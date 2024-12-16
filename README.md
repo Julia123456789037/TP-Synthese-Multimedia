@@ -1,2 +1,2 @@
-# TP-Synthese-Multimedia
+# TP-Synthèse-Multimedia
 TP plp
