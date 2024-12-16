@@ -1,16 +1,22 @@
 package org.multimedia.vue;
+
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.Serial;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
@@ -36,7 +42,20 @@ public class FramePrinc extends JFrame
 		this.setTitle  ( "Gestion image (contrefaçon de paint)"  );
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
-
+		
+		System.out.println(System.getProperty("os.name"));
+		
+		try {
+			String lafClassName = switch (System.getProperty("os.name")) {
+				case "Linux"   -> "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+				case "Windows" -> "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+				default -> null;
+			};
+			UIManager.setLookAndFeel(lafClassName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
@@ -69,7 +88,7 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuOpenFile = new JMenuItem( "Ouvrir un fichier ..." );
 		mnuOpenFile.setIcon( new ImageIcon( ImageUtils.openImg("/open.png", true) ) );
 		mnuOpenFile.setMnemonic( 'O' );
-		mnuOpenFile.addActionListener( this::mnuNewListener );
+		mnuOpenFile.addActionListener( this::mnuOpenFileListener );
 		mnuOpenFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK) );
 		mnuFile.add(mnuOpenFile);
 
@@ -82,6 +101,7 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuSaveFileAs = new JMenuItem( "Sauvegarder dans le dossier..." );
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
 		mnuSaveFileAs.setMnemonic( 'A' );
+		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
 
 		mnuFile.addSeparator();
@@ -96,19 +116,33 @@ public class FramePrinc extends JFrame
 		
 		// Définition du menu déroulant "Edition d'image" et de son contenu
 		JMenu mnuEdit = new JMenu( "Edition d'image" );
-		mnuEdit.setMnemonic( 'E' );
+		mnuEdit.setMnemonic( 'I' );
 		
-		JMenuItem mnuUndo = new JMenuItem( "Rotation à gauche" );
-		mnuUndo.setIcon( new ImageIcon( ImageUtils.openImg("/organiser.png", true) ) );
-		mnuUndo.setMnemonic( 'U' );
-		mnuUndo.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK) );
-		mnuEdit.add(mnuUndo);
+		JMenuItem mnuRotG = new JMenuItem( "Rotation à gauche" );
+		mnuRotG.setIcon( new ImageIcon( ImageUtils.openImg("/undo.png", true) ) );
+		mnuRotG.setMnemonic( 'G' );
+		mnuRotG.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuRotG);
 
-		JMenuItem mnuRedo = new JMenuItem( "Rotation à droite" );
-		mnuRedo.setIcon( new ImageIcon( ImageUtils.openImg("/organiser.png", true) ) );
-		mnuRedo.setMnemonic( 'R' );
-		mnuRedo.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
-		mnuEdit.add(mnuRedo);
+		JMenuItem mnuRotD = new JMenuItem( "Rotation à droite" );
+		mnuRotD.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
+		mnuRotD.setMnemonic( 'D' );
+		mnuRotD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuRotD);
+		
+		mnuEdit.addSeparator();
+
+		JMenuItem mnuMirGD = new JMenuItem( "Miroir gauche droite" );
+		mnuMirGD.setIcon( new ImageIcon( ImageUtils.openImg("/miroirGD.png", true) ) );
+		mnuMirGD.setMnemonic( 'L' );
+		mnuMirGD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuMirGD);
+
+		JMenuItem mnuMirHB = new JMenuItem( "Miroir haut bas" );
+		mnuMirHB.setIcon( new ImageIcon( ImageUtils.openImg("/miroirHB.png", true) ) );
+		mnuMirHB.setMnemonic( 'P' );
+		mnuMirHB.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuMirHB);
 		
 		mnuEdit.addSeparator();
 		
@@ -120,13 +154,13 @@ public class FramePrinc extends JFrame
 		
 		JMenuItem mnuCut = new JMenuItem( "Couper" );
 		mnuCut.setIcon( new ImageIcon( ImageUtils.openImg("/cut.png", true) ) );
-		mnuCut.setMnemonic( 't' );
+		mnuCut.setMnemonic( 'X' );
 		mnuCut.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuCut);
 		
 		JMenuItem mnuPaste = new JMenuItem( "Coller" );
 		mnuPaste.setIcon( new ImageIcon( ImageUtils.openImg("/paste.png", true) ) );
-		mnuPaste.setMnemonic( 'P' );
+		mnuPaste.setMnemonic( 'V' );
 		mnuPaste.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuPaste);
 
@@ -135,23 +169,23 @@ public class FramePrinc extends JFrame
 		
 		// Définition du menu déroulant "Edition de texte" et de son contenu
 		JMenu mnuTexte = new JMenu( "Edition de texte" );
-		mnuTexte.setMnemonic( 'E' );
+		mnuTexte.setMnemonic( 'T' );
 		
 		JMenuItem mnuAjTe = new JMenuItem( "Ajouter un texte" );
 		mnuAjTe.setIcon( new ImageIcon( ImageUtils.openImg("/ajoutZoneTexte.png", true) ) );
-		mnuAjTe.setMnemonic( 'U' );
+		mnuAjTe.setMnemonic( 'A' );
 		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuAjTe);
 
 		JMenuItem mnuTailTe = new JMenuItem( "Taille du texte" );
 		mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuTailTe.setMnemonic( 'R' );
+		mnuTailTe.setMnemonic( 'T' );
 		mnuTailTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuTailTe);
 
 		JMenuItem mnuCoulTe = new JMenuItem( "Couleur du texte" );
 		mnuCoulTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuCoulTe.setMnemonic( 'p' );
+		mnuCoulTe.setMnemonic( 'C' );
 		mnuCoulTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuCoulTe);
 
@@ -164,14 +198,34 @@ public class FramePrinc extends JFrame
 		
 		menuBar.add( mnuHelp );
 		
-
-		
 		return menuBar;
 	}
 
-	public void mnuNewListener( ActionEvent event ) {
-		JOptionPane.showMessageDialog( this, "Button clicked !" );
-	}
+	public void mnuOpenFileListener(ActionEvent event) {
+        // Créer un JFileChooser pour sélectionner un fichier
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez une image");
+
+        // Filtrer pour n'autoriser que les fichiers image
+        fileChooser.setFileFilter(new FileNameExtensionFilter(
+            "Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+        ));
+
+        // Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+
+            // Charger et afficher l'image
+            ImageIcon imageIcon = new ImageIcon(filePath);
+        	Image image = imageIcon.getImage();
+			panelImage.setImage(image);
+
+            // Message de confirmation
+            JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
+        }
+    }
 
 }
 
