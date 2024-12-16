@@ -1,11 +1,15 @@
 package org.multimedia.vue;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
@@ -39,6 +43,17 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public BarreOutils (Controleur ctrl ) 
 	{
 		this.ctrl = ctrl;
+		this.setBackground(Color.RED);
+		
+//		UIManager.put(null, null);
+		
+		UIDefaults map = UIManager.getDefaults();
+		
+		for (Entry<Object, Object> o : map.entrySet()) {
+			System.out.println(o.getKey().getClass());
+			if (((String) o.getKey()).contains("JToolBar"))
+				System.out.println(o.getKey());
+		}
 		
 		/*-------------------------------*/
 		/* Création des composants       */
