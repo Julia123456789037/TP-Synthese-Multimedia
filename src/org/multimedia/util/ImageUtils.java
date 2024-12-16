@@ -1,6 +1,7 @@
 package org.multimedia.util;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -426,6 +427,41 @@ public class ImageUtils
 	    return resultat;
 	}
 	
+	public static BufferedImage invertHorizontal(BufferedImage img) {
+		BufferedImage res = Builder.clone(img);
+		int width = res.getWidth();
+		pixelLoop(img, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+		return res;
+	}
+	
+	public static BufferedImage invertVertical(BufferedImage img) {
+		BufferedImage res = Builder.clone(img);
+		int height = res.getHeight();
+		pixelLoop(img, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+		return res;
+	}
+	
+	public static BufferedImage writeText(BufferedImage img, Text text) {
+		BufferedImage res = Builder.deepClone(img);
+		Graphics2D g2d = res.createGraphics();
+		g2d.setColor(text.getColor());
+		g2d.setFont(text.getFont());
+		g2d.drawString(text.getText(), text.x(), text.y());
+		g2d.dispose();
+		return res;
+	}
+	
+	/**
+	 * TODO: Méthode pas indispensable, à faire plus tard.
+	 * 
+	 * @param img
+	 * @param text
+	 * @param mask
+	 * @return
+	 */
+	public static BufferedImage writeTextMask(BufferedImage img, Text text, BufferedImage mask) {
+		return null;
+	}
 	
 	/*----------------*/
 	/*    À tester    */
