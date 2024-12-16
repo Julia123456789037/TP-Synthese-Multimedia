@@ -486,7 +486,7 @@ public class ImageUtils
 	 * @param img
 	 * @param pi
 	 */
-	public static void pixelLoop(BufferedImage img, PixelIterator pi)
+	static void pixelLoop(BufferedImage img, PixelIterator pi)
 	{
 		for (int x = 0; x < img.getWidth(); x++)
 		{

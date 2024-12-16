@@ -1,10 +1,8 @@
 package org.multimedia.vue;
-import org.multimedia.main.Controleur;
-import org.multimedia.util.ImageUtils;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -14,11 +12,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.multimedia.main.Controleur;
+import org.multimedia.util.ImageUtils;
+
 public class FramePrinc extends JFrame 
 {
+	@Serial
+	private static final long serialVersionUID = 5106104636891939306L;
+
 	Controleur ctrl;
 
-	PanelBouton	panelBouton;
+	BarreOutils	barreOutils;
 	PanelImage	panelImage;
 
 	JMenu mnuFile;
@@ -36,7 +40,7 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
-		this.panelBouton  = new PanelBouton  (this.ctrl);
+		this.barreOutils  = new BarreOutils  (this.ctrl);
 		this.panelImage = new PanelImage (this.ctrl);
 
 		this.setJMenuBar( this.createMenuBar() );
@@ -45,8 +49,8 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add ( this.panelBouton,  BorderLayout.NORTH );
-		this.add ( this.panelImage, BorderLayout.CENTER  );
+		this.add(this.barreOutils, BorderLayout.NORTH);
+		this.add(this.panelImage,  BorderLayout.CENTER);
 
 		this.setVisible ( true );
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
