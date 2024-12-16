@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.awt.Image;
 
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -30,6 +31,7 @@ public class FramePrinc extends JFrame
 	JMenuItem mnuNewFile;
 	BufferedImage bFimage;
 	int angle;
+	Color selectedColor;
 
 	public FramePrinc(Controleur ctrl)
 	{
@@ -122,12 +124,14 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuMirGD = new JMenuItem( "Miroir gauche droite" );
 		mnuMirGD.setIcon( new ImageIcon( ImageUtils.openImg("/miroirGD.png", true) ) );
 		mnuMirGD.setMnemonic( 'L' );
+		mnuMirGD.addActionListener( this::mnuMirGDListener );
 		mnuMirGD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuMirGD);
 
 		JMenuItem mnuMirHB = new JMenuItem( "Miroir haut bas" );
 		mnuMirHB.setIcon( new ImageIcon( ImageUtils.openImg("/miroirHB.png", true) ) );
 		mnuMirHB.setMnemonic( 'P' );
+		mnuMirHB.addActionListener( this::mnuMirHBListener );
 		mnuMirHB.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuMirHB);
 		
@@ -230,6 +234,19 @@ public class FramePrinc extends JFrame
 		this.angle = this.angle + 270;
 		if (this.angle > 360) {this.angle = this.angle - 360;}
 		panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
+	}
+
+
+	public void mnuMirGDListener(ActionEvent event) { 
+		//panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
+	}
+	public void mnuMirHBListener(ActionEvent event) { 
+		//panelImage.setImage(ImageUtils.miroir(this.bFimage));  
+	}
+
+	public void activatePipetteMode() {
+		JOptionPane.showMessageDialog(this, "Cliquez sur l'image pour choisir une couleur avec la pipette.");
+		panelImage.enablePipetteMode(true);
 	}
 
 }
