@@ -5,8 +5,11 @@ import org.multimedia.util.ImageUtils;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.awt.Image;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -65,7 +68,7 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuOpenFile = new JMenuItem( "Ouvrir un fichier ..." );
 		mnuOpenFile.setIcon( new ImageIcon( ImageUtils.openImg("/open.png", true) ) );
 		mnuOpenFile.setMnemonic( 'O' );
-		mnuOpenFile.addActionListener( this::mnuNewListener );
+		mnuOpenFile.addActionListener( this::mnuOpenFileListener );
 		mnuOpenFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK) );
 		mnuFile.add(mnuOpenFile);
 
@@ -175,14 +178,34 @@ public class FramePrinc extends JFrame
 		
 		menuBar.add( mnuHelp );
 		
-
-		
 		return menuBar;
 	}
 
-	public void mnuNewListener( ActionEvent event ) {
-		JOptionPane.showMessageDialog( this, "Button clicked !" );
-	}
+	public void mnuOpenFileListener(ActionEvent event) {
+        // Créer un JFileChooser pour sélectionner un fichier
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez une image");
+
+        // Filtrer pour n'autoriser que les fichiers image
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+            "Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+        ));
+
+        // Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+
+            // Charger et afficher l'image
+            ImageIcon imageIcon = new ImageIcon(filePath);
+        	Image image = imageIcon.getImage();
+			panelImage.setImage(image);
+
+            // Message de confirmation
+            JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
+        }
+    }
 
 }
 
