@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.awt.Image;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import java.awt.image.BufferedImage;
 
 public class FramePrinc extends JFrame 
 {
@@ -26,10 +28,13 @@ public class FramePrinc extends JFrame
 
 	JMenu mnuFile;
 	JMenuItem mnuNewFile;
+	BufferedImage bFimage;
+	int angle;
 
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
+		this.angle = 0;
 
 
 		this.setTitle  ( "Gestion image (contrefaçon de paint)"  );
@@ -101,12 +106,14 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuRotG = new JMenuItem( "Rotation à gauche" );
 		mnuRotG.setIcon( new ImageIcon( ImageUtils.openImg("/undo.png", true) ) );
 		mnuRotG.setMnemonic( 'G' );
+		mnuRotG.addActionListener( this::mnuRotGListener );
 		mnuRotG.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuRotG);
 
 		JMenuItem mnuRotD = new JMenuItem( "Rotation à droite" );
 		mnuRotD.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
 		mnuRotD.setMnemonic( 'D' );
+		mnuRotD.addActionListener( this::mnuRotDListener );
 		mnuRotD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuRotD);
 		
@@ -182,31 +189,47 @@ public class FramePrinc extends JFrame
 	}
 
 	public void mnuOpenFileListener(ActionEvent event) {
-        // Créer un JFileChooser pour sélectionner un fichier
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Sélectionnez une image");
+		// Créer un JFileChooser pour sélectionner un fichier
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Sélectionnez une image");
 
-        // Filtrer pour n'autoriser que les fichiers image
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-            "Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
-        ));
+		// Filtrer pour n'autoriser que les fichiers image
+		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+		));
 
-        // Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
+		// Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
+		int result = fileChooser.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			try {
+				File selectedFile = fileChooser.getSelectedFile();
+				String filePath = selectedFile.getAbsolutePath();
 
-            // Charger et afficher l'image
-            ImageIcon imageIcon = new ImageIcon(filePath);
-        	Image image = imageIcon.getImage();
-			panelImage.setImage(image);
+				// Charger l'image en tant que BufferedImage
+				this.bFimage = ImageIO.read(selectedFile);
 
-            // Message de confirmation
-            JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
-        }
-    }
+				// Mettre à jour l'image dans PanelImage
+				panelImage.setImage(this.bFimage);
+
+				// Message de confirmation
+				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Erreur lors du chargement de l'image.");
+			}
+		}
+	}
+
+	public void mnuRotGListener(ActionEvent event) { 
+		this.angle = this.angle + 90;
+		if (this.angle > 360) {this.angle = this.angle - 360;}
+		panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
+	}
+	public void mnuRotDListener(ActionEvent event) { 
+		this.angle = this.angle + 270;
+		if (this.angle > 360) {this.angle = this.angle - 360;}
+		panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
+	}
 
 }
-
-
