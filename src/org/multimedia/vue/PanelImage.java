@@ -1,6 +1,8 @@
 package org.multimedia.vue;
 import org.multimedia.main.Controleur;
 
+import java.io.Serial;
+
 import javax.swing.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -9,7 +11,12 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PanelImage extends JPanel {
+
+public class PanelImage extends JPanel
+{
+	@Serial
+	private static final long serialVersionUID = -8471532996846330745L;
+	
 	Controleur ctrl;
 	private Image image; // Stocke l'image actuellement affichée
 	private BufferedImage bFimage; 

@@ -1,6 +1,7 @@
 package org.multimedia.util;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -426,6 +427,41 @@ public class ImageUtils
 	    return resultat;
 	}
 	
+	public static BufferedImage invertHorizontal(BufferedImage img) {
+		BufferedImage res = Builder.clone(img);
+		int width = res.getWidth();
+		pixelLoop(img, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+		return res;
+	}
+	
+	public static BufferedImage invertVertical(BufferedImage img) {
+		BufferedImage res = Builder.clone(img);
+		int height = res.getHeight();
+		pixelLoop(img, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+		return res;
+	}
+	
+	public static BufferedImage writeText(BufferedImage img, Text text) {
+		BufferedImage res = Builder.deepClone(img);
+		Graphics2D g2d = res.createGraphics();
+		g2d.setColor(text.getColor());
+		g2d.setFont(text.getFont());
+		g2d.drawString(text.getText(), text.x(), text.y());
+		g2d.dispose();
+		return res;
+	}
+	
+	/**
+	 * TODO: Méthode pas indispensable, à faire plus tard.
+	 * 
+	 * @param img
+	 * @param text
+	 * @param mask
+	 * @return
+	 */
+	public static BufferedImage writeTextMask(BufferedImage img, Text text, BufferedImage mask) {
+		return null;
+	}
 	
 	/*----------------*/
 	/*    À tester    */
@@ -719,250 +755,239 @@ public class ImageUtils
 		return kernel;
 	}
 	
-}
-
-/**
- * Classe utilitaire permettant la création et la duplication d'images.
- * <br><br>
- * <b>Date :</b> 14/12/2024
- * @author Gabriel Roche
- */
-class Builder
-{
-	
 	/**
-	 * Constructeur, à ne pas instancier.
+	 * Classe utilitaire permettant la création et la duplication d'images.
+	 * <br><br>
+	 * <b>Date :</b> 14/12/2024
+	 * @author Gabriel Roche
 	 */
-	private Builder() {}
-	
-	/**
-	 * Créé une image de dimension {@code width / height} remplie d'une couleur.
-	 * 
-	 * @param width
-	 * @param height
-	 * @param color
-	 * @return
-	 */
-	public static BufferedImage plainColor(int width, int height, Color color)
+	public static class Builder
 	{
-		return Builder.plainColor(width, height, color.getRGB());
-	}
-	
-	/**
-	 * Créé une image de dimension {@code width / height} remplie d'une couleur.
-	 * 
-	 * @param width
-	 * @param height
-	 * @param rgb
-	 * @return
-	 */
-	public static BufferedImage plainColor(int width, int height, int rgb)
-	{
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		for (int y = 0; y < height; y++)
+		
+		/**
+		 * Constructeur, à ne pas instancier.
+		 */
+		private Builder() {}
+		
+		/**
+		 * Créé une image de dimension {@code width / height} remplie d'une couleur.
+		 * 
+		 * @param width
+		 * @param height
+		 * @param color
+		 * @return
+		 */
+		public static BufferedImage plainColor(int width, int height, Color color)
 		{
-			for (int x = 0; x < width; x++)
-			{
-				img.setRGB(x, y, rgb);
-			}
+			return Builder.plainColor(width, height, color.getRGB());
 		}
-		return img;
-	}
-	
-	/**
-	 * Créé un clone d'une image avec les mêmes dimensions et type.
-	 * 
-	 * @param img
-	 * @return
-	 */
-	public static BufferedImage clone(BufferedImage img)
-	{
-		return new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
-	}
-	
-	/**
-	 * Créé un clone d'une image en copiant également les pixels.
-	 * 
-	 * @param img
-	 * @return
-	 */
-	public static BufferedImage deepClone(BufferedImage img)
-	{
-		return new BufferedImage(img.getColorModel(), img.copyData(null), img.getColorModel().isAlphaPremultiplied(), null);
-	}
-	
-	/**
-	 * @deprecated Duplicata
-	 * @param img
-	 * @return
-	 */
-	@Deprecated
-	public static BufferedImage deepClone0(BufferedImage img)
-	{
-		BufferedImage res = Builder.clone(img);
-		for (int x = 0; x < res.getWidth(); x++)
+		
+		/**
+		 * Créé une image de dimension {@code width / height} remplie d'une couleur.
+		 * 
+		 * @param width
+		 * @param height
+		 * @param rgb
+		 * @return
+		 */
+		public static BufferedImage plainColor(int width, int height, int rgb)
 		{
-			for (int y = 0; y < res.getHeight(); y++)
+			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			for (int y = 0; y < height; y++)
 			{
-				res.setRGB(x, y, img.getRGB(x, y));
+				for (int x = 0; x < width; x++)
+				{
+					img.setRGB(x, y, rgb);
+				}
 			}
+			return img;
 		}
-		return res;
+		
+		/**
+		 * Créé un clone d'une image avec les mêmes dimensions et type.
+		 * 
+		 * @param img
+		 * @return
+		 */
+		public static BufferedImage clone(BufferedImage img)
+		{
+			return new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		}
+		
+		/**
+		 * Créé un clone d'une image en copiant également les pixels.
+		 * 
+		 * @param img
+		 * @return
+		 */
+		public static BufferedImage deepClone(BufferedImage img)
+		{
+			return new BufferedImage(img.getColorModel(), img.copyData(null), img.getColorModel().isAlphaPremultiplied(), null);
+		}
+		
+		/**
+		 * @deprecated Duplicata
+		 * @param img
+		 * @return
+		 */
+		@Deprecated
+		public static BufferedImage deepClone0(BufferedImage img)
+		{
+			BufferedImage res = Builder.clone(img);
+			for (int x = 0; x < res.getWidth(); x++)
+			{
+				for (int y = 0; y < res.getHeight(); y++)
+				{
+					res.setRGB(x, y, img.getRGB(x, y));
+				}
+			}
+			return res;
+		}
+		
 	}
 	
-}
-
-/**
- * Classe utilitaire pour les couleur RGB pures.
- * <br><br>
- * <b>Date :</b> 14/12/2024
- * @author Gabriel Roche
- */
-class RGB
-{
-	
 	/**
-	 * Constructeur, à ne pas instancier.
+	 * Classe utilitaire pour les couleur RGB pures.
+	 * <br><br>
+	 * <b>Date :</b> 14/12/2024
+	 * @author Gabriel Roche
 	 */
-	private RGB() {}
-	
-	/**
-	 * Retourne la valeur Alpha d'une couleur.
-	 * 
-	 * @param rgb
-	 * @return
-	 */
-	public static int getAlpha(int rgb)
+	public static class RGB
 	{
-		return (rgb >> 24) & 0xFF;
+		
+		/**
+		 * Constructeur, à ne pas instancier.
+		 */
+		private RGB() {}
+		
+		/**
+		 * Retourne la valeur Alpha d'une couleur.
+		 * 
+		 * @param rgb
+		 * @return
+		 */
+		public static int getAlpha(int rgb)
+		{
+			return (rgb >> 24) & 0xFF;
+		}
+		
+		/**
+		 * Retourne la valeur Rouge d'une couleur.
+		 * 
+		 * @param rgb
+		 * @return
+		 */
+		public static int getRed(int rgb)
+		{
+			return (rgb >> 16) & 0xFF;
+		}
+		
+		/**
+		 * Retourne la valeur Vert d'une couleur.
+		 * 
+		 * @param rgb
+		 * @return
+		 */
+		public static int getGreen(int rgb)
+		{
+			return (rgb >> 8) & 0xFF;
+		}
+		
+		/**
+		 * Retourne la valeur Bleu d'une couleur.
+		 * 
+		 * @param rgb
+		 * @return
+		 */
+		public static int getBlue(int rgb)
+		{
+			return rgb & 0xFF;
+		}
+		
+		/**
+		 * Converti les valeurs Rouge, Vert et Bleu en couleur.
+		 * 
+		 * @param r
+		 * @param g
+		 * @param b
+		 * @return
+		 */
+		public static int parse(int r, int g, int b)
+		{
+			return RGB.parse(255, r, g, b);
+		}
+		
+		/**
+		 * Converti les valeurs Alpha, Rouge, Vert et Bleu en couleur.
+		 * 
+		 * @param a
+		 * @param r
+		 * @param g
+		 * @param b
+		 * @return
+		 */
+		public static int parse(int a, int r, int g, int b)
+		{
+			if (a < 0 || a > 255 || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+				return -1;
+			return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
+		}
+		
+		/**
+		 * Converti les valeurs Rouge, Vert et Bleu en couleur.
+		 * 
+		 * @param r
+		 * @param g
+		 * @param b
+		 * @return
+		 */
+		public static int parse(float r, float g, float b)
+		{
+			return RGB.parse(255, r, g, b);
+		}
+		
+		/**
+		 * Converti les valeurs Alpha, Rouge, Vert et Bleu en couleur.
+		 * 
+		 * @param a
+		 * @param r
+		 * @param g
+		 * @param b
+		 * @return
+		 */
+		public static int parse(int a, float r, float g, float b)
+		{
+			if (a < 0 || a > 255 || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+				return -1;
+			return (int) ((a * 256 * 256 * 256) + (r * 256 * 256) + (g * 256) + b);
+		}
+		
+		/**
+		 * Assure qu'une valeur de couleur RGB respecte les bornes.
+		 * 
+		 * @param c
+		 * @return
+		 */
+		public static int limit(int c)
+		{
+			return Math.max(0, Math.min(255, c));
+		}
+		
+		/**
+		 * Retourne la différence entre deux couleurs.
+		 * 
+		 * @param rgb1
+		 * @param rgb2
+		 * @return
+		 */
+		public static double difference(int rgb1, int rgb2)
+		{
+			int r1 = RGB.getRed(rgb1),   r2 = RGB.getRed(rgb2);
+			int g1 = RGB.getGreen(rgb1), g2 = RGB.getGreen(rgb2);
+			int b1 = RGB.getBlue(rgb1),  b2 = RGB.getBlue(rgb2);
+			return Math.sqrt(Math.pow((r1 - r2), 2) + Math.pow((g1 - g2), 2) + Math.pow((b1 - b2), 2));
+		}
+		
 	}
 	
-	/**
-	 * Retourne la valeur Rouge d'une couleur.
-	 * 
-	 * @param rgb
-	 * @return
-	 */
-	public static int getRed(int rgb)
-	{
-		return (rgb >> 16) & 0xFF;
-	}
-	
-	/**
-	 * Retourne la valeur Vert d'une couleur.
-	 * 
-	 * @param rgb
-	 * @return
-	 */
-	public static int getGreen(int rgb)
-	{
-		return (rgb >> 8) & 0xFF;
-	}
-	
-	/**
-	 * Retourne la valeur Bleu d'une couleur.
-	 * 
-	 * @param rgb
-	 * @return
-	 */
-	public static int getBlue(int rgb)
-	{
-		return rgb & 0xFF;
-	}
-	
-	/**
-	 * Converti les valeurs Rouge, Vert et Bleu en couleur.
-	 * 
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @return
-	 */
-	public static int parse(int r, int g, int b)
-	{
-		return RGB.parse(255, r, g, b);
-	}
-	
-	/**
-	 * Converti les valeurs Alpha, Rouge, Vert et Bleu en couleur.
-	 * 
-	 * @param a
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @return
-	 */
-	public static int parse(int a, int r, int g, int b)
-	{
-		if (a < 0 || a > 255 || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-			return -1;
-		return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
-	}
-	
-	/**
-	 * Converti les valeurs Rouge, Vert et Bleu en couleur.
-	 * 
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @return
-	 */
-	public static int parse(float r, float g, float b)
-	{
-		return RGB.parse(255, r, g, b);
-	}
-	
-	/**
-	 * Converti les valeurs Alpha, Rouge, Vert et Bleu en couleur.
-	 * 
-	 * @param a
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @return
-	 */
-	public static int parse(int a, float r, float g, float b)
-	{
-		if (a < 0 || a > 255 || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-			return -1;
-		return (int) ((a * 256 * 256 * 256) + (r * 256 * 256) + (g * 256) + b);
-	}
-	
-	/**
-	 * Assure qu'une valeur de couleur RGB respecte les bornes.
-	 * 
-	 * @param c
-	 * @return
-	 */
-	public static int limit(int c)
-	{
-		return Math.max(0, Math.min(255, c));
-	}
-	
-	/**
-	 * Retourne la différence entre deux couleurs.
-	 * 
-	 * @param rgb1
-	 * @param rgb2
-	 * @return
-	 */
-	public static double difference(int rgb1, int rgb2)
-	{
-		int r1 = RGB.getRed(rgb1),   r2 = RGB.getRed(rgb2);
-		int g1 = RGB.getGreen(rgb1), g2 = RGB.getGreen(rgb2);
-		int b1 = RGB.getBlue(rgb1),  b2 = RGB.getBlue(rgb2);
-		return Math.sqrt(Math.pow((r1 - r2), 2) + Math.pow((g1 - g2), 2) + Math.pow((b1 - b2), 2));
-	}
-	
-}
-
-/**
- * Interface d'iteration à pixels.
- * <br><br>
- * <b>Date :</b> 14/12/2024
- * @author Gabriel Roche
- */
-interface PixelIterator
-{
-	public void applyFilter(int x, int y);
 }

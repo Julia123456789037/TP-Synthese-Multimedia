@@ -1,13 +1,15 @@
 package org.multimedia.vue;
+
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.awt.Image;
 import java.awt.Color;
+import java.io.Serial;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -19,12 +21,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import java.awt.image.BufferedImage;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 public class FramePrinc extends JFrame 
 {
+	@Serial
+	private static final long serialVersionUID = 5106104636891939306L;
+
 	Controleur ctrl;
 
-	PanelBouton	panelBouton;
+	BarreOutils	barreOutils;
 	PanelImage	panelImage;
 
 	JMenu mnuFile;
@@ -42,11 +50,24 @@ public class FramePrinc extends JFrame
 		this.setTitle  ( "Gestion image (contrefaçon de paint)"  );
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
-
+		
+		System.out.println(System.getProperty("os.name"));
+		
+		try {
+			String lafClassName = switch (System.getProperty("os.name")) {
+				case "Linux"   -> "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+				case "Windows" -> "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+				default -> null;
+			};
+			UIManager.setLookAndFeel(lafClassName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
-		this.panelBouton  = new PanelBouton  (this.ctrl);
+		this.barreOutils  = new BarreOutils  (this.ctrl);
 		this.panelImage = new PanelImage (this.ctrl);
 
 		this.setJMenuBar( this.createMenuBar() );
@@ -55,8 +76,8 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add ( this.panelBouton,  BorderLayout.NORTH );
-		this.add ( this.panelImage, BorderLayout.CENTER  );
+		this.add(this.barreOutils, BorderLayout.NORTH);
+		this.add(this.panelImage,  BorderLayout.CENTER);
 
 		this.setVisible ( true );
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -197,10 +218,10 @@ public class FramePrinc extends JFrame
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Sélectionnez une image");
 
-		// Filtrer pour n'autoriser que les fichiers image
-		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
-		));
+        // Filtrer pour n'autoriser que les fichiers image
+        fileChooser.setFileFilter(new FileNameExtensionFilter(
+            "Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+        ));
 
 		// Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
 		int result = fileChooser.showOpenDialog(this);

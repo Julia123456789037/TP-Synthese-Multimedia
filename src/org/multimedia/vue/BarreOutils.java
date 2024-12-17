@@ -1,13 +1,24 @@
 package org.multimedia.vue;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serial;
+import java.util.Map.Entry;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
 
-import java.awt.event.*;
-import javax.swing.*;
-import java.awt.FlowLayout;
-
-public class PanelBouton extends JPanel implements ActionListener
+public class BarreOutils extends JToolBar implements ActionListener
 {
+	@Serial
+	private static final long serialVersionUID = 6326511901738014336L;
+	
 	Controleur ctrl;
 	JButton    btnSauvegarder;
 	JButton    btnImporteImage;
@@ -29,28 +40,41 @@ public class PanelBouton extends JPanel implements ActionListener
 
 	JButton btnAjouterTexte;
 
-	public PanelBouton (Controleur ctrl ) 
+	public BarreOutils (Controleur ctrl ) 
 	{
 		this.ctrl = ctrl;
-
+		this.setBackground(Color.RED);
+		
+//		UIManager.put(null, null);
+		
+		UIDefaults map = UIManager.getDefaults();
+		
+		for (Entry<Object, Object> o : map.entrySet()) {
+			System.out.println(o.getKey().getClass());
+			if (((String) o.getKey()).contains("JToolBar"))
+				System.out.println(o.getKey());
+		}
+		
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
 
-		this.setLayout(new FlowLayout()); // Disposition simple pour placer les boutons
-
         // Bouton 1 avec une image
         this.btnSauvegarder = new JButton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
-        this.btnSauvegarder.setToolTipText("Sauvegarder"); 
+        this.btnSauvegarder.setToolTipText("Sauvegarder");
+        this.btnSauvegarder.setActionCommand("Sauvegarder");
 
 		this.btnPipette = new JButton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
-        this.btnPipette.setToolTipText("Pipette"); 
+        this.btnPipette.setToolTipText("Pipette");
+        this.btnPipette.setActionCommand("Pipette");
 
 		this.btnPotPeinture = new JButton(new ImageIcon(ImageUtils.openImg("/potPeinture.png", true) ));
-        this.btnPotPeinture.setToolTipText("Pot de peinture"); 
+        this.btnPotPeinture.setToolTipText("Pot de peinture");
+        this.btnPotPeinture.setActionCommand("PotDePeinture");
 
 		this.btnAjouterTexte = new JButton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
-        this.btnAjouterTexte.setToolTipText("Ajouter un texte"); 
+        this.btnAjouterTexte.setToolTipText("Ajouter du texte");
+        this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
 
 
 
@@ -71,45 +95,33 @@ public class PanelBouton extends JPanel implements ActionListener
 		/*-------------------------------*/
 
 
-
-		this.add ( this.btnSauvegarder			);
-		this.add ( this.btnPipette				);
-		this.add ( this.btnPotPeinture			);
-
-
-		this.add ( this.btnAjouterTexte			);
-
+		
+		this.add(this.btnSauvegarder);
+		this.add(this.btnPipette);
+		this.add(this.btnPotPeinture);
+		this.add(this.btnAjouterTexte);
+		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
-		this.btnSauvegarder			.addActionListener ( this );
-		this.btnPipette			.addActionListener ( this );
-		this.btnPotPeinture				.addActionListener ( this );
-		this.btnAjouterTexte				.addActionListener ( this );
+		this.btnSauvegarder .addActionListener(this);
+		this.btnPipette     .addActionListener(this);
+		this.btnPotPeinture .addActionListener(this);
+		this.btnAjouterTexte.addActionListener(this);
+		
 	}
-
-
 
 	public void actionPerformed ( ActionEvent e)
 	{
-		// Sauvegarde
-		if ( e.getSource() == this.btnSauvegarder ) { // this.ctrl.sauvegarder (); 
+		switch (e.getActionCommand()) {
+			case "Sauvegarder" -> {
+//				this.ctrl.sauvegarder ();
 			}
-
-		// Pipette
-		if ( e.getSource() == this.btnPipette ) {
-			//
+			case "Pipette" -> {}
+			case "PotDePeinture" -> {}
+			case "AjouterDuTexte" -> {
+				System.out.println("-----------------");
+			}
 		}
-
-		// Pot de peinture
-		if ( e.getSource() == this.btnPotPeinture ){
-			//
-		}
-
-		// Pot de peinture
-		if ( e.getSource() == this.btnAjouterTexte ){ System.out.println("-----------------");
-			//
-		}
-
 	}
 }
