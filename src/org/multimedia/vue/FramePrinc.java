@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.awt.Image;
-
+import java.awt.Color;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -247,6 +247,11 @@ public class FramePrinc extends JFrame
 	public void activatePipetteMode() {
 		JOptionPane.showMessageDialog(this, "Cliquez sur l'image pour choisir une couleur avec la pipette.");
 		panelImage.enablePipetteMode(true);
+	}
+
+    public void setSelectedColor(Color color) {
+		this.selectedColor = color;
+		System.out.println("Couleur sélectionnée : " + color);
 	}
 
 }
