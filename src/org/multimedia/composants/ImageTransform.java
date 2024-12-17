@@ -28,9 +28,13 @@ public class ImageTransform {
 	public void invertV() {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
 	}
-	
-	public void fillColor(int x, int y, Color color) {
+
+    public void fillColor(int x, int y, Color color) {
 		this.addOperation(image -> ImageUtils.fill(image, x, y, color));
+	}
+
+    public void applyBrightness( int brightness ) {
+		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
 	}
 	
 	private void addOperation(Operation o) {
