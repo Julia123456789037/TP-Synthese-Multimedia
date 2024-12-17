@@ -75,6 +75,12 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		this.add(this.barreOutils, BorderLayout.NORTH);
 		this.add(this.panelImage,  BorderLayout.CENTER);
+		
+//		JDialog w = new JDialog(this);
+//	    w.add(new JLabel("Testing a Window!!!!!"));
+//	    w.setLocation(300, 300);
+//	    w.pack();
+//	    w.setVisible(true);
 
 		this.setVisible ( true );
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -269,7 +275,7 @@ public class FramePrinc extends JFrame
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
 
 	public void PotPeint( int x, int y ) {
-		this.panelImage.transform.fillColor(x, y, selectedColor);
+		this.panelImage.transform.fillColor(x, y, this.selectedColor);
 		this.panelImage.updateUI();
 	}
 	

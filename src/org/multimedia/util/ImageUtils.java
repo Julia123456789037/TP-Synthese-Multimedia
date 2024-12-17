@@ -3,16 +3,16 @@ package org.multimedia.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
@@ -247,6 +247,7 @@ public class ImageUtils
 	 * @param rgb
 	 * @return
 	 */
+	/*
 	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb)
 	{
 		if (x < 0 || x > img.getWidth() || y < 0 || y > img.getHeight())
@@ -283,6 +284,101 @@ public class ImageUtils
 		}
 		return res;
 	}
+	*/
+	
+	/*
+	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb) {
+	    if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
+	        throw new IndexOutOfBoundsException("Coordinates out of bounds: (" + x + ", " + y + ")");
+	    }
+	    
+	    BufferedImage res = Builder.deepClone(img);
+	    int origC = res.getRGB(x, y) & 0xFFFFFF;
+	    
+	    if (origC == rgb) {
+	        return res;
+	    }
+	    
+	    return fillRecursive(res, x, y, rgb, origC);
+	}
+
+	private static BufferedImage fillRecursive(BufferedImage img, int x, int y, int rgb, int origC) {
+	    if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
+	        return img;
+	    }
+	    
+	    int curC = img.getRGB(x, y) & 0xFFFFFF;
+	    double diff = RGB.difference(origC, curC);
+	    
+	    if (diff >= 0.0 && diff <= 80.0) {
+	        img.setRGB(x, y, rgb);
+	        
+	        fillRecursive(img, x + 1, y, rgb, origC);
+	        fillRecursive(img, x - 1, y, rgb, origC);
+	        fillRecursive(img, x, y + 1, rgb, origC);
+	        fillRecursive(img, x, y - 1, rgb, origC);
+	    }
+	    
+	    return img;
+	}
+	*/
+	
+	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb) {
+        if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
+            throw new IllegalArgumentException();
+        }
+        
+        BufferedImage res = Builder.deepClone(img);
+
+        WritableRaster raster = res.getRaster();
+        int[] fill = new int[]{RGB.getRed(rgb), RGB.getGreen(rgb), RGB.getBlue(rgb), RGB.getAlpha(rgb)};
+        int[] old = raster.getPixel(x, y, new int[4]);
+
+        // Checks trivial case where loc is of the fill color
+        if (isEqualRgba(fill, old)) {
+            return res;
+        }
+
+        floodLoop(raster, x, y, fill, old);
+        return res;
+    }
+
+    // Recursively fills surrounding pixels of the old color
+    private static void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old) {
+        Rectangle bounds = raster.getBounds();
+        int[] aux = {255, 255, 255, 255};
+
+        // finds the left side, filling along the way
+        int fillL = x;
+        do {
+            raster.setPixel(fillL, y, fill);
+            fillL--;
+        } while (fillL >= 0 && isEqualRgba(raster.getPixel(fillL, y, aux), old));
+        fillL++;
+
+        // find the right right side, filling along the way
+        int fillR = x;
+        do {
+            raster.setPixel(fillR, y, fill);
+            fillR++;
+        } while (fillR < bounds.width - 1 && isEqualRgba(raster.getPixel(fillR, y, aux), old));
+        fillR--;
+
+        // checks if applicable up or down
+        for (int i = fillL; i <= fillR; i++) {
+            if (y > 0 && isEqualRgba(raster.getPixel(i, y - 1, aux), old)) {
+                floodLoop(raster, i, y - 1, fill, old);
+            }
+            if (y < bounds.height - 1 && isEqualRgba(raster.getPixel(i, y + 1, aux), old)) {
+                floodLoop(raster, i, y + 1, fill, old);
+            }
+        }
+    }
+
+    private static boolean isEqualRgba(int[] pix1, int[] pix2) {
+        return Math.abs(pix1[0] - pix2[0]) == 0 && Math.abs(pix1[1] - pix2[1]) == 0 && Math.abs(pix1[2] - pix2[2]) == 0 && Math.abs(pix1[3] - pix2[3]) == 0;
+    }
+
 	
 	/**
 	 * Inclusion naïve d'une image dans une autre.
@@ -300,7 +396,7 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
+		pixelLoop(img, 0, 0, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
 		return res;
 	}
 	
@@ -336,7 +432,7 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, (x0, y0) ->
+		pixelLoop(img, 0, 0, (x0, y0) ->
 		{
 			int rgb0 = img.getRGB(x0, y0);
 			if (rgb0 != rgb)
@@ -433,14 +529,14 @@ public class ImageUtils
 	public static BufferedImage invertHorizontal(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int width = res.getWidth();
-		pixelLoop(img, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
 		return res;
 	}
 	
 	public static BufferedImage invertVertical(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int height = res.getHeight();
-		pixelLoop(img, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
 		return res;
 	}
 	
@@ -479,7 +575,7 @@ public class ImageUtils
 	public static BufferedImage invertFilter(BufferedImage img)
 	{
 		BufferedImage tmp = Builder.clone(img);
-		pixelLoop(img, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
+		pixelLoop(img, 0, 0, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
 		return tmp;
 	}
 	
@@ -489,15 +585,16 @@ public class ImageUtils
 	 * @param img
 	 * @param pi
 	 */
-	static void pixelLoop(BufferedImage img, PixelIterator pi)
+	static void pixelLoop(BufferedImage img, int x, int y, PixelIterator pi)
 	{
-		for (int x = 0; x < img.getWidth(); x++)
-		{
-			for (int y = 0; y < img.getHeight(); y++)
-			{
-				pi.applyFilter(x, y);
-			}
-		}
+		if (img == null || pi == null)
+			return;
+		if (x >= img.getWidth() || y >= img.getHeight())
+			return;
+		pi.applyFilter(x, y);
+		pixelLoop(img, x + 1, y,     pi);
+		pixelLoop(img, x,     y + 1, pi);
+		pixelLoop(img, x + 1, y + 1, pi);
 	}
 	
 	public static List<BufferedImage> cutOut(BufferedImage img, int width, int height) {

@@ -95,6 +95,8 @@ public class PanelImage extends JPanel {
 	}
 
 	private void pickColor(int x, int y) {
+		BufferedImage image = this.transform.applyTransforms(this.image);
+		
 		// Calculer le décalage de l'image dans le panneau
 		int imageX = x - (getWidth() - image.getWidth()) / 2;  // Décalage horizontal
 		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
