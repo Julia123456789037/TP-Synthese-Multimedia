@@ -247,22 +247,24 @@ public class FramePrinc extends JFrame
 	}
 
 	public void mnuRotGListener(ActionEvent event) { 
-		this.angle = this.angle + 90;
-		if (this.angle > 360) {this.angle = this.angle - 360;}
-		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
+		//this.angle = this.angle + 90;
+		//if (this.angle > 360) {this.angle = this.angle - 360;} a garder au cas ou on fait un scroll pour la rotation
+		this.bFimage = ImageUtils.rotate(this.bFimage, 90);
+		this.panelImage.setImage(this.bFimage);  
 	}
 	public void mnuRotDListener(ActionEvent event) { 
-		this.angle = this.angle + 270;
-		if (this.angle > 360) {this.angle = this.angle - 360;}
-		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
+		this.bFimage = ImageUtils.rotate(this.bFimage, 270);
+		this.panelImage.setImage(this.bFimage);  
 	}
 
 
 	public void mnuMirGDListener(ActionEvent event) { 
-		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
+		this.bFimage = ImageUtils.invertHorizontal(this.bFimage);
+		this.panelImage.setImage(this.bFimage); 
 	}
 	public void mnuMirHBListener(ActionEvent event) { 
-		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage));  
+		this.bFimage = ImageUtils.invertVertical(this.bFimage);
+		this.panelImage.setImage(this.bFimage); 
 	}
 
 	public void activatePipetteMode() {
