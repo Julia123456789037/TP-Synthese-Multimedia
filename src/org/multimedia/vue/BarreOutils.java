@@ -27,6 +27,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 	JButton    btnPipette;
 	JButton    btnPotPeinture;
 	JButton    btnCouleur;
+	JButton    btnCreerRectangle;
+	JButton    btnCreerRond;
 
 	JButton    btnSelectionRect;
 	JButton    btnSelectionRond;
@@ -55,30 +57,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/* Création des composants       */
 		/*-------------------------------*/
 
-        // Bouton 1 avec une image
-        this.btnSauvegarder = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
-        this.btnSauvegarder.setToolTipText("Sauvegarder");
-        this.btnSauvegarder.setActionCommand("Sauvegarder");
+		// Bouton 1 avec une image
+		this.btnSauvegarder = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
+		this.btnSauvegarder.setToolTipText("Sauvegarder");
+		this.btnSauvegarder.setActionCommand("Sauvegarder");
 
-		this.btnPipette = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
-        this.btnPipette.setToolTipText("Pipette");
-        this.btnPipette.setActionCommand("Pipette");
-
-		this.btnPotPeinture = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/potPeinture.png", true) ));
-        this.btnPotPeinture.setToolTipText("Pot de peinture");
-        this.btnPotPeinture.setActionCommand("PotDePeinture");
-
-		this.btnAjouterTexte = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
-        this.btnAjouterTexte.setToolTipText("Ajouter du texte");
-        this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
-        
-		this.btnCouleur = new ToolBarBouton();
-		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
-		this.btnCouleur.setActionCommand("Couleur");
-		this.btnCouleur.setBackground(this.couleurSelectionnee); 
-		this.btnCouleur.setOpaque(true);
-		this.btnCouleur.setBorderPainted(true);
-		
 		this.btnUndo = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/undo.png", true)));
 		this.btnUndo.setToolTipText("Défaire");
 		this.btnUndo.setActionCommand("Undo");
@@ -86,6 +69,35 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnRedo = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/redo.png", true)));
 		this.btnRedo.setToolTipText("Refaire");
 		this.btnRedo.setActionCommand("Redo");
+
+		this.btnCouleur = new ToolBarBouton();
+		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
+		this.btnCouleur.setActionCommand("Couleur");
+		this.btnCouleur.setBackground(this.couleurSelectionnee); 
+		this.btnCouleur.setOpaque(true);
+		this.btnCouleur.setBorderPainted(true);
+
+		this.btnPipette = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
+		this.btnPipette.setToolTipText("Pipette");
+		this.btnPipette.setActionCommand("Pipette");
+
+		this.btnPotPeinture = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/potPeinture.png", true) ));
+		this.btnPotPeinture.setToolTipText("Pot de peinture");
+		this.btnPotPeinture.setActionCommand("PotDePeinture");
+
+		this.btnAjouterTexte = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
+		this.btnAjouterTexte.setToolTipText("Ajouter du texte");
+		this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
+
+
+		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
+		this.btnCreerRectangle.setToolTipText("Copier un rectangle");
+		this.btnCreerRectangle.setActionCommand("CopierRectangle");
+
+		this.btnCreerRond = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
+		this.btnCreerRond.setToolTipText("Copier un rond");
+		this.btnCreerRond.setActionCommand("CopierRond");
+	
 		
 		this.btnSelectionRect      = new ToolBarBouton("Selectionner Rectangle");
 		this.btnSelectionRond      = new ToolBarBouton("Selectionner Rond");
@@ -101,13 +113,15 @@ public class BarreOutils extends JToolBar implements ActionListener
 		
 		// Dans votre constructeur, après chaque création de bouton :
 		uniformiserBouton(this.btnSauvegarder);
+		uniformiserBouton(this.btnUndo);
+		uniformiserBouton(this.btnRedo);
+		uniformiserBouton(this.btnCouleur);
 		uniformiserBouton(this.btnPipette);
 		uniformiserBouton(this.btnPotPeinture);
 		uniformiserBouton(this.btnAjouterTexte);
-		uniformiserBouton(this.btnCouleur);
-		
-		this.uniformiserBouton(this.btnUndo);
-		this.uniformiserBouton(this.btnRedo);
+		uniformiserBouton(this.btnCreerRectangle);
+		uniformiserBouton(this.btnCreerRond);
+
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
@@ -116,24 +130,28 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		
 		this.add(this.btnSauvegarder);
+		this.add(this.btnUndo);
+		this.add(this.btnRedo);
+		this.add(this.btnCouleur);
 		this.add(this.btnPipette);
 		this.add(this.btnPotPeinture);
 		this.add(this.btnAjouterTexte);
-		this.add(this.btnCouleur);
-		this.add(this.btnUndo);
-		this.add(this.btnRedo);
+		this.add(this.btnCreerRectangle);
+		this.add(this.btnCreerRond);
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
 		this.btnSauvegarder .addActionListener(this);
+		this.btnUndo		.addActionListener(this);
+		this.btnRedo		.addActionListener(this);
+		this.btnCouleur		.addActionListener(this);
 		this.btnPipette     .addActionListener(this);
 		this.btnPotPeinture .addActionListener(this);
 		this.btnAjouterTexte.addActionListener(this);
 		this.btnCouleur		.addActionListener(this);
-		
-		this.btnUndo.addActionListener(this);
-		this.btnRedo.addActionListener(this);
+		this.btnCreerRectangle.addActionListener(this);
+		this.btnCreerRond		.addActionListener(this);
 		
 	}
 	
@@ -174,6 +192,12 @@ public class BarreOutils extends JToolBar implements ActionListener
 					couleurSelectionnee = nouvelleCouleur;
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
+			}
+			case "CopierRectangle" -> {
+				//
+			}
+			case "CopierRond" -> {
+				//
 			}
 			case "Undo" -> {
 				panel.transform.undo();
