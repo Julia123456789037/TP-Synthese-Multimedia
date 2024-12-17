@@ -18,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
@@ -63,7 +64,7 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
-		this.barreOutils = new BarreOutils(this.ctrl);
+		this.barreOutils = new BarreOutils(this, this.ctrl);
 		this.panelImage  = new PanelImage(this.ctrl);
 
 		this.setJMenuBar( this.createMenuBar() );
@@ -215,7 +216,7 @@ public class FramePrinc extends JFrame
 		fileChooser.setDialogTitle("Sélectionnez une image");
 
 		// Filtrer pour n'autoriser que les fichiers image
-				fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+				fileChooser.setFileFilter(new FileNameExtensionFilter(
 			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
 		));
 
@@ -224,16 +225,19 @@ public class FramePrinc extends JFrame
 		if (result == JFileChooser.APPROVE_OPTION) {
 			try {
 				File selectedFile = fileChooser.getSelectedFile();
+				@SuppressWarnings("unused")
 				String filePath = selectedFile.getAbsolutePath();
 
 				// Charger l'image en tant que BufferedImage
 				this.bFimage = ImageIO.read(selectedFile);
 
 				// Mettre à jour l'image dans PanelImage
-				this.panelImage.setImage(this.bFimage);
+				this.panelImage.loadImage(this.bFimage);
+				this.panelImage.transform.reset();
+				this.panelImage.updateUI();
 
 				// Message de confirmation
-				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
+//				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -243,22 +247,30 @@ public class FramePrinc extends JFrame
 	}
 
 	public void mnuRotGListener(ActionEvent event) { 
-		this.angle = this.angle + 90;
-		if (this.angle > 360) {this.angle = this.angle - 360;}
-		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
+//		this.angle = this.angle + 90;
+//		if (this.angle > 360) {this.angle = this.angle - 360;}
+//		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
+		this.panelImage.transform.addRotation(-90);
+		this.panelImage.updateUI();
 	}
 	public void mnuRotDListener(ActionEvent event) { 
-		this.angle = this.angle + 270;
-		if (this.angle > 360) {this.angle = this.angle - 360;}
-		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
+//		this.angle = this.angle + 270;
+//		if (this.angle > 360) {this.angle = this.angle - 360;}
+//		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));
+		this.panelImage.transform.addRotation(90);
+		this.panelImage.updateUI();
 	}
 
 
 	public void mnuMirGDListener(ActionEvent event) { 
 		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
+		this.panelImage.transform.invertH();
+		this.panelImage.updateUI();
 	}
 	public void mnuMirHBListener(ActionEvent event) { 
 		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage));  
+		this.panelImage.transform.invertV();
+		this.panelImage.updateUI();
 	}
 
 	public void activatePipetteMode() {

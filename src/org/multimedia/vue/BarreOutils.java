@@ -1,5 +1,6 @@
 package org.multimedia.vue;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
@@ -8,7 +9,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 
 import org.multimedia.composants.ToolBarBouton;
 import org.multimedia.main.Controleur;
@@ -37,15 +37,20 @@ public class BarreOutils extends JToolBar implements ActionListener
 	JButton    btnMiroirHautBas;
 	JButton    btnNoirBlanc;
 	JButton    btnZoneTexte;
-
-
+	
 	JButton btnAjouterTexte;
-
+	
+	JButton btnUndo;
+	JButton btnRedo;
+	
 	private Color couleurSelectionnee = Color.BLACK;
-
-	public BarreOutils(Controleur ctrl ) 
+	
+	private FramePrinc frame;
+	
+	public BarreOutils(FramePrinc frame, Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
+		this.frame = frame;
 		
 		/*-------------------------------*/
 		/* Création des composants       */
@@ -67,24 +72,33 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnAjouterTexte = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
         this.btnAjouterTexte.setToolTipText("Ajouter du texte");
         this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
-
-
-
-		this.btnSelectionRect		= new ToolBarBouton ( "Selectionner rectangle"	);
-		this.btnSelectionRond		= new ToolBarBouton ( "Selectionner rond"		);
-		this.btnAutreFrame			= new ToolBarBouton ( "importer autre image"		);
-		this.btnFondTransp			= new ToolBarBouton ( "Fond transparent"			);
-		this.btnRotationGauche		= new ToolBarBouton ( "rotation gauche"			);
-		this.btnRotationDroite		= new ToolBarBouton ( "rotation droite"			);
-
-		this.btnMiroirGaucheDroite	= new ToolBarBouton ( "miroir gauche droite"		);
-		this.btnMiroirHautBas		= new ToolBarBouton ( "miroir haut bas"			);
-		this.btnNoirBlanc			= new ToolBarBouton ( "noir et blanc"			);
-		this.btnZoneTexte			= new ToolBarBouton ( "Zone de texte"			);
-
-
-
+        
+		this.btnCouleur = new ToolBarBouton();
+		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
+		this.btnCouleur.setActionCommand("Couleur");
+		this.btnCouleur.setBackground(this.couleurSelectionnee); 
+		this.btnCouleur.setOpaque(true);
+		this.btnCouleur.setBorderPainted(true);
 		
+		this.btnUndo = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/undo.png", true)));
+		this.btnUndo.setToolTipText("Défaire");
+		this.btnUndo.setActionCommand("Undo");
+		
+		this.btnRedo = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/redo.png", true)));
+		this.btnRedo.setToolTipText("Refaire");
+		this.btnRedo.setActionCommand("Redo");
+		
+		this.btnSelectionRect      = new ToolBarBouton("Selectionner Rectangle");
+		this.btnSelectionRond      = new ToolBarBouton("Selectionner Rond");
+		this.btnAutreFrame         = new ToolBarBouton("Importer une Image");
+		this.btnFondTransp         = new ToolBarBouton("Fond Transparent");
+		this.btnRotationGauche     = new ToolBarBouton("Rotation à Gauche");
+		this.btnRotationDroite     = new ToolBarBouton("Rotation à Droite");
+
+		this.btnMiroirGaucheDroite = new ToolBarBouton("Miroir Horizontal");
+		this.btnMiroirHautBas      = new ToolBarBouton("Miroir Vertical");
+		this.btnNoirBlanc          = new ToolBarBouton("Niveaux de Gris");
+		this.btnZoneTexte          = new ToolBarBouton("Zone de Texte");
 		
 		// Dans votre constructeur, après chaque création de bouton :
 		uniformiserBouton(this.btnSauvegarder);
@@ -93,6 +107,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 		uniformiserBouton(this.btnAjouterTexte);
 		uniformiserBouton(this.btnCouleur);
 		
+		this.uniformiserBouton(this.btnUndo);
+		this.uniformiserBouton(this.btnRedo);
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
@@ -105,6 +121,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.add(this.btnPotPeinture);
 		this.add(this.btnAjouterTexte);
 		this.add(this.btnCouleur);
+		this.add(this.btnUndo);
+		this.add(this.btnRedo);
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
@@ -114,6 +132,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture .addActionListener(this);
 		this.btnAjouterTexte.addActionListener(this);
 		this.btnCouleur		.addActionListener(this);
+		
+		this.btnUndo.addActionListener(this);
+		this.btnRedo.addActionListener(this);
 		
 	}
 	
@@ -129,16 +150,14 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 	public void actionPerformed ( ActionEvent e)
 	{
+		final PanelImage panel = this.frame.getPanelImage();
 		switch (e.getActionCommand()) {
 			case "Sauvegarder" -> {
 //				this.ctrl.sauvegarder ();
 			}
 			case "Pipette" -> {
 				// Activer le mode pipette dans PanelImage
-				FramePrinc frame = (FramePrinc) SwingUtilities.getWindowAncestor(this);
-				if (frame != null) {
-					frame.getPanelImage().enablePipetteMode(true);
-				}
+				panel.enablePipetteMode(true);
 			}
 			case "PotDePeinture" -> {}
 			case "AjouterDuTexte" -> {
@@ -153,12 +172,20 @@ public class BarreOutils extends JToolBar implements ActionListener
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
 			}
+			case "Undo" -> {
+				panel.transform.undo();
+				panel.updateUI();
+			}
+			case "Redo" -> {
+				panel.transform.redo();
+				panel.updateUI();
+			}
 		}
 	}
 
 	private void uniformiserBouton(JButton bouton) {
-		bouton.setPreferredSize(new java.awt.Dimension(40, 40));
-		bouton.setMaximumSize(new java.awt.Dimension(40, 40));
-		bouton.setMinimumSize(new java.awt.Dimension(40, 40));
+		bouton.setPreferredSize(new Dimension(40, 40));
+		bouton.setMaximumSize(new Dimension(40, 40));
+		bouton.setMinimumSize(new Dimension(40, 40));
 	}
 }
