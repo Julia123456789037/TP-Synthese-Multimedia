@@ -20,11 +20,10 @@ public class PanelImage extends JPanel implements ActionListener {
 	private Cursor cursorPipette;
 
 	// Bordel de seb !
-	private JButton btnAction;
+
 	private JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere;
 	private int startX, startY, currentX, currentY;
-	private JTextField txtCoordX;
-	private JTextField txtCoordY;
+
 	private JComboBox JcbFigure;
 	private JLabel lblRect, lblOval;
 	private char typeSelection;
@@ -66,8 +65,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		panelTracer.setOpaque(false);
 		panelAction.setOpaque(false);
 
-		this.btnAction = new JButton("Action");
-
 		this.lblOval = new JLabel("Ovale");
 		this.lblRect = new JLabel("Rectangle");
 
@@ -96,26 +93,14 @@ public class PanelImage extends JPanel implements ActionListener {
 			}
 		});
 
-		this.txtCoordX = new JTextField(10);
-		this.txtCoordY = new JTextField(10);
-
 		this.btnPremierPlan = new JButton("1er plan");
 		this.btnArrierePlan = new JButton("Arrière plan");
 		this.btnAvant = new JButton("1 plan avant");
 		this.btnArriere = new JButton("1 plan arrière");
 
-		JcbFigure.add(this.txtCoordX);
-
 		// positionnement des composants
 		panelAction.add(this.JcbFigure);
 		panelAction.add(this.chkCreateMode);
-		panelAction.add(new JLabel("x :"));
-		panelAction.add(this.txtCoordX);
-
-		panelAction.add(new JLabel("y :"));
-		panelAction.add(this.txtCoordY);
-
-		panelAction.add(this.btnAction);
 
 		panelAction.add(btnPremierPlan);
 		panelAction.add(btnArrierePlan);
@@ -126,8 +111,8 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.add(panelAction, BorderLayout.SOUTH);
 
 		// activation des composants
-		this.btnAction.addActionListener(this);
-		// Exercice 4
+
+		
 		GereSouris gereSouris = new GereSouris();
 
 		btnPremierPlan.addActionListener(this);
@@ -166,7 +151,7 @@ public class PanelImage extends JPanel implements ActionListener {
 				}
 
 				if (fig.isSelected()) {
-					g2.setColor(new Color(255, 0, 0, 128));
+					g2.setColor(this.couleurSelectionnee);
 					switch (fig.getType()) {
 						case 'r':
 							g2.drawRect(left, top, fig.getTailleX(), fig.getTailleY());
@@ -244,35 +229,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int x = 0;
 		int y = 0;
 
-		try {
-			x = Integer.parseInt(this.txtCoordX.getText());
-			y = Integer.parseInt(this.txtCoordY.getText());
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		if (evt.getSource() == this.btnAction) {
-			JLabel lblSelect = (JLabel) this.JcbFigure.getSelectedItem();
-
-			switch (lblSelect.getText()) {
-				case "Ovale":
-					this.typeSelection = 'o';
-					break;
-				case "Rectangle":
-					this.typeSelection = 'r';
-					break;
-			}
-
-			// Create the figure with the background for pixel capture
-			if (this.typeSelection == 'o') {
-				this.ctrl.ajouterFigure(x, y, 100, 150, this.typeSelection, this.image);
-			} else if (this.typeSelection == 'r') {
-				this.ctrl.ajouterFigure(x, y, 100, 150, this.typeSelection, this.image);
-			}
-
-			this.repaint();
-
-		} else if (evt.getSource() == this.btnPremierPlan) {
+		if (evt.getSource() == this.btnPremierPlan) {
 			// Get the index of the selected figure
 			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); // Replace with your method to get the
 																					// selected figure index
@@ -334,7 +291,6 @@ public class PanelImage extends JPanel implements ActionListener {
 				}
 				this.figSelected.setSelected(true);
 
-				
 				if (!foundFigure) {
 					for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
 						PanelImage.this.ctrl.getFigure(i).setSelected(false);
@@ -365,11 +321,23 @@ public class PanelImage extends JPanel implements ActionListener {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (chkCreateMode.isSelected()) {
+				// Calculate the width and height of the figure
 				int width = Math.abs(currentX - startX);
 				int height = Math.abs(currentY - startY);
+
+				// Calculate the center coordinates of the figure relative to the image
 				int x = (startX + currentX) / 2;
 				int y = (startY + currentY) / 2;
 
+				// Calculate the offset due to the centering of the image
+				int offsetX = (getWidth() - image.getWidth()) / 2;
+				int offsetY = (getHeight() - image.getHeight()) / 2;
+
+				// Adjust the coordinates to account for the image offset
+				x -= offsetX;
+				y -= offsetY;
+
+				// Create the figure based on the selected type
 				if (JcbFigure.getSelectedItem() == lblRect) {
 					PanelImage.this.ctrl.ajouterFigure(x, y, width, height, 'r', image);
 				} else if (JcbFigure.getSelectedItem() == lblOval) {
