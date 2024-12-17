@@ -170,6 +170,15 @@ public class FramePrinc extends JFrame
 		mnuEdit.add(mnuSombre);
 		
 		mnuEdit.addSeparator();
+
+        JMenuItem mnuNoirBlanc = new JMenuItem( "Noir et Blanc" );
+		mnuNoirBlanc.setIcon( new ImageIcon( ImageUtils.openImg("/noirblanc.png", true) ) );
+		mnuNoirBlanc.setMnemonic( 'N' );
+		mnuNoirBlanc.addActionListener( this::mnuNoirBlancListener );
+		mnuNoirBlanc.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuNoirBlanc);
+		
+		mnuEdit.addSeparator();
 		
 		JMenuItem mnuCopy = new JMenuItem( "Copier" );
 		mnuCopy.setIcon( new ImageIcon( ImageUtils.openImg("/copy.png", true) ) );
@@ -287,6 +296,11 @@ public class FramePrinc extends JFrame
 	}
     public void mnuSombreListener(ActionEvent event) { 
 		this.panelImage.transform.applyBrightness( -20 );
+		this.panelImage.updateUI();
+	}
+
+    public void mnuNoirBlancListener(ActionEvent event) { 
+		this.panelImage.transform.toGreyScale(  );
 		this.panelImage.updateUI();
 	}
 

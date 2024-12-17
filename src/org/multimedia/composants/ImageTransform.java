@@ -16,7 +16,7 @@ public class ImageTransform {
 		this.operations = new LinkedList<>();
 		this.reset();
 	}
-	
+
 	public void addRotation(int rotation) {
 		this.addOperation(image -> ImageUtils.rotate(image, rotation));
 	}
@@ -29,27 +29,30 @@ public class ImageTransform {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
 	}
 
-    public void fillColor(int x, int y, Color color) {
+    public void fillColor( int x, int y, Color color ) {
 		this.addOperation(image -> ImageUtils.fill(image, x, y, color));
 	}
 
     public void applyBrightness( int brightness ) {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
-	}
+	}    
+
+    public void toGreyScale() { 
+        this.addOperation(image -> ImageUtils.toGreyScale( image )); 
+    }
+    
+    public void undo() { 
+        this.currentIndex = Math.max(-1, this.currentIndex - 1); 
+    }
+	public void redo() { 
+        this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1); 
+    }
 	
 	private void addOperation(Operation o) {
 		while (this.currentIndex + 1 != this.operations.size())
 			this.operations.removeLast();
 		this.operations.add(o);
 		this.currentIndex++;
-	}
-	
-	public void undo() {
-		this.currentIndex = Math.max(-1, this.currentIndex - 1);
-	}
-	
-	public void redo() {
-		this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1);
 	}
 	
 	public BufferedImage applyTransforms(BufferedImage image) {
@@ -65,9 +68,7 @@ public class ImageTransform {
 	}
 	
 	public static interface Operation {
-		
 		public BufferedImage apply(BufferedImage image);
-		
 	}
 	
 }
