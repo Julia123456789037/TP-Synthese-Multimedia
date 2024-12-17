@@ -12,9 +12,8 @@ import org.multimedia.main.Controleur;
 public class PanelImage extends JPanel {
 	private Controleur ctrl;
 	private BufferedImage image;
-	private boolean pipetteMode = false; // Mode pipette activé/désactivé
+	private String Mode; // Mode pipette activé/désactivé
 	private boolean potPeintureMode = false;
-	private Color couleurSelectionnee = Color.BLACK;
 	private Cursor cursorPipette;
 	private Cursor cursorPotPeinture;
 
@@ -22,6 +21,7 @@ public class PanelImage extends JPanel {
 	public PanelImage(Controleur ctrl) {
 		this.ctrl = ctrl;
 		this.image = null;
+		this.Mode = "cursor";
 
 		// Charger l'icône de pipette personnalisée pour le curseur
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -35,8 +35,8 @@ public class PanelImage extends JPanel {
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (pipetteMode && image != null) { pickColor(e.getX(), e.getY()); }
-				if (potPeintureMode && image != null) { paintColor(e.getX(), e.getY()); }
+				if ( Mode.equals("pipette") && image != null) { pickColor(e.getX(), e.getY()); }
+				if ( Mode.equals("potPeinture") && image != null) { paintColor(e.getX(), e.getY()); }
 			}
 		});
 	}
@@ -60,15 +60,13 @@ public class PanelImage extends JPanel {
 	}
 
 	public void enablePipetteMode(boolean enable) {
-		this.pipetteMode = enable;
-		if (enable) { setCursor(cursorPipette); } 
-		else { setCursor(Cursor.getDefaultCursor()); }
+		if (enable) { this.Mode = "pipette"; setCursor(cursorPipette); } 
+		else { this.Mode = "cursor"; setCursor(Cursor.getDefaultCursor()); }
 	}
 
 	public void enablePotPeintureMode(boolean enable) {
-		this.potPeintureMode = enable;
-		if (enable) { setCursor(cursorPotPeinture); } 
-		else { setCursor(Cursor.getDefaultCursor()); }
+		if (enable) { this.Mode = "potPeinture"; setCursor(cursorPotPeinture); } 
+		else { this.Mode = "cursor"; setCursor(Cursor.getDefaultCursor()); }
 	}
 
 	private void pickColor(int x, int y) {
@@ -100,10 +98,7 @@ public class PanelImage extends JPanel {
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.PotPeint( imageX, imageY,couleurSelectionnee);
-				System.out.println("Pot de peinture appliqué à (" + imageX + ", " + imageY + ")");
-			}
+			if (frame != null) { frame.PotPeint( imageX, imageY ); }
 		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 }

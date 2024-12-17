@@ -39,7 +39,7 @@ public class FramePrinc extends JFrame
 	JMenuItem mnuNewFile;
 	BufferedImage bFimage;
 	int angle;
-	Color selectedColor;
+	private Color selectedColor = Color.BLACK;
 
 	public FramePrinc(Controleur ctrl)
 	{
@@ -50,8 +50,6 @@ public class FramePrinc extends JFrame
 		this.setTitle  ( "Gestion image (contrefaçon de paint)"  );
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
-		
-		//System.out.println(System.getProperty("os.name"));
 		
 		try {
 			String lafClassName = switch (System.getProperty("os.name")) {
@@ -268,19 +266,12 @@ public class FramePrinc extends JFrame
 	}
 
 	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
-	
+	public void setSelectedColor(Color color) { this.selectedColor = color; }
 
-	public void setSelectedColor(Color color) {
-		this.selectedColor = color;
-		System.out.println("Couleur sélectionnée : " + color);
-	}
-
-	public void PotPeint( int x, int y, Color coul) {
-		this.bFimage = ImageUtils.fill(this.bFimage, x, y, coul);
+	public void PotPeint( int x, int y ) {
+		this.bFimage = ImageUtils.fill(this.bFimage, x, y, this.selectedColor);
 		this.panelImage.setImage(this.bFimage); 
 	}
-
-
 
 	public PanelImage getPanelImage() { return this.panelImage; }
 	public BarreOutils getBarreOutils() { return this.barreOutils; }

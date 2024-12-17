@@ -142,6 +142,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 	}
 
 	public void setCouleurSelectionnee(Color couleur) {
+		this.ctrl.getFramePrinc().setSelectedColor(couleur);
 		this.couleurSelectionnee = couleur;
 		this.btnCouleur.setBackground(couleur);
 	}
@@ -170,6 +171,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
 
 				if (nouvelleCouleur != null) {
+					this.ctrl.getFramePrinc().setSelectedColor(nouvelleCouleur);
 					couleurSelectionnee = nouvelleCouleur;
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
