@@ -226,6 +226,7 @@ public class DisplayImage
 			if (this.image != null) {
 				g2d.drawImage(this.image, this.zoom, this);
 			}
+			g2d.dispose();
 		}
 		
 		/**

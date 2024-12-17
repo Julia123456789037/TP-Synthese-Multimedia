@@ -1,19 +1,19 @@
 package org.multimedia.composants;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import org.multimedia.util.ImageUtils;
 
 public class ImageTransform {
 	
-	private List<Operation> operations;
+	private LinkedList<Operation> operations;
 	
 	private int currentIndex;
 	
 	public ImageTransform() {
-		this.operations = new ArrayList<>();
+		this.operations = new LinkedList<>();
 		this.reset();
 	}
 	
@@ -27,6 +27,10 @@ public class ImageTransform {
 	
 	public void invertV() {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
+	}
+	
+	public void fillColor(int x, int y, Color color) {
+		this.addOperation(image -> ImageUtils.fill(image, x, y, color));
 	}
 	
 	private void addOperation(Operation o) {

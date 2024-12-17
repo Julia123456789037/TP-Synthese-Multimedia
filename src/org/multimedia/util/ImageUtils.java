@@ -251,9 +251,12 @@ public class ImageUtils
 	{
 		if (x < 0 || x > img.getWidth() || y < 0 || y > img.getHeight())
 			throw new IndexOutOfBoundsException("Coordinates out of bounds: (" + x + ", " + y + ")");
-		BufferedImage res = Builder.deepClone0(img);
+		BufferedImage res = Builder.deepClone(img);
 		Queue<Point> file = new LinkedList<Point>();
 		int origC = res.getRGB(x, y) & 0xFFFFFF;
+		
+		if (origC == rgb)
+			return res;
 
 		file.add(new Point(x, y));
 		

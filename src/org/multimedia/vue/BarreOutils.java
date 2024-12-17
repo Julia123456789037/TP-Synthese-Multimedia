@@ -18,6 +18,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 {
 	@Serial
 	private static final long serialVersionUID = 6326511901738014336L;
+
+	
 	
 	Controleur ctrl;
 	JButton    btnSauvegarder;
@@ -45,12 +47,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 	
 	private Color couleurSelectionnee = Color.BLACK;
 	
-	private FramePrinc frame;
-	
-	public BarreOutils(FramePrinc frame, Controleur ctrl) 
+	public BarreOutils(Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
-		this.frame = frame;
 		
 		/*-------------------------------*/
 		/* Création des composants       */
@@ -144,13 +143,14 @@ public class BarreOutils extends JToolBar implements ActionListener
 	}
 
 	public void setCouleurSelectionnee(Color couleur) {
+		this.ctrl.getFramePrinc().setSelectedColor(couleur);
 		this.couleurSelectionnee = couleur;
 		this.btnCouleur.setBackground(couleur);
 	}
 
 	public void actionPerformed ( ActionEvent e)
 	{
-		final PanelImage panel = this.frame.getPanelImage();
+		final PanelImage panel = this.ctrl.getFramePrinc().getPanelImage();
 		switch (e.getActionCommand()) {
 			case "Sauvegarder" -> {
 //				this.ctrl.sauvegarder ();
@@ -159,7 +159,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 				// Activer le mode pipette dans PanelImage
 				panel.enablePipetteMode(true);
 			}
-			case "PotDePeinture" -> {}
+			case "PotDePeinture" -> {
+				this.ctrl.getFramePrinc().getPanelImage().enablePotPeintureMode(!this.ctrl.getFramePrinc().getPanelImage().isPotPeintureMode());
+			}
 			case "AjouterDuTexte" -> {
 				System.out.println("-----------------");
 			}
@@ -168,6 +170,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
 
 				if (nouvelleCouleur != null) {
+					this.ctrl.getFramePrinc().setSelectedColor(nouvelleCouleur);
 					couleurSelectionnee = nouvelleCouleur;
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}

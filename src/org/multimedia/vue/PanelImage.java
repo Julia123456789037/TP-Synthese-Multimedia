@@ -1,14 +1,17 @@
 package org.multimedia.vue;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
 import org.multimedia.main.Controleur;
 
 public class PanelImage extends JPanel {
@@ -18,40 +21,43 @@ public class PanelImage extends JPanel {
 	
 	private Controleur ctrl;
 	private BufferedImage image;
-	private boolean pipetteMode = false; // Mode pipette activé/désactivé
-	@SuppressWarnings("unused")
-	private Color couleurSelectionnee = Color.BLACK;
-	private Cursor cursorPipette;
+	
+	private ModeEdition mode;
+	private boolean potPeintureMode = false;
 	
 	final ImageTransform transform;
 
 	public PanelImage(Controleur ctrl) {
 		this.ctrl = ctrl;
 		this.image = null;
+		
 		this.transform = new ImageTransform();
-
-		// Charger l'icône de pipette personnalisée pour le curseur
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Image pipetteImage = toolkit.getImage(getClass().getResource("/pipette.png"));
-		Point hotSpot = new Point(0, 0); // Position active de la pipette (pointe)
-		this.cursorPipette = toolkit.createCustomCursor(pipetteImage, hotSpot, "Pipette");
+		this.mode = ModeEdition.NORMAL;
 
 		// Ajouter un écouteur de souris pour récupérer la couleur
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (pipetteMode && image != null) {
-					pickColor(e.getX(), e.getY());
+				if (PanelImage.this.image != null) {
+					int x = e.getX(), y = e.getY();
+					switch (PanelImage.this.mode) {
+					case NORMAL          -> {}
+					case PIPETTE         -> pickColor(x, y);
+					case POT_DE_PEINTURE -> paintColor(x, y);
+					default              -> {}
+					}
 				}
 			}
 		});
 	}
 
+	public void setImage(BufferedImage image) { this.image = image; repaint(); }
+	public boolean isPotPeintureMode() { return this.potPeintureMode; }
+	public Point getImageLocationOnScreen() { return this.getLocationOnScreen(); }
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		final int margin = 20;
 		
 		// Dessiner l'image si elle existe
 		if (this.image != null) {
@@ -60,11 +66,12 @@ public class PanelImage extends JPanel {
 			int y = (getHeight() - image.getHeight()) / 2; // Centrer l'image verticalement
 			
 			g.setColor(Color.WHITE);
-			g.fillRect(x - margin, y - margin, image.getWidth() + (margin * 2), image.getHeight() + (margin * 2));
+			g.fillRect(x, y, image.getWidth(), image.getHeight());
 			
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage(image, x, y, this);
 		}
+		g.dispose();
 	}
 	
 	@Override
@@ -78,8 +85,13 @@ public class PanelImage extends JPanel {
 	}
 
 	public void enablePipetteMode(boolean enable) {
-		this.pipetteMode = enable;
-		setCursor(this.pipetteMode ? this.cursorPipette : Cursor.getDefaultCursor());
+		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+	
+	public void enablePotPeintureMode(boolean enable) {
+		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
 	}
 
 	private void pickColor(int x, int y) {
@@ -103,5 +115,15 @@ public class PanelImage extends JPanel {
 		enablePipetteMode(false);
 	}
 
-	public Point getImageLocationOnScreen() { return this.getLocationOnScreen(); }
+	private synchronized void paintColor(int x, int y) {
+		// Calculer la position de l'image dans le panneau
+		int imageX = x - (getWidth() - this.image.getWidth()) / 2;  // Décalage horizontal
+		int imageY = y - (getHeight() - this.image.getHeight()) / 2; // Décalage vertical
+
+		// Vérification que les coordonnées sont dans les limites de l'image
+		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+			FramePrinc frame = this.ctrl.getFramePrinc();
+			if (frame != null) { frame.PotPeint( imageX, imageY ); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
+	}
 }

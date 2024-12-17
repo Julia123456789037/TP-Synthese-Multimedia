@@ -38,7 +38,7 @@ public class FramePrinc extends JFrame
 	JMenuItem mnuNewFile;
 	BufferedImage bFimage;
 	int angle;
-	Color selectedColor;
+	private Color selectedColor = Color.BLACK;
 
 	public FramePrinc(Controleur ctrl)
 	{
@@ -64,7 +64,7 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
-		this.barreOutils = new BarreOutils(this, this.ctrl);
+		this.barreOutils = new BarreOutils(this.ctrl);
 		this.panelImage  = new PanelImage(this.ctrl);
 
 		this.setJMenuBar( this.createMenuBar() );
@@ -247,42 +247,32 @@ public class FramePrinc extends JFrame
 	}
 
 	public void mnuRotGListener(ActionEvent event) { 
-//		this.angle = this.angle + 90;
-//		if (this.angle > 360) {this.angle = this.angle - 360;}
-//		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
 		this.panelImage.transform.addRotation(-90);
 		this.panelImage.updateUI();
 	}
 	public void mnuRotDListener(ActionEvent event) { 
-//		this.angle = this.angle + 270;
-//		if (this.angle > 360) {this.angle = this.angle - 360;}
-//		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));
 		this.panelImage.transform.addRotation(90);
 		this.panelImage.updateUI();
 	}
 
 
 	public void mnuMirGDListener(ActionEvent event) { 
-		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
 		this.panelImage.transform.invertH();
 		this.panelImage.updateUI();
 	}
 	public void mnuMirHBListener(ActionEvent event) { 
-		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage));  
 		this.panelImage.transform.invertV();
 		this.panelImage.updateUI();
 	}
 
-	public void activatePipetteMode() {
-		JOptionPane.showMessageDialog(this, "Cliquez sur l'image pour choisir une couleur avec la pipette.");
-		this.panelImage.enablePipetteMode(true);
-	}
+	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
+	public void setSelectedColor(Color color) { this.selectedColor = color; }
 
-	public void setSelectedColor(Color color) {
-		this.selectedColor = color;
-		System.out.println("Couleur sélectionnée : " + color);
+	public void PotPeint( int x, int y ) {
+		this.panelImage.transform.fillColor(x, y, selectedColor);
+		this.panelImage.updateUI();
 	}
-
+	
 	public PanelImage getPanelImage() { return this.panelImage; }
 	public BarreOutils getBarreOutils() { return this.barreOutils; }
 }
