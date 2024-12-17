@@ -267,14 +267,17 @@ public class FramePrinc extends JFrame
 		this.panelImage.setImage(this.bFimage); 
 	}
 
-	public void activatePipetteMode() {
-		JOptionPane.showMessageDialog(this, "Cliquez sur l'image pour choisir une couleur avec la pipette.");
-		this.panelImage.enablePipetteMode(true);
-	}
+	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
+	
 
 	public void setSelectedColor(Color color) {
 		this.selectedColor = color;
 		System.out.println("Couleur sélectionnée : " + color);
+	}
+
+	public void PotPeint( int x, int y, Color coul) {
+		this.bFimage = ImageUtils.fill(this.bFimage, x, y, coul);
+		this.panelImage.setImage(this.bFimage); 
 	}
 
 

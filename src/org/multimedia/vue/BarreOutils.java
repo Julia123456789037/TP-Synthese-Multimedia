@@ -20,6 +20,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 {
 	@Serial
 	private static final long serialVersionUID = 6326511901738014336L;
+
+	
 	
 	Controleur ctrl;
 	JButton    btnSauvegarder;
@@ -157,7 +159,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 					frame.getPanelImage().enablePipetteMode(true);
 				}
 			}
-			case "PotDePeinture" -> {}
+			case "PotDePeinture" -> {
+				this.ctrl.getFramePrinc().getPanelImage().enablePotPeintureMode(!this.ctrl.getFramePrinc().getPanelImage().isPotPeintureMode());
+			}
 			case "AjouterDuTexte" -> {
 				System.out.println("-----------------");
 			}
