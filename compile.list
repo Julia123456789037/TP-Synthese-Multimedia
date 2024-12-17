@@ -2,5 +2,9 @@ src/org/multimedia/main/Controleur.java
 src/org/multimedia/util/DisplayImage.java
 src/org/multimedia/util/ImageUtils.java
 src/org/multimedia/vue/FramePrinc.java
-src/org/multimedia/vue/PanelBouton.java
+
 src/org/multimedia/vue/PanelImage.java
+src/org/multimedia/metier/Figure.java
+src/org/multimedia/metier/Metier.java
+src/org/multimedia/metier/Ovale.java
+src/org/multimedia/metier/Rectangle.java
