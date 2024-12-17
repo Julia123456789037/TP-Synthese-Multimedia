@@ -51,7 +51,7 @@ public class FramePrinc extends JFrame
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
 		
-		System.out.println(System.getProperty("os.name"));
+		//System.out.println(System.getProperty("os.name"));
 		
 		try {
 			String lafClassName = switch (System.getProperty("os.name")) {
@@ -218,10 +218,10 @@ public class FramePrinc extends JFrame
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Sélectionnez une image");
 
-        // Filtrer pour n'autoriser que les fichiers image
-        fileChooser.setFileFilter(new FileNameExtensionFilter(
-            "Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
-        ));
+		// Filtrer pour n'autoriser que les fichiers image
+				fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+		));
 
 		// Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
 		int result = fileChooser.showOpenDialog(this);
@@ -234,7 +234,7 @@ public class FramePrinc extends JFrame
 				this.bFimage = ImageIO.read(selectedFile);
 
 				// Mettre à jour l'image dans PanelImage
-				panelImage.setImage(this.bFimage);
+				this.panelImage.setImage(this.bFimage);
 
 				// Message de confirmation
 				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
@@ -249,30 +249,34 @@ public class FramePrinc extends JFrame
 	public void mnuRotGListener(ActionEvent event) { 
 		this.angle = this.angle + 90;
 		if (this.angle > 360) {this.angle = this.angle - 360;}
-		panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
+		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle)); 
 	}
 	public void mnuRotDListener(ActionEvent event) { 
 		this.angle = this.angle + 270;
 		if (this.angle > 360) {this.angle = this.angle - 360;}
-		panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
+		this.panelImage.setImage(ImageUtils.rotate(this.bFimage, this.angle));  
 	}
 
 
 	public void mnuMirGDListener(ActionEvent event) { 
-		//panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
+		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage)); 
 	}
 	public void mnuMirHBListener(ActionEvent event) { 
-		//panelImage.setImage(ImageUtils.miroir(this.bFimage));  
+		//this.panelImage.setImage(ImageUtils.miroir(this.bFimage));  
 	}
 
 	public void activatePipetteMode() {
 		JOptionPane.showMessageDialog(this, "Cliquez sur l'image pour choisir une couleur avec la pipette.");
-		panelImage.enablePipetteMode(true);
+		this.panelImage.enablePipetteMode(true);
 	}
 
-    public void setSelectedColor(Color color) {
+	public void setSelectedColor(Color color) {
 		this.selectedColor = color;
 		System.out.println("Couleur sélectionnée : " + color);
 	}
 
+
+
+	public PanelImage getPanelImage() { return this.panelImage; }
+	public BarreOutils getBarreOutils() { return this.barreOutils; }
 }
