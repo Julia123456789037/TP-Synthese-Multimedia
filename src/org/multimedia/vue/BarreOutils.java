@@ -8,6 +8,7 @@ import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
 import org.multimedia.composants.ToolBarBouton;
@@ -22,27 +23,20 @@ public class BarreOutils extends JToolBar implements ActionListener
 	
 	
 	Controleur ctrl;
-	JButton    btnSauvegarder;
-	JButton    btnImporteImage;
-	JButton    btnPipette;
-	JButton    btnPotPeinture;
-	JButton    btnCouleur;
-	JButton    btnCreerRectangle;
-	JButton    btnCreerRond;
+	JButton		btnSauvegarder;
+	JButton		btnImporteImage;
+	JButton		btnPipette;
+	JButton		btnPotPeinture;
+	JButton		btnCouleur;
+	JButton 	btnAjouterTexte;
+	JButton		btnCreerRectangle;
+	JButton		btnCreerRond;
 
-	JButton    btnSelectionRect;
-	JButton    btnSelectionRond;
-	JButton    btnAutreFrame;
-	JButton    btnFondTransp;
-	JButton    btnRotationGauche;
-	JButton    btnRotationDroite;
+	JComboBox<String> comboTailleTexte;
 
-	JButton    btnMiroirGaucheDroite;
-	JButton    btnMiroirHautBas;
-	JButton    btnNoirBlanc;
-	JButton    btnZoneTexte;
+	JButton		btnAutreFrame;
+	JButton		btnFondTransp;
 	
-	JButton btnAjouterTexte;
 	
 	JButton btnUndo;
 	JButton btnRedo;
@@ -85,11 +79,6 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture.setToolTipText("Pot de peinture");
 		this.btnPotPeinture.setActionCommand("PotDePeinture");
 
-		this.btnAjouterTexte = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
-		this.btnAjouterTexte.setToolTipText("Ajouter du texte");
-		this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
-
-
 		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
 		this.btnCreerRectangle.setToolTipText("Copier un rectangle");
 		this.btnCreerRectangle.setActionCommand("CopierRectangle");
@@ -97,60 +86,61 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCreerRond = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
 		this.btnCreerRond.setToolTipText("Copier un rond");
 		this.btnCreerRond.setActionCommand("CopierRond");
+
+		this.btnAjouterTexte = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/ajoutZoneTexte.png", true) ));
+		this.btnAjouterTexte.setToolTipText("Ajouter du texte");
+		this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
+
+		String[] taillesTexte = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30"};
+		this.comboTailleTexte = new JComboBox<>(taillesTexte);
+		this.comboTailleTexte.setPreferredSize(new Dimension(60, 30));
+		this.comboTailleTexte.setMaximumSize(new Dimension(60, 30));
+		this.comboTailleTexte.setMinimumSize(new Dimension(60, 30));
+		this.comboTailleTexte.setToolTipText("Taille du texte");
 	
 		
-		this.btnSelectionRect      = new ToolBarBouton("Selectionner Rectangle");
-		this.btnSelectionRond      = new ToolBarBouton("Selectionner Rond");
 		this.btnAutreFrame         = new ToolBarBouton("Importer une Image");
 		this.btnFondTransp         = new ToolBarBouton("Fond Transparent");
-		this.btnRotationGauche     = new ToolBarBouton("Rotation à Gauche");
-		this.btnRotationDroite     = new ToolBarBouton("Rotation à Droite");
 
-		this.btnMiroirGaucheDroite = new ToolBarBouton("Miroir Horizontal");
-		this.btnMiroirHautBas      = new ToolBarBouton("Miroir Vertical");
-		this.btnNoirBlanc          = new ToolBarBouton("Niveaux de Gris");
-		this.btnZoneTexte          = new ToolBarBouton("Zone de Texte");
 		
-		// Dans votre constructeur, après chaque création de bouton :
+		// Même taille des bouton pour tous
 		uniformiserBouton(this.btnSauvegarder);
 		uniformiserBouton(this.btnUndo);
 		uniformiserBouton(this.btnRedo);
 		uniformiserBouton(this.btnCouleur);
 		uniformiserBouton(this.btnPipette);
 		uniformiserBouton(this.btnPotPeinture);
-		uniformiserBouton(this.btnAjouterTexte);
 		uniformiserBouton(this.btnCreerRectangle);
 		uniformiserBouton(this.btnCreerRond);
+		uniformiserBouton(this.btnAjouterTexte);
 
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-
-
-		
 		this.add(this.btnSauvegarder);
 		this.add(this.btnUndo);
 		this.add(this.btnRedo);
 		this.add(this.btnCouleur);
 		this.add(this.btnPipette);
 		this.add(this.btnPotPeinture);
-		this.add(this.btnAjouterTexte);
 		this.add(this.btnCreerRectangle);
 		this.add(this.btnCreerRond);
+		this.add(this.btnAjouterTexte);
+		this.add(this.comboTailleTexte);
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
-		this.btnSauvegarder .addActionListener(this);
-		this.btnUndo		.addActionListener(this);
-		this.btnRedo		.addActionListener(this);
-		this.btnCouleur		.addActionListener(this);
-		this.btnPipette     .addActionListener(this);
-		this.btnPotPeinture .addActionListener(this);
-		this.btnAjouterTexte.addActionListener(this);
-		this.btnCouleur		.addActionListener(this);
-		this.btnCreerRectangle.addActionListener(this);
+		this.btnSauvegarder 	.addActionListener(this);
+		this.btnUndo			.addActionListener(this);
+		this.btnRedo			.addActionListener(this);
+		this.btnCouleur			.addActionListener(this);
+		this.btnPipette     	.addActionListener(this);
+		this.btnPotPeinture 	.addActionListener(this);
+		this.btnAjouterTexte	.addActionListener(this);
+		this.btnCouleur			.addActionListener(this);
+		this.btnCreerRectangle	.addActionListener(this);
 		this.btnCreerRond		.addActionListener(this);
 		
 	}
@@ -209,6 +199,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			}
 		}
 	}
+
 
 	private void uniformiserBouton(JButton bouton) {
 		bouton.setPreferredSize(new Dimension(40, 40));

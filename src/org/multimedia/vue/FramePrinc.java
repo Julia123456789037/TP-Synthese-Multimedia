@@ -39,6 +39,7 @@ public class FramePrinc extends JFrame
 	BufferedImage bFimage;
 	int angle;
 	private Color selectedColor = Color.BLACK;
+    private int textSize = 12;
 
 	public FramePrinc(Controleur ctrl)
 	{
@@ -315,6 +316,11 @@ public class FramePrinc extends JFrame
 
 	public void PotPeint( int x, int y ) {
 		this.panelImage.transform.fillColor(x, y, this.selectedColor);
+		this.panelImage.updateUI();
+	}
+
+    public void writeText(String text, int x, int y, int size, Color color)  {
+		this.panelImage.transform.writeText(text, x, y, size, color);
 		this.panelImage.updateUI();
 	}
 	

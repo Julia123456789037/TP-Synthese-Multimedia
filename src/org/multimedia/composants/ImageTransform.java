@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import org.multimedia.util.ImageUtils;
+import org.multimedia.util.Text;
 
 public class ImageTransform {
 	
@@ -29,24 +30,28 @@ public class ImageTransform {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
 	}
 
-    public void fillColor( int x, int y, Color color ) {
+	public void fillColor( int x, int y, Color color ) {
 		this.addOperation(image -> ImageUtils.fill(image, x, y, color));
 	}
 
-    public void applyBrightness( int brightness ) {
+	public void applyBrightness( int brightness ) {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
 	}    
 
-    public void toGreyScale() { 
-        this.addOperation(image -> ImageUtils.toGreyScale( image )); 
-    }
-    
-    public void undo() { 
-        this.currentIndex = Math.max(-1, this.currentIndex - 1); 
-    }
+	public void toGreyScale() { 
+		this.addOperation(image -> ImageUtils.toGreyScale( image )); 
+	}
+
+	public void writeText(String text, int x, int y, int size, Color color) { 
+		this.addOperation(image -> ImageUtils.writeText( image, new Text.Builder(text, x, y).size(size).color(color).build() )); 
+	}
+	
+	public void undo() { 
+		this.currentIndex = Math.max(-1, this.currentIndex - 1); 
+	}
 	public void redo() { 
-        this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1); 
-    }
+		this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1); 
+	}
 	
 	private void addOperation(Operation o) {
 		while (this.currentIndex + 1 != this.operations.size())
