@@ -1,11 +1,14 @@
 package org.multimedia.vue;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.multimedia.composants.ToolBarBouton;
 import org.multimedia.main.Controleur;
@@ -21,6 +24,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 	JButton    btnImporteImage;
 	JButton    btnPipette;
 	JButton    btnPotPeinture;
+	JButton    btnCouleur;
 
 	JButton    btnSelectionRect;
 	JButton    btnSelectionRond;
@@ -36,6 +40,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 
 	JButton btnAjouterTexte;
+
+	private Color couleurSelectionnee = Color.BLACK;
 
 	public BarreOutils(Controleur ctrl ) 
 	{
@@ -76,6 +82,18 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnNoirBlanc			= new ToolBarBouton ( "noir et blanc"			);
 		this.btnZoneTexte			= new ToolBarBouton ( "Zone de texte"			);
 
+
+
+		
+		
+		// Dans votre constructeur, après chaque création de bouton :
+		uniformiserBouton(this.btnSauvegarder);
+		uniformiserBouton(this.btnPipette);
+		uniformiserBouton(this.btnPotPeinture);
+		uniformiserBouton(this.btnAjouterTexte);
+		uniformiserBouton(this.btnCouleur);
+		
+
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
@@ -86,6 +104,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.add(this.btnPipette);
 		this.add(this.btnPotPeinture);
 		this.add(this.btnAjouterTexte);
+		this.add(this.btnCouleur);
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
@@ -94,6 +113,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPipette     .addActionListener(this);
 		this.btnPotPeinture .addActionListener(this);
 		this.btnAjouterTexte.addActionListener(this);
+		this.btnCouleur		.addActionListener(this);
 		
 	}
 	
@@ -101,18 +121,44 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public int getHeight() {
 		return 40;
 	}
-	
-	public void actionPerformed (ActionEvent e)
+
+	public void setCouleurSelectionnee(Color couleur) {
+		this.couleurSelectionnee = couleur;
+		this.btnCouleur.setBackground(couleur);
+	}
+
+	public void actionPerformed ( ActionEvent e)
 	{
 		switch (e.getActionCommand()) {
 			case "Sauvegarder" -> {
 //				this.ctrl.sauvegarder ();
 			}
-			case "Pipette" -> {}
+			case "Pipette" -> {
+				// Activer le mode pipette dans PanelImage
+				FramePrinc frame = (FramePrinc) SwingUtilities.getWindowAncestor(this);
+				if (frame != null) {
+					frame.getPanelImage().enablePipetteMode(true);
+				}
+			}
 			case "PotDePeinture" -> {}
 			case "AjouterDuTexte" -> {
 				System.out.println("-----------------");
 			}
+			case "Couleur" -> {
+				// Ouvrir le sélecteur de couleur
+				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
+
+				if (nouvelleCouleur != null) {
+					couleurSelectionnee = nouvelleCouleur;
+					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
+				}
+			}
 		}
+	}
+
+	private void uniformiserBouton(JButton bouton) {
+		bouton.setPreferredSize(new java.awt.Dimension(40, 40));
+		bouton.setMaximumSize(new java.awt.Dimension(40, 40));
+		bouton.setMinimumSize(new java.awt.Dimension(40, 40));
 	}
 }

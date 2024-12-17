@@ -1,8 +1,5 @@
 package org.multimedia.main;
 
-import javax.swing.UIManager;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-
 import org.multimedia.vue.FramePrinc;
 
 public class Controleur {
@@ -16,6 +13,7 @@ public class Controleur {
 		this.ihm    = new FramePrinc(this);
 
 	}
+    public FramePrinc getFramePrinc() { return this.ihm; }
 
     public static void main(String[] a){ new Controleur(); }
     
