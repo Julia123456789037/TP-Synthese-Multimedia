@@ -43,13 +43,11 @@ public class FramePrinc extends JFrame
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
 		
-		System.out.println(System.getProperty("os.name"));
-		
 		try {
 			String lafClassName = switch (System.getProperty("os.name")) {
 				case "Linux"   -> "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
 				case "Windows" -> "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-				default -> null;
+				default        -> UIManager.getCrossPlatformLookAndFeelClassName();
 			};
 			UIManager.setLookAndFeel(lafClassName);
 		} catch (Exception e) {
@@ -59,8 +57,8 @@ public class FramePrinc extends JFrame
 		/*-------------------------------*/
 		/* Création des composants       */
 		/*-------------------------------*/
-		this.barreOutils  = new BarreOutils  (this.ctrl);
-		this.panelImage = new PanelImage (this.ctrl);
+		this.barreOutils = new BarreOutils(this.ctrl);
+		this.panelImage  = new PanelImage(this.ctrl);
 
 		this.setJMenuBar( this.createMenuBar() );
 
