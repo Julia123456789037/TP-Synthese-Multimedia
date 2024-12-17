@@ -154,6 +154,31 @@ public class FramePrinc extends JFrame
 		mnuEdit.add(mnuMirHB);
 		
 		mnuEdit.addSeparator();
+
+        JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
+		mnuLumineux.setIcon( new ImageIcon( ImageUtils.openImg("/luminosite.png", true) ) );
+		mnuLumineux.setMnemonic( 'U' );
+		mnuLumineux.addActionListener( this::mnuLumineuxListener );
+		mnuLumineux.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuLumineux);
+
+		JMenuItem mnuSombre = new JMenuItem( "Rendre plus Sombre" );
+		mnuSombre.setIcon( new ImageIcon( ImageUtils.openImg("/Assombrir.png", true) ) );
+		mnuSombre.setMnemonic( 'Y' );
+		mnuSombre.addActionListener( this::mnuSombreListener );
+		mnuSombre.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuSombre);
+		
+		mnuEdit.addSeparator();
+
+        JMenuItem mnuNoirBlanc = new JMenuItem( "Noir et Blanc" );
+		mnuNoirBlanc.setIcon( new ImageIcon( ImageUtils.openImg("/noirblanc.png", true) ) );
+		mnuNoirBlanc.setMnemonic( 'N' );
+		mnuNoirBlanc.addActionListener( this::mnuNoirBlancListener );
+		mnuNoirBlanc.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK) );
+		mnuEdit.add(mnuNoirBlanc);
+		
+		mnuEdit.addSeparator();
 		
 		JMenuItem mnuCopy = new JMenuItem( "Copier" );
 		mnuCopy.setIcon( new ImageIcon( ImageUtils.openImg("/copy.png", true) ) );
@@ -262,6 +287,20 @@ public class FramePrinc extends JFrame
 	}
 	public void mnuMirHBListener(ActionEvent event) { 
 		this.panelImage.transform.invertV();
+		this.panelImage.updateUI();
+	}
+
+    public void mnuLumineuxListener(ActionEvent event) { 
+		this.panelImage.transform.applyBrightness( 20 );
+		this.panelImage.updateUI();
+	}
+    public void mnuSombreListener(ActionEvent event) { 
+		this.panelImage.transform.applyBrightness( -20 );
+		this.panelImage.updateUI();
+	}
+
+    public void mnuNoirBlancListener(ActionEvent event) { 
+		this.panelImage.transform.toGreyScale(  );
 		this.panelImage.updateUI();
 	}
 
