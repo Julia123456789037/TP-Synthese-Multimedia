@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
@@ -21,10 +22,11 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.multimedia.main.Controleur;
+import org.multimedia.util.DisplayImage;
 import org.multimedia.util.ImageUtils;
 
 
-public class FramePrinc extends JFrame 
+public class FramePrinc extends JFrame implements KeyListener
 {
 	@Serial
 	private static final long serialVersionUID = 5106104636891939306L;
@@ -39,7 +41,7 @@ public class FramePrinc extends JFrame
 	BufferedImage bFimage;
 	int angle;
 	private Color selectedColor = Color.BLACK;
-
+	
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
@@ -81,6 +83,8 @@ public class FramePrinc extends JFrame
 //	    w.setLocation(300, 300);
 //	    w.pack();
 //	    w.setVisible(true);
+		
+		this.addKeyListener(this);
 
 		this.setVisible ( true );
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,13 +110,17 @@ public class FramePrinc extends JFrame
 		JMenuItem mnuSaveFile = new JMenuItem( "Sauvegarder ..." );
 		mnuSaveFile.setIcon( new ImageIcon( ImageUtils.openImg("/save.png", true) ) );
 		mnuSaveFile.setMnemonic( 'S' );
-		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK) );
+		mnuSaveFile.addActionListener(e -> {
+			if (this.bFimage != null)
+				DisplayImage.show(this.bFimage);
+		});
+		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK ) );
 		mnuFile.add(mnuSaveFile);
 
 		JMenuItem mnuSaveFileAs = new JMenuItem( "Sauvegarder dans le dossier..." );
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
 		mnuSaveFileAs.setMnemonic( 'A' );
-		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK) );
+		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
 
 		mnuFile.addSeparator();
@@ -259,11 +267,8 @@ public class FramePrinc extends JFrame
 				@SuppressWarnings("unused")
 				String filePath = selectedFile.getAbsolutePath();
 
-				// Charger l'image en tant que BufferedImage
-				this.bFimage = ImageIO.read(selectedFile);
-
 				// Mettre à jour l'image dans PanelImage
-				this.panelImage.loadImage(this.bFimage);
+				this.panelImage.loadImage(ImageIO.read(selectedFile));
 				this.panelImage.transform.reset();
 				this.panelImage.updateUI();
 
@@ -320,4 +325,34 @@ public class FramePrinc extends JFrame
 	
 	public PanelImage getPanelImage() { return this.panelImage; }
 	public BarreOutils getBarreOutils() { return this.barreOutils; }
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
+	
+	private boolean isCtrl = false;
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_CONTROL -> this.isCtrl = true;
+			case KeyEvent.VK_Z -> {
+				if (this.isCtrl) {
+					this.panelImage.transform.undo();
+				}
+			}
+			case KeyEvent.VK_Y -> {
+				if (this.isCtrl) {
+					this.panelImage.transform.redo();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_CONTROL -> this.isCtrl = false;
+		}
+	}
+	
 }

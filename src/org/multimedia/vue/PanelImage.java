@@ -70,6 +70,14 @@ public class PanelImage extends JPanel {
 			
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage(image, x, y, this);
+			
+			BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+			Graphics g2 = out.createGraphics();
+			g2.setColor(Color.WHITE);
+			g2.fillRect(x, y, image.getWidth(), image.getHeight());
+			g2.drawImage(image, x, y, this);
+			
+			this.ctrl.getFramePrinc().bFimage = out;
 		}
 		g.dispose();
 	}
@@ -92,6 +100,10 @@ public class PanelImage extends JPanel {
 	public void enablePotPeintureMode(boolean enable) {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
+	}
+	
+	public BufferedImage getImage() {
+		return this.image;
 	}
 
 	private void pickColor(int x, int y) {
