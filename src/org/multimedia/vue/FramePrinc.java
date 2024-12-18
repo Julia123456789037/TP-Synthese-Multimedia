@@ -39,11 +39,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
-
-	JMenu mnuFile;
-	JMenuItem mnuNewFile;
-	BufferedImage bFimage;
-	int angle;
+	
 	private Color selectedColor = Color.BLACK;
 	
 	private boolean isSaved;
@@ -58,7 +54,6 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
-		this.angle = 0;
 		this.isSaved = false;
 		this.titre = "Swing Painter";
 
@@ -73,9 +68,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 				default        -> UIManager.getCrossPlatformLookAndFeelClassName();
 			};
 			UIManager.setLookAndFeel(lafClassName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) { e.printStackTrace(); }
 		
 		/*-------------------------------*/
 		/* Création des composants       */
@@ -85,10 +78,10 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 
 		this.setJMenuBar( this.createMenuBar() );
 
-
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
+
 		this.add(this.barreOutils, BorderLayout.NORTH);
 		this.add(this.panelImage,  BorderLayout.CENTER);
 		
@@ -121,30 +114,30 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		// Définition du menu déroulant "File" et de son contenu
 		JMenu mnuFile = new JMenu( "Fichier" );
 		mnuFile.setMnemonic(KeyEvent.VK_F);
-
+		
 		JMenuItem mnuOpenFile = new JMenuItem( "Ouvrir..." );
 		mnuOpenFile.setIcon( new ImageIcon( ImageUtils.openImg("/open.png", true) ) );
 		mnuOpenFile.setMnemonic( 'O' );
 		mnuOpenFile.addActionListener( this::mnuOpenFileListener );
 		mnuOpenFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK) );
 		mnuFile.add(mnuOpenFile);
-
+		
 		JMenuItem mnuSaveFile = new JMenuItem( "Enregistrer" );
 		mnuSaveFile.setIcon( new ImageIcon( ImageUtils.openImg("/save.png", true) ) );
-		mnuSaveFile.setMnemonic(KeyEvent.VK_S);
+		mnuSaveFile.setMnemonic(KeyEvent.VK_E);
 		mnuSaveFile.addActionListener(this::save);
 		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK ) );
 		mnuFile.add(mnuSaveFile);
-
+		
 		JMenuItem mnuSaveFileAs = new JMenuItem( "Enregistrer sous..." );
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
-		mnuSaveFileAs.setMnemonic(KeyEvent.VK_A);
+		mnuSaveFileAs.setMnemonic(KeyEvent.VK_E);
 		mnuSaveFileAs.addActionListener(this::saveAs);
-		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
+		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
-
+		
 		mnuFile.addSeparator();
-
+		
 		JMenuItem mnuExit = new JMenuItem( "Quitter" );
 		mnuExit.setIcon( new ImageIcon( ImageUtils.openImg("/exit.png", true) ) );
 		mnuExit.setMnemonic(KeyEvent.VK_X);
@@ -154,8 +147,9 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		menuBar.add(mnuFile);
 		
 		// Définition du menu déroulant "Edition d'image" et de son contenu
+		
 		JMenu mnuEdit = new JMenu( "Edition" );
-		mnuEdit.setMnemonic(KeyEvent.VK_I);
+		mnuEdit.setMnemonic(KeyEvent.VK_E);
 		
 		JMenuItem mnuCopy = new JMenuItem( "Copier" );
 		mnuCopy.setIcon( new ImageIcon( ImageUtils.openImg("/copy.png", true) ) );
@@ -174,7 +168,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuPaste.setMnemonic(KeyEvent.VK_V);
 		mnuPaste.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuPaste);
-
+		
 		menuBar.add(mnuEdit);
 		
 		
@@ -225,7 +219,6 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuImage.add(mnuMirHB);
 		
 		menuBar.add(mnuImage);
-
 		
 		// Définition du menu déroulant "Edition de texte" et de son contenu
 		JMenu mnuTexte = new JMenu( "Texte" );
@@ -234,15 +227,27 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		JMenuItem mnuAjTe = new JMenuItem( "Ajouter du texte" );
 		mnuAjTe.setIcon( new ImageIcon( ImageUtils.openImg("/ajoutZoneTexte.png", true) ) );
 		mnuAjTe.setMnemonic(KeyEvent.VK_A);
-//		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK) );
+		mnuAjTe.addActionListener( this::mnuAjTeListener );
+		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuAjTe);
-
+		
 		JMenuItem mnuTailTe = new JMenuItem( "Taille du texte" );
 		mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
 		mnuTailTe.setMnemonic(KeyEvent.VK_T);
 		mnuTailTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuTailTe);
-
+		
+		String[] tailles = { "8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96" };
+		
+		for (String taille : tailles) {
+			JMenuItem menuItem = new JMenuItem(taille);
+			menuItem.addActionListener(e -> { setTextSize(Integer.parseInt(taille)); });
+			mnuTailTe.add(menuItem);
+		}
+		mnuTexte.add(mnuTailTe);
+		
+		menuBar.add(mnuTexte);
+		
 		JMenuItem mnuCoulTe = new JMenuItem( "Couleur du texte" );
 		mnuCoulTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
 		mnuCoulTe.setMnemonic(KeyEvent.VK_C);
@@ -296,7 +301,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		JMenu mnuHelp = new JMenu( "Help" );
 		mnuHelp.setMnemonic(KeyEvent.VK_H);
 		
-		menuBar.add( mnuHelp );
+		menuBar.add(mnuHelp);
 		
 		return menuBar;
 	}
@@ -343,6 +348,8 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	private static interface IFileChooser {
 		public void onResult(JFileChooser fileChooser, int result);
 	}
+
+	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(true); }
 	
 	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
 	public void setSelectedColor(Color color) { this.selectedColor = color; }

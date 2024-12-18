@@ -3,14 +3,11 @@ package org.multimedia.vue;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.multimedia.composants.ImageTransform;
@@ -26,7 +23,6 @@ public class PanelImage extends JPanel {
 	private BufferedImage image;
 	
 	private ModeEdition mode;
-	private boolean potPeintureMode = false;
 	
 	final ImageTransform transform;
 
@@ -49,7 +45,8 @@ public class PanelImage extends JPanel {
 					case PIPETTE			-> pickColor(x, y);
 					case POT_DE_PEINTURE	-> paintColor(x, y);
 					case TEXTE 				-> paintTexte(x, y);
-					//case SELECTION 			-> paintRectangle(x, y);
+					//case SELECTION_RECT 			-> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
+					//case SELECTION_ROND 			-> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
 					default              	-> {}
 					}
 				}
@@ -58,8 +55,12 @@ public class PanelImage extends JPanel {
 	}
 
 	public void setImage(BufferedImage image) { this.image = image; repaint(); }
-	public boolean isPotPeintureMode() { return this.potPeintureMode; }
-	public Point getImageLocationOnScreen() { return this.getLocationOnScreen(); }
+	public boolean isPotPeintureMode()		{  return this.mode == ModeEdition.POT_DE_PEINTURE; }
+	public boolean isPipetteMode()			{  return this.mode == ModeEdition.PIPETTE; }
+	public boolean isStyloMode()			{  return this.mode == ModeEdition.TEXTE; }
+	public boolean isSelectionRectMode()	{  return this.mode == ModeEdition.SELECTION_RECT; }
+	public boolean isSelectionRondMode() 	{  return this.mode == ModeEdition.SELECTION_ROND; }
+	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -86,9 +87,7 @@ public class PanelImage extends JPanel {
 		this.repaint();
 	}
 	
-	public void loadImage(BufferedImage image) {
-		this.image = image;
-	}
+	public void loadImage(BufferedImage image) { this.image = image; }
 
 	public void enablePipetteMode(boolean enable) {
 		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
@@ -97,6 +96,7 @@ public class PanelImage extends JPanel {
 	
 	public void enablePotPeintureMode(boolean enable) {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
+		System.out.println("this.mode = "+this.mode);
 		this.setCursor(this.mode.cursor);
 	}
 	
@@ -109,9 +109,19 @@ public class PanelImage extends JPanel {
 		this.setCursor(this.mode.cursor);
 	}
 
-	public void enableSelection(boolean enable) {
-		this.mode = enable ? ModeEdition.SELECTION : ModeEdition.NORMAL;
+	public void enableSelectionRect(boolean enable) {
+		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
+	}
+
+	public void enableSelectionRond(boolean enable) {
+		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void curseurMode( ) { 
+		this.mode = ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor); 
 	}
 
 	private void pickColor(int x, int y) {
