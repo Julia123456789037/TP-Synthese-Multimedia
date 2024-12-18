@@ -153,7 +153,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		final PanelImage panel = this.ctrl.getFramePrinc().getPanelImage();
 		switch (e.getActionCommand()) {
 			case "Sauvegarder" -> {
-//				this.ctrl.sauvegarder ();
+				this.ctrl.getFramePrinc().save(e);
 			}
 			case "Pipette" -> {
 				// Activer le mode pipette dans PanelImage

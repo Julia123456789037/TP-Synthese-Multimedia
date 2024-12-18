@@ -31,7 +31,7 @@ public class PanelImage extends JPanel {
 		this.ctrl = ctrl;
 		this.image = null;
 		
-		this.transform = new ImageTransform();
+		this.transform = new ImageTransform(ctrl);
 		this.mode = ModeEdition.NORMAL;
 
 		// Ajouter un écouteur de souris pour récupérer la couleur
@@ -70,14 +70,6 @@ public class PanelImage extends JPanel {
 			
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage(image, x, y, this);
-			
-			BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-			Graphics g2 = out.createGraphics();
-			g2.setColor(Color.WHITE);
-			g2.fillRect(x, y, image.getWidth(), image.getHeight());
-			g2.drawImage(image, x, y, this);
-			
-			this.ctrl.getFramePrinc().bFimage = out;
 		}
 		g.dispose();
 	}

@@ -396,7 +396,8 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, 0, 0, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
+//		pixelLoop(img, 0, 0, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
+		pixelLoop(img, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
 		return res;
 	}
 	
@@ -432,7 +433,13 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, 0, 0, (x0, y0) ->
+//		pixelLoop(img, 0, 0, (x0, y0) ->
+//		{
+//			int rgb0 = img.getRGB(x0, y0);
+//			if (rgb0 != rgb)
+//				res.setRGB(x + x0, y + y0, rgb0);
+//		});
+		pixelLoop(img, (x0, y0) ->
 		{
 			int rgb0 = img.getRGB(x0, y0);
 			if (rgb0 != rgb)
@@ -529,14 +536,16 @@ public class ImageUtils
 	public static BufferedImage invertHorizontal(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int width = res.getWidth();
-		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+//		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+		pixelLoop(img, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
 		return res;
 	}
 	
 	public static BufferedImage invertVertical(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int height = res.getHeight();
-		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+//		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+		pixelLoop(img, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
 		return res;
 	}
 	
@@ -575,7 +584,8 @@ public class ImageUtils
 	public static BufferedImage invertFilter(BufferedImage img)
 	{
 		BufferedImage tmp = Builder.clone(img);
-		pixelLoop(img, 0, 0, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
+//		pixelLoop(img, 0, 0, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
+		pixelLoop(img, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
 		return tmp;
 	}
 	
@@ -585,17 +595,27 @@ public class ImageUtils
 	 * @param img
 	 * @param pi
 	 */
-	static void pixelLoop(BufferedImage img, int x, int y, PixelIterator pi)
+	static void pixelLoop(BufferedImage img, PixelIterator pi)
 	{
-		if (img == null || pi == null)
-			return;
-		if (x >= img.getWidth() || y >= img.getHeight())
-			return;
-		pi.applyFilter(x, y);
-		pixelLoop(img, x + 1, y,     pi);
-		pixelLoop(img, x,     y + 1, pi);
-		pixelLoop(img, x + 1, y + 1, pi);
+		for (int x = 0; x < img.getWidth(); x++)
+		{
+			for (int y = 0; y < img.getHeight(); y++)
+			{
+				pi.applyFilter(x, y);
+			}
+		}
 	}
+//	static void pixelLoop(BufferedImage img, int x, int y, PixelIterator pi)
+//	{
+//		if (img == null || pi == null)
+//			return;
+//		if (x >= img.getWidth() || y >= img.getHeight())
+//			return;
+//		pi.applyFilter(x, y);
+//		pixelLoop(img, x + 1, y,     pi);
+//		pixelLoop(img, x,     y + 1, pi);
+//		pixelLoop(img, x + 1, y + 1, pi);
+//	}
 	
 	public static List<BufferedImage> cutOut(BufferedImage img, int width, int height) {
 		List<BufferedImage> lst = new ArrayList<>();

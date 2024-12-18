@@ -55,7 +55,44 @@ public class DisplayImage
 	 */
 	public static void show(InputStream stream) throws IOException
 	{
-		DisplayImage.show(ImageIO.read(stream));
+		DisplayImage.show(ImageIO.read(stream), JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param stream
+	 * @param exitMode
+	 * @throws IOException
+	 */
+	public static void show(InputStream stream, int exitMode) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(stream), null, exitMode);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param stream
+	 * @param title
+	 * @throws IOException
+	 */
+	public static void show(InputStream stream, String title) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(stream), title, JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param stream
+	 * @param title
+	 * @param exitMode
+	 * @throws IOException
+	 */
+	public static void show(InputStream stream, String title, int exitMode) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(stream), title, exitMode);
 	}
 	
 	/**
@@ -66,7 +103,44 @@ public class DisplayImage
 	 */
 	public static void show(File image) throws IOException
 	{
-		DisplayImage.show(ImageIO.read(image));
+		DisplayImage.show(ImageIO.read(image), JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param image
+	 * @param exitMode
+	 * @throws IOException
+	 */
+	public static void show(File image, int exitMode) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(image), null, exitMode);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param image
+	 * @param title
+	 * @throws IOException
+	 */
+	public static void show(File image, String title) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(image), title, JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param image
+	 * @param title
+	 * @param exitMode
+	 * @throws IOException
+	 */
+	public static void show(File image, String title, int exitMode) throws IOException
+	{
+		DisplayImage.show(ImageIO.read(image), title, exitMode);
 	}
 	
 	/**
@@ -76,7 +150,18 @@ public class DisplayImage
 	 */
 	public static void show(BufferedImage img)
 	{
-		DisplayImage.show(new ImageIcon(img), null);
+		DisplayImage.show(new ImageIcon(img), JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param img
+	 * @param exitMode
+	 */
+	public static void show(BufferedImage img, int exitMode)
+	{
+		DisplayImage.show(new ImageIcon(img), null, exitMode);
 	}
 	
 	/**
@@ -91,13 +176,36 @@ public class DisplayImage
 	}
 	
 	/**
+	 * Affiche une image et définit le titre de la page.
+	 * 
+	 * @param img
+	 * @param title
+	 * @param exitMode
+	 */
+	public static void show(BufferedImage img, String title, int exitMode)
+	{
+		DisplayImage.show(new ImageIcon(img), title, exitMode);
+	}
+	
+	/**
 	 * Affiche une image.
 	 * 
 	 * @param icon
 	 */
 	public static void show(ImageIcon icon)
 	{
-		DisplayImage.show(icon, null);
+		DisplayImage.show(icon, JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image.
+	 * 
+	 * @param icon
+	 * @param exitMode
+	 */
+	public static void show(ImageIcon icon, int exitMode)
+	{
+		DisplayImage.show(icon, null, exitMode);
 	}
 	
 	/**
@@ -108,7 +216,19 @@ public class DisplayImage
 	 */
 	public static void show(ImageIcon icon, String title)
 	{
-		DisplayImage.openFrame0(icon, title);
+		DisplayImage.show(icon, title, JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**
+	 * Affiche une image et définit le titre de la page.
+	 * 
+	 * @param icon
+	 * @param title
+	 * @param exitMode
+	 */
+	public static void show(ImageIcon icon, String title, int exitMode)
+	{
+		DisplayImage.openFrame0(icon, title, exitMode);
 	}
 	
 	/**
@@ -117,7 +237,7 @@ public class DisplayImage
 	 * @param icon
 	 * @param title
 	 */
-	private static void openFrame0(ImageIcon icon, String title)
+	private static void openFrame0(ImageIcon icon, String title, int exitMode)
 	{
 		SwingUtilities.invokeLater(() ->
 		{
@@ -127,7 +247,7 @@ public class DisplayImage
 			ImagePanel panel = new ImagePanel(icon.getImage(), frame.getWidth(), frame.getHeight(), true);
 			frame.add(BorderLayout.CENTER, panel);
 			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(exitMode);
 		});
 	}
 	

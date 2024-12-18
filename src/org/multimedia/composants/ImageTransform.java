@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
 
 public class ImageTransform {
@@ -12,9 +13,12 @@ public class ImageTransform {
 	
 	private int currentIndex;
 	
-	public ImageTransform() {
+	private Controleur ctrl;
+	
+	public ImageTransform(Controleur ctrl) {
+		this.ctrl = ctrl;
 		this.operations = new LinkedList<>();
-		this.reset();
+		this.currentIndex = -1;
 	}
 
 	public void addRotation(int rotation) {
@@ -37,15 +41,17 @@ public class ImageTransform {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
 	}    
 
-    public void toGreyScale() { 
-        this.addOperation(image -> ImageUtils.toGreyScale( image )); 
+    public void toGreyScale() {
+        this.addOperation(image -> ImageUtils.toGreyScale( image ));
     }
     
-    public void undo() { 
-        this.currentIndex = Math.max(-1, this.currentIndex - 1); 
+    public void undo() {
+        this.currentIndex = Math.max(-1, this.currentIndex - 1);
+        this.ctrl.getFramePrinc().setModified();
     }
-	public void redo() { 
-        this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1); 
+	public void redo() {
+        this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1);
+        this.ctrl.getFramePrinc().setModified();
     }
 	
 	private void addOperation(Operation o) {
@@ -53,6 +59,7 @@ public class ImageTransform {
 			this.operations.removeLast();
 		this.operations.add(o);
 		this.currentIndex++;
+		this.ctrl.getFramePrinc().setModified();
 	}
 	
 	public BufferedImage applyTransforms(BufferedImage image) {
@@ -65,6 +72,11 @@ public class ImageTransform {
 	public void reset() {
 		this.operations.clear();
 		this.currentIndex = -1;
+		this.ctrl.getFramePrinc().setModified();
+	}
+	
+	public boolean hasOperations() {
+		return this.operations.size() == this.currentIndex + 1 && this.operations.size() > 0;
 	}
 	
 	public static interface Operation {

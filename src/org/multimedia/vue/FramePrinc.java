@@ -2,9 +2,12 @@ package org.multimedia.vue;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
@@ -22,11 +25,10 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.multimedia.main.Controleur;
-import org.multimedia.util.DisplayImage;
 import org.multimedia.util.ImageUtils;
 
 
-public class FramePrinc extends JFrame implements KeyListener
+public class FramePrinc extends JFrame implements KeyListener, WindowListener
 {
 	@Serial
 	private static final long serialVersionUID = 5106104636891939306L;
@@ -42,13 +44,20 @@ public class FramePrinc extends JFrame implements KeyListener
 	int angle;
 	private Color selectedColor = Color.BLACK;
 	
+	private boolean isSaved;
+	
+	public final String titre;
+	
+	private File fichierOuvert;
+	
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
 		this.angle = 0;
+		this.isSaved = false;
+		this.titre = "Gestion image (contrefaçon de paint)";
 
-
-		this.setTitle  ( "Gestion image (contrefaçon de paint)"  );
+		this.setTitle  ( this.titre  );
 		this.setSize   ( 1500, 950 );
 		this.setLocationRelativeTo( null );
 		
@@ -85,9 +94,10 @@ public class FramePrinc extends JFrame implements KeyListener
 //	    w.setVisible(true);
 		
 		this.addKeyListener(this);
-
+		this.addWindowListener(this);
+		
 		this.setVisible ( true );
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -97,29 +107,26 @@ public class FramePrinc extends JFrame implements KeyListener
 
 		// Définition du menu déroulant "File" et de son contenu
 		JMenu mnuFile = new JMenu( "Fichier" );
-		mnuFile.setMnemonic( 'F' );
+		mnuFile.setMnemonic(KeyEvent.VK_F);
 
-
-		JMenuItem mnuOpenFile = new JMenuItem( "Ouvrir un fichier ..." );
+		JMenuItem mnuOpenFile = new JMenuItem( "Ouvrir..." );
 		mnuOpenFile.setIcon( new ImageIcon( ImageUtils.openImg("/open.png", true) ) );
 		mnuOpenFile.setMnemonic( 'O' );
 		mnuOpenFile.addActionListener( this::mnuOpenFileListener );
 		mnuOpenFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK) );
 		mnuFile.add(mnuOpenFile);
 
-		JMenuItem mnuSaveFile = new JMenuItem( "Sauvegarder ..." );
+		JMenuItem mnuSaveFile = new JMenuItem( "Enregistrer" );
 		mnuSaveFile.setIcon( new ImageIcon( ImageUtils.openImg("/save.png", true) ) );
-		mnuSaveFile.setMnemonic( 'S' );
-		mnuSaveFile.addActionListener(e -> {
-			if (this.bFimage != null)
-				DisplayImage.show(this.bFimage);
-		});
+		mnuSaveFile.setMnemonic(KeyEvent.VK_S);
+		mnuSaveFile.addActionListener(this::save);
 		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK ) );
 		mnuFile.add(mnuSaveFile);
 
-		JMenuItem mnuSaveFileAs = new JMenuItem( "Sauvegarder dans le dossier..." );
+		JMenuItem mnuSaveFileAs = new JMenuItem( "Enregistrer sous..." );
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
-		mnuSaveFileAs.setMnemonic( 'A' );
+		mnuSaveFileAs.setMnemonic(KeyEvent.VK_A);
+		mnuSaveFileAs.addActionListener(this::saveAs);
 		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
 
@@ -127,26 +134,26 @@ public class FramePrinc extends JFrame implements KeyListener
 
 		JMenuItem mnuExit = new JMenuItem( "Quitter" );
 		mnuExit.setIcon( new ImageIcon( ImageUtils.openImg("/exit.png", true) ) );
-		mnuExit.setMnemonic( 'x' );
+		mnuExit.setMnemonic(KeyEvent.VK_X);
 		mnuExit.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK) );
 		mnuFile.add(mnuExit);
 		
 		menuBar.add(mnuFile);
 		
 		// Définition du menu déroulant "Edition d'image" et de son contenu
-		JMenu mnuEdit = new JMenu( "Edition d'image" );
-		mnuEdit.setMnemonic( 'I' );
+		JMenu mnuEdit = new JMenu( "Edition" );
+		mnuEdit.setMnemonic(KeyEvent.VK_I);
 		
 		JMenuItem mnuRotG = new JMenuItem( "Rotation à gauche" );
 		mnuRotG.setIcon( new ImageIcon( ImageUtils.openImg("/undo.png", true) ) );
-		mnuRotG.setMnemonic( 'G' );
+		mnuRotG.setMnemonic(KeyEvent.VK_G);
 		mnuRotG.addActionListener( this::mnuRotGListener );
 		mnuRotG.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuRotG);
 
 		JMenuItem mnuRotD = new JMenuItem( "Rotation à droite" );
 		mnuRotD.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuRotD.setMnemonic( 'D' );
+		mnuRotD.setMnemonic(KeyEvent.VK_D);
 		mnuRotD.addActionListener( this::mnuRotDListener );
 		mnuRotD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuRotD);
@@ -155,14 +162,14 @@ public class FramePrinc extends JFrame implements KeyListener
 
 		JMenuItem mnuMirGD = new JMenuItem( "Miroir gauche droite" );
 		mnuMirGD.setIcon( new ImageIcon( ImageUtils.openImg("/miroirGD.png", true) ) );
-		mnuMirGD.setMnemonic( 'L' );
+		mnuMirGD.setMnemonic(KeyEvent.VK_L);
 		mnuMirGD.addActionListener( this::mnuMirGDListener );
 		mnuMirGD.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuMirGD);
 
 		JMenuItem mnuMirHB = new JMenuItem( "Miroir haut bas" );
 		mnuMirHB.setIcon( new ImageIcon( ImageUtils.openImg("/miroirHB.png", true) ) );
-		mnuMirHB.setMnemonic( 'P' );
+		mnuMirHB.setMnemonic(KeyEvent.VK_P);
 		mnuMirHB.addActionListener( this::mnuMirHBListener );
 		mnuMirHB.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuMirHB);
@@ -171,14 +178,14 @@ public class FramePrinc extends JFrame implements KeyListener
 
         JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
 		mnuLumineux.setIcon( new ImageIcon( ImageUtils.openImg("/luminosite.png", true) ) );
-		mnuLumineux.setMnemonic( 'U' );
+		mnuLumineux.setMnemonic(KeyEvent.VK_U);
 		mnuLumineux.addActionListener( this::mnuLumineuxListener );
 		mnuLumineux.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuLumineux);
 
 		JMenuItem mnuSombre = new JMenuItem( "Rendre plus Sombre" );
 		mnuSombre.setIcon( new ImageIcon( ImageUtils.openImg("/Assombrir.png", true) ) );
-		mnuSombre.setMnemonic( 'Y' );
+		mnuSombre.setMnemonic(KeyEvent.VK_Y);
 		mnuSombre.addActionListener( this::mnuSombreListener );
 		mnuSombre.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuSombre);
@@ -187,7 +194,7 @@ public class FramePrinc extends JFrame implements KeyListener
 
         JMenuItem mnuNoirBlanc = new JMenuItem( "Noir et Blanc" );
 		mnuNoirBlanc.setIcon( new ImageIcon( ImageUtils.openImg("/noirblanc.png", true) ) );
-		mnuNoirBlanc.setMnemonic( 'N' );
+		mnuNoirBlanc.setMnemonic(KeyEvent.VK_N);
 		mnuNoirBlanc.addActionListener( this::mnuNoirBlancListener );
 		mnuNoirBlanc.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuNoirBlanc);
@@ -196,19 +203,19 @@ public class FramePrinc extends JFrame implements KeyListener
 		
 		JMenuItem mnuCopy = new JMenuItem( "Copier" );
 		mnuCopy.setIcon( new ImageIcon( ImageUtils.openImg("/copy.png", true) ) );
-		mnuCopy.setMnemonic( 'C' );
+		mnuCopy.setMnemonic(KeyEvent.VK_C);
 		mnuCopy.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuCopy);
 		
 		JMenuItem mnuCut = new JMenuItem( "Couper" );
 		mnuCut.setIcon( new ImageIcon( ImageUtils.openImg("/cut.png", true) ) );
-		mnuCut.setMnemonic( 'X' );
+		mnuCut.setMnemonic(KeyEvent.VK_X);
 		mnuCut.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuCut);
 		
 		JMenuItem mnuPaste = new JMenuItem( "Coller" );
 		mnuPaste.setIcon( new ImageIcon( ImageUtils.openImg("/paste.png", true) ) );
-		mnuPaste.setMnemonic( 'V' );
+		mnuPaste.setMnemonic(KeyEvent.VK_V);
 		mnuPaste.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK) );
 		mnuEdit.add(mnuPaste);
 
@@ -216,24 +223,24 @@ public class FramePrinc extends JFrame implements KeyListener
 
 		
 		// Définition du menu déroulant "Edition de texte" et de son contenu
-		JMenu mnuTexte = new JMenu( "Edition de texte" );
-		mnuTexte.setMnemonic( 'T' );
+		JMenu mnuTexte = new JMenu( "Texte" );
+		mnuTexte.setMnemonic(KeyEvent.VK_T);
 		
-		JMenuItem mnuAjTe = new JMenuItem( "Ajouter un texte" );
+		JMenuItem mnuAjTe = new JMenuItem( "Ajouter du texte" );
 		mnuAjTe.setIcon( new ImageIcon( ImageUtils.openImg("/ajoutZoneTexte.png", true) ) );
-		mnuAjTe.setMnemonic( 'A' );
+		mnuAjTe.setMnemonic(KeyEvent.VK_A);
 		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuAjTe);
 
 		JMenuItem mnuTailTe = new JMenuItem( "Taille du texte" );
 		mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuTailTe.setMnemonic( 'T' );
+		mnuTailTe.setMnemonic(KeyEvent.VK_T);
 		mnuTailTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuTailTe);
 
 		JMenuItem mnuCoulTe = new JMenuItem( "Couleur du texte" );
 		mnuCoulTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuCoulTe.setMnemonic( 'C' );
+		mnuCoulTe.setMnemonic(KeyEvent.VK_C);
 		mnuCoulTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuCoulTe);
 
@@ -242,7 +249,7 @@ public class FramePrinc extends JFrame implements KeyListener
 
 		// Définition du menu déroulant "Help" et de son contenu
 		JMenu mnuHelp = new JMenu( "Help" );
-		mnuHelp.setMnemonic( 'H' );
+		mnuHelp.setMnemonic(KeyEvent.VK_H);
 		
 		menuBar.add( mnuHelp );
 		
@@ -250,36 +257,47 @@ public class FramePrinc extends JFrame implements KeyListener
 	}
 
 	public void mnuOpenFileListener(ActionEvent event) {
+		if (this.isSaved == false && this.isModified()) {
+			int status = JOptionPane.showInternalConfirmDialog(this.getContentPane(), "Votre travail n'est pas sauvegardé, voulez-vous vraiment en disposer ?");
+			if (status != JOptionPane.OK_OPTION)
+				return;
+		}
+		this.openFileChooser("Sélectionnez une image", (fileChooser, result) -> {
+			if (result == JFileChooser.APPROVE_OPTION) {
+				try {
+					this.fichierOuvert = fileChooser.getSelectedFile();
+					
+					// Mettre à jour l'image dans PanelImage
+					this.panelImage.loadImage(ImageIO.read(this.fichierOuvert));
+					this.panelImage.transform.reset();
+					this.setTitle(this.titre);
+					this.panelImage.updateUI();
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Erreur lors du chargement de l'image.");
+				}
+			}
+		});
+	}
+	
+	public void openFileChooser(String titre, IFileChooser action) {
 		// Créer un JFileChooser pour sélectionner un fichier
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setDialogTitle("Sélectionnez une image");
-
+		fileChooser.setDialogTitle(titre);
+		
 		// Filtrer pour n'autoriser que les fichiers image
-				fileChooser.setFileFilter(new FileNameExtensionFilter(
+		fileChooser.setFileFilter(new FileNameExtensionFilter(
 			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
 		));
-
+		
 		// Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
 		int result = fileChooser.showOpenDialog(this);
-		if (result == JFileChooser.APPROVE_OPTION) {
-			try {
-				File selectedFile = fileChooser.getSelectedFile();
-				@SuppressWarnings("unused")
-				String filePath = selectedFile.getAbsolutePath();
-
-				// Mettre à jour l'image dans PanelImage
-				this.panelImage.loadImage(ImageIO.read(selectedFile));
-				this.panelImage.transform.reset();
-				this.panelImage.updateUI();
-
-				// Message de confirmation
-//				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Erreur lors du chargement de l'image.");
-			}
-		}
+		action.onResult(fileChooser, result);
+	}
+	
+	private static interface IFileChooser {
+		public void onResult(JFileChooser fileChooser, int result);
 	}
 
 	public void mnuRotGListener(ActionEvent event) { 
@@ -354,5 +372,80 @@ public class FramePrinc extends JFrame implements KeyListener
 			case KeyEvent.VK_CONTROL -> this.isCtrl = false;
 		}
 	}
+	
+	public boolean isModified() {
+		return this.panelImage.getImage() != null && this.panelImage.transform.hasOperations();
+	}
+	
+	public void setModified() {
+		this.isSaved = false;
+		this.setTitle(this.titre + "*");
+	}
+	
+	public void save(ActionEvent e) {
+		if (this.fichierOuvert == null)
+			return;
+		BufferedImage image = this.panelImage.transform.applyTransforms(this.panelImage.getImage());
+		BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		Graphics2D g2 = out.createGraphics();
+		g2.drawImage(image, 0, 0, null);
+		g2.dispose();
+		try {
+			ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		this.isSaved = true;
+		this.setTitle(this.titre);
+	}
+	
+	public void saveAs(ActionEvent e) {
+		if (this.fichierOuvert == null)
+			return;
+		this.openFileChooser("Enregistrer sous", (fileChooser, result) -> {
+			if (result == JFileChooser.APPROVE_OPTION) {
+				this.fichierOuvert = fileChooser.getSelectedFile();
+			}
+		});
+		this.save(e);
+	}
+	
+	private String getFileExtension(File file) {
+		if (file == null)
+			return null;
+		if (file.isDirectory())
+			return null;
+		String name = this.fichierOuvert.getName();
+		return name.substring(name.indexOf(".") + 1);
+	}
+	
+	@Override
+	public void windowOpened(WindowEvent e) {}
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (this.isSaved == false && this.isModified()) {
+			int status = JOptionPane.showInternalConfirmDialog(this.getContentPane(), "Votre travail n'est pas sauvegardé, voulez-vous vraiment quitter ?");
+			if (status == JOptionPane.CANCEL_OPTION || status == JOptionPane.NO_OPTION)
+				return;
+		}
+		this.dispose();
+	}
+	
+	@Override
+	public void windowClosed(WindowEvent e) {}
+	
+	@Override
+	public void windowIconified(WindowEvent e) {}
+	
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+	
+	@Override
+	public void windowActivated(WindowEvent e) {}
+	
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
 	
 }

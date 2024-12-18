@@ -62,7 +62,7 @@ public class ToolBarBouton extends JButton {
 	public JToolTip createToolTip() {
 		JToolTip tip = super.createToolTip();
 		tip.setForeground(Color.BLACK);
-		tip.setBorder(BorderFactory.createLineBorder(new Color(76, 79, 83)));
+		tip.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		return tip;
 	}
 	
