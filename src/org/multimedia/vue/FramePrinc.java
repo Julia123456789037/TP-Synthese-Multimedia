@@ -38,6 +38,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
+	private JMenu mnuTailTe;
 	
 	private Color selectedColor = Color.BLACK;
 	
@@ -47,9 +48,9 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	
 	private File fichierOuvert;
 	
-    private int textSize = 12;
-    private String textTexte = "";
-    
+	private int textSize = 12;
+	private String textTexte = "";
+	
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
@@ -229,30 +230,22 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuAjTe.addActionListener( this::mnuAjTeListener );
 		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuAjTe);
-		
-		JMenuItem mnuTailTe = new JMenuItem( "Taille du texte" );
-		mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuTailTe.setMnemonic(KeyEvent.VK_T);
-		mnuTailTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
-		mnuTexte.add(mnuTailTe);
+
+		this.mnuTailTe = new JMenu("Taille du texte");
+		this.mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/tailleTexte.png", true) ) );
+		this.mnuTailTe.setMnemonic('T');
 		
 		String[] tailles = { "8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96" };
-		
+
 		for (String taille : tailles) {
 			JMenuItem menuItem = new JMenuItem(taille);
+			menuItem.setOpaque(true);
 			menuItem.addActionListener(e -> { setTextSize(Integer.parseInt(taille)); });
-			mnuTailTe.add(menuItem);
+			this.mnuTailTe.add(menuItem);
+			if ( Integer.parseInt(taille) == this.textSize ) { menuItem.setBackground(Color.GRAY); }
 		}
-		mnuTexte.add(mnuTailTe);
-		
-		menuBar.add(mnuTexte);
-		
-		JMenuItem mnuCoulTe = new JMenuItem( "Couleur du texte" );
-		mnuCoulTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuCoulTe.setMnemonic(KeyEvent.VK_C);
-		mnuCoulTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
-		mnuTexte.add(mnuCoulTe);
 
+		mnuTexte.add( this.mnuTailTe );
 		menuBar.add(mnuTexte);
 		
 		// Définition de menu "Ajustements"
@@ -278,7 +271,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		
 		menuAjust.addSeparator();
 
-        JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
+		JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
 		mnuLumineux.setIcon( new ImageIcon( ImageUtils.openImg("/luminosite.png", true) ) );
 		mnuLumineux.setMnemonic(KeyEvent.VK_U);
 		mnuLumineux.addActionListener(this);
@@ -352,15 +345,31 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	
 	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
-	public void setTextSize(int size) { this.textSize = size; }
+	public void setTextSize(int size) { 
+		this.textSize = size; 
+		this.getBarreOutils().updateComboBoxSize(size);
+		this.updateMenuTextSize(size);
+	}
 	public void setTextTexte(String texte) { this.textTexte = texte; }
+
+	public void updateMenuTextSize(int newSize) {
+		for (int i = 0; i < this.mnuTailTe.getItemCount(); i++) {
+			JMenuItem item = this.mnuTailTe.getItem(i);
+			item.setBackground(null);
+	
+			if (item.getText().equals(String.valueOf(newSize))) {
+				item.setSelected(true); // Mettre en surbrillance l'élément sélectionné
+				item.setBackground(Color.GRAY);
+			}
+		}
+	}
 
 	public void potPeint( int x, int y ) {
 		this.panelImage.transform.fillColor(x, y, this.selectedColor);
 		this.panelImage.updateUI();
 	}
 
-    public void writeText( int x, int y )  {
+	public void writeText( int x, int y )  {
 		this.panelImage.transform.writeText(this.textTexte, x, y, this.textSize, this.selectedColor);
 		this.panelImage.updateUI();
 	}

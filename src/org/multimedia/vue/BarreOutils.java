@@ -107,9 +107,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		String[] taillesTexte = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96"};
 		this.comboTailleTexte = new JComboBox<>(taillesTexte);
-		this.comboTailleTexte.setPreferredSize(new Dimension(70, 40));
-		this.comboTailleTexte.setMaximumSize(new Dimension(70, 40));
-		this.comboTailleTexte.setMinimumSize(new Dimension(70, 40));
+		this.comboTailleTexte.setPreferredSize(new Dimension(80, 40));
+		this.comboTailleTexte.setMaximumSize(new Dimension(80, 40));
+		this.comboTailleTexte.setMinimumSize(new Dimension(80, 40));
 		this.comboTailleTexte.setToolTipText("Taille du texte");
 		this.comboTailleTexte.setSelectedItem("12");
 
@@ -206,6 +206,18 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.ctrl.getFramePrinc().setSelectedColor( couleur );
 		this.couleurSelectionnee = couleur;
 		this.btnCouleur.setBackground( couleur );
+	}
+
+	public void updateComboBoxSize(int newSize) {
+		String newSizeStr = String.valueOf(newSize);
+	
+		// Vérifiez si la taille est dans le JComboBox et mettez-la à jour
+		for (int i = 0; i < this.comboTailleTexte.getItemCount(); i++) {
+			if (this.comboTailleTexte.getItemAt(i).equals(newSizeStr)) {
+				this.comboTailleTexte.setSelectedIndex(i);
+				break;
+			}
+		}
 	}
 
 	public void actionPerformed ( ActionEvent e)
