@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -491,12 +493,10 @@ public class ImageUtils
 	 * @param angle
 	 * @return
 	 */
-	public static BufferedImage rotate(BufferedImage image, double angle)
-	{
-		int largeur = image.getWidth();
+	public static BufferedImage rotate(BufferedImage image, double angle) {
+	    int largeur = image.getWidth();
 	    int hauteur = image.getHeight();
 	    
-	    // Calculer la taille de la nouvelle image
 	    double radians = Math.toRadians(angle);
 	    double sin = Math.abs(Math.sin(radians));
 	    double cos = Math.abs(Math.cos(radians));
@@ -504,34 +504,23 @@ public class ImageUtils
 	    int nouvelleHauteur = (int) Math.ceil(hauteur * cos + largeur * sin);
 	    
 	    BufferedImage resultat = new BufferedImage(nouvelleLargeur, nouvelleHauteur, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2d = resultat.createGraphics();
 	    
-	    // Calculer le centre de l'image originale et de la nouvelle image
-	    double x0 = 0.5 * (largeur - 1);
-	    double y0 = 0.5 * (hauteur - 1);
-	    double xc = 0.5 * (nouvelleLargeur - 1);
-	    double yc = 0.5 * (nouvelleHauteur - 1);
+	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
+	    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_QUALITY);
 	    
-	    for (int y = 0; y < nouvelleHauteur; y++)
-	    {
-	        for (int x = 0; x < nouvelleLargeur; x++)
-	        {
-	            // Calculer la position relative au centre de la nouvelle image
-	            double a = x - xc;
-	            double b = y - yc;
-	            
-	            // Appliquer la rotation inverse et translater vers le centre de l'image originale
-	            int xx = (int) (a * Math.cos(radians) + b * Math.sin(radians) + x0);
-	            int yy = (int) (-a * Math.sin(radians) + b * Math.cos(radians) + y0);
-	            
-	            if (xx >= 0 && xx < largeur && yy >= 0 && yy < hauteur)
-	            {
-	                resultat.setRGB(x, y, image.getRGB(xx, yy));
-	            }
-	        }
-	    }
+	    AffineTransform at = new AffineTransform();
+	    at.translate((nouvelleLargeur - largeur) / 2, (nouvelleHauteur - hauteur) / 2);
+	    at.rotate(radians, largeur / 2, hauteur / 2);
+	    
+	    g2d.setTransform(at);
+	    g2d.drawImage(image, 0, 0, null);
+	    g2d.dispose();
 	    
 	    return resultat;
 	}
+
 	
 	public static BufferedImage invertHorizontal(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);

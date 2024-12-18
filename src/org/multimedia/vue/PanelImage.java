@@ -3,11 +3,14 @@ package org.multimedia.vue;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.multimedia.composants.ImageTransform;
@@ -30,6 +33,7 @@ public class PanelImage extends JPanel {
 	public PanelImage(Controleur ctrl) {
 		this.ctrl = ctrl;
 		this.image = null;
+		this.setFocusable(true);
 		
 		this.transform = new ImageTransform(ctrl);
 		this.mode = ModeEdition.NORMAL;
@@ -41,10 +45,12 @@ public class PanelImage extends JPanel {
 				if (PanelImage.this.image != null) {
 					int x = e.getX(), y = e.getY();
 					switch (PanelImage.this.mode) {
-					case NORMAL          -> {}
-					case PIPETTE         -> pickColor(x, y);
-					case POT_DE_PEINTURE -> paintColor(x, y);
-					default              -> {}
+					case NORMAL				-> {}
+					case PIPETTE			-> pickColor(x, y);
+					case POT_DE_PEINTURE	-> paintColor(x, y);
+					case TEXTE 				-> paintTexte(x, y);
+					//case SELECTION 			-> paintRectangle(x, y);
+					default              	-> {}
 					}
 				}
 			}
@@ -98,6 +104,16 @@ public class PanelImage extends JPanel {
 		return this.image;
 	}
 
+	public void enableStylo(boolean enable) {
+		this.mode = enable ? ModeEdition.TEXTE : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void enableSelection(boolean enable) {
+		this.mode = enable ? ModeEdition.SELECTION : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
 	private void pickColor(int x, int y) {
 		BufferedImage image = this.transform.applyTransforms(this.image);
 		
@@ -129,7 +145,19 @@ public class PanelImage extends JPanel {
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) { frame.PotPeint( imageX, imageY ); }
+			if (frame != null) { frame.potPeint( imageX, imageY ); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
+	}
+
+	private synchronized void paintTexte(int x, int y) {
+		// Calculer la position de l'image dans le panneau
+		int imageX = x - (getWidth() - this.image.getWidth()) / 2;  // Décalage horizontal
+		int imageY = y - (getHeight() - this.image.getHeight()) / 2; // Décalage vertical
+
+		// Vérification que les coordonnées sont dans les limites de l'image
+		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+			FramePrinc frame = this.ctrl.getFramePrinc();
+			if (frame != null) { frame.writeText( imageX, imageY); }
 		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 }
