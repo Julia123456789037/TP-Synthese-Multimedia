@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
-import java.awt.Component;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -256,7 +255,7 @@ public class FramePrinc extends JFrame
 		// Définition du menu déroulant "Help" et de son contenu
 		this.mnuHelp = new JMenu( "Help" );
 		this.mnuHelp.setMnemonic( 'H' );
-		this.mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK) );
+		this.mnuAjTe.setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK ) );
 		
 		this.menuBar.add( this.mnuHelp );
 		
@@ -269,27 +268,27 @@ public class FramePrinc extends JFrame
 		fileChooser.setDialogTitle("Sélectionnez une image");
 
 		// Filtrer pour n'autoriser que les fichiers image
-				fileChooser.setFileFilter(new FileNameExtensionFilter(
-			"Fichiers Image (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
-		));
+				fileChooser.setFileFilter( new FileNameExtensionFilter(
+			"Fichiers Image ( JPG, PNG, GIF )", "jpg", "jpeg", "png", "gif"
+		) );
 
 		// Afficher la boîte de dialogue et vérifier si l'utilisateur a sélectionné un fichier
 		int result = fileChooser.showOpenDialog(this);
-		if (result == JFileChooser.APPROVE_OPTION) {
+		if ( result == JFileChooser.APPROVE_OPTION ) {
 			try {
 				File selectedFile = fileChooser.getSelectedFile();
-				@SuppressWarnings("unused")
+				@SuppressWarnings( "unused" )
 				String filePath = selectedFile.getAbsolutePath();
 
 				// Charger l'image en tant que BufferedImage
-				this.bFimage = ImageIO.read(selectedFile);
+				this.bFimage = ImageIO.read( selectedFile) ;
 
 				// Mettre à jour l'image dans PanelImage
-				this.panelImage.loadImage(this.bFimage);
+				this.panelImage.loadImage( this.bFimage );
 				this.panelImage.transform.reset();
 				this.panelImage.updateUI();
 
-			} catch (Exception ex) {
+			} catch ( Exception ex ) {
 				ex.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Erreur lors du chargement de l'image.");
 			}

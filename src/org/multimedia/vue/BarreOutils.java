@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.event.DocumentListener;
 
-import org.multimedia.composants.ModeEdition;
 import org.multimedia.composants.ToolBarBouton;
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
@@ -53,7 +52,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/* Création des composants       */
 		/*-------------------------------*/
 
-		// Bouton 1 avec une image
+
+		this.btnImporteImage = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnImporteImage.setToolTipText("changer d'image");
+		this.btnImporteImage.setActionCommand("changeImage");
+
 		this.btnSauvegarder = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
 		this.btnSauvegarder.setToolTipText("Sauvegarder");
 		this.btnSauvegarder.setActionCommand("Sauvegarder");
@@ -113,26 +116,26 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		this.textFieldTexte.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { onTextChanged(); }
+            public void insertUpdate( DocumentEvent e ) { onTextChanged(); }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { onTextChanged(); }
+            public void removeUpdate( DocumentEvent e ) { onTextChanged(); }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { onTextChanged(); }
+            public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
 
             // Méthode appelée à chaque changement de texte
             private void onTextChanged() {
                 String texte = textFieldTexte.getText();
-                ctrl.getFramePrinc().setTextTexte(texte); // Appeler la méthode dans FramePrinc
+                ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
             }
         });
 
 		this.comboTailleTexte.addActionListener(e -> {
-			String tailleSelectionnee = (String) comboTailleTexte.getSelectedItem();
-			if (tailleSelectionnee != null) {
-				int tailleTexte = Integer.parseInt(tailleSelectionnee);
-				this.ctrl.getFramePrinc().setTextSize(tailleTexte);
+			String tailleSelectionnee = ( String ) comboTailleTexte.getSelectedItem();
+			if ( tailleSelectionnee != null ) {
+				int tailleTexte = Integer.parseInt( tailleSelectionnee );
+				this.ctrl.getFramePrinc().setTextSize( tailleTexte );
 			}
 		});
 
@@ -143,37 +146,40 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		
 		// Même taille des bouton pour tous
-		uniformiserBouton(this.btnSauvegarder);
-		uniformiserBouton(this.btnUndo);
-		uniformiserBouton(this.btnRedo);
-		uniformiserBouton(this.btnCurseur);
-		uniformiserBouton(this.btnCouleur);
-		uniformiserBouton(this.btnPipette);
-		uniformiserBouton(this.btnPotPeinture);
-		uniformiserBouton(this.btnCreerRectangle);
-		uniformiserBouton(this.btnCreerRond);
-		uniformiserBouton(this.btnAjouterTexte);
+		uniformiserBouton( this.btnImporteImage );
+		uniformiserBouton( this.btnSauvegarder );
+		uniformiserBouton( this.btnUndo );
+		uniformiserBouton( this.btnRedo );
+		uniformiserBouton( this.btnCurseur );
+		uniformiserBouton( this.btnCouleur );
+		uniformiserBouton( this.btnPipette );
+		uniformiserBouton( this.btnPotPeinture );
+		uniformiserBouton( this.btnCreerRectangle );
+		uniformiserBouton( this.btnCreerRond );
+		uniformiserBouton( this.btnAjouterTexte );
 
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add(this.btnSauvegarder);
-		this.add(this.btnUndo);
-		this.add(this.btnRedo);
-		this.add(this.btnCurseur);
-		this.add(this.btnCouleur);
-		this.add(this.btnPipette);
-		this.add(this.btnPotPeinture);
-		this.add(this.btnCreerRectangle);
-		this.add(this.btnCreerRond);
-		this.add(this.btnAjouterTexte);
-		this.add(this.comboTailleTexte);
-		this.add(this.textFieldTexte);
+		this.add( this.btnImporteImage );
+		this.add( this.btnSauvegarder );
+		this.add( this.btnUndo );
+		this.add( this.btnRedo );
+		this.add( this.btnCurseur );
+		this.add( this.btnCouleur );
+		this.add( this.btnPipette );
+		this.add( this.btnPotPeinture );
+		this.add( this.btnCreerRectangle );
+		this.add( this.btnCreerRond );
+		this.add( this.btnAjouterTexte );
+		this.add( this.comboTailleTexte );
+		this.add( this.textFieldTexte );
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
+		this.btnImporteImage 	.addActionListener(this);
 		this.btnSauvegarder 	.addActionListener(this);
 		this.btnUndo			.addActionListener(this);
 		this.btnRedo			.addActionListener(this);
@@ -191,18 +197,19 @@ public class BarreOutils extends JToolBar implements ActionListener
 	@Override
 	public int getHeight() { return 40; }
 
-	public void setCouleurSelectionnee(Color couleur) {
-		this.ctrl.getFramePrinc().setSelectedColor(couleur);
+	public void setCouleurSelectionnee( Color couleur ) {
+		this.ctrl.getFramePrinc().setSelectedColor( couleur );
 		this.couleurSelectionnee = couleur;
-		this.btnCouleur.setBackground(couleur);
+		this.btnCouleur.setBackground( couleur );
 	}
 
 	public void actionPerformed ( ActionEvent e)
 	{
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
-		switch (e.getActionCommand()) {
+		switch ( e.getActionCommand() ) {
+			case "changeImage" -> { this.ctrl.getFramePrinc().mnuOpenFileListener(e); }
 			case "Sauvegarder" -> { /*this.ctrl.sauvegarder ();*/ }
-			case "Pipette" 			-> { panelIm.enablePipetteMode(! panelIm.isPipetteMode() ); }
+			case "Pipette" 			-> { panelIm.enablePipetteMode( ! panelIm.isPipetteMode() ); }
 			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( ! panelIm.isPotPeintureMode() ); }
 			case "Couleur" -> {
 				// Ouvrir le sélecteur de couleur
@@ -230,8 +237,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 	}
 
 	private void uniformiserBouton(JButton bouton) {
-		bouton.setPreferredSize(new Dimension(40, 40));
-		bouton.setMaximumSize(new Dimension(40, 40));
-		bouton.setMinimumSize(new Dimension(40, 40));
+		bouton.setPreferredSize ( new Dimension( 40, 40 ) );
+		bouton.setMaximumSize   ( new Dimension( 40, 40 ) );
+		bouton.setMinimumSize   ( new Dimension( 40, 40 ) );
 	}
 }
