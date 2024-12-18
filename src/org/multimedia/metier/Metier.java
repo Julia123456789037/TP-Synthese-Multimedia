@@ -124,4 +124,8 @@ public class Metier {
 		}
 	}
 
+	public void delFigure(Figure selectedFigure) {
+		this.lstFigure.remove(selectedFigure);
+	}
+
 }

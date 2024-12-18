@@ -7,28 +7,34 @@ import javax.swing.*;
 
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.io.IOException;
 import java.awt.event.*;
 
 import org.multimedia.main.Controleur;
 import org.multimedia.metier.Figure;
+import org.multimedia.vue.FrameImport;
 
 public class PanelImage extends JPanel implements ActionListener {
-	private Controleur ctrl;
-	private BufferedImage image;
-	private boolean pipetteMode = false; // Mode pipette activé/désactivé
-	private Color couleurSelectionnee = Color.BLACK;
-	private Cursor cursorPipette;
+	protected Controleur ctrl;
+	protected BufferedImage image;
+	protected boolean pipetteMode = false; // Mode pipette activé/désactivé
+	protected Color couleurSelectionnee = Color.BLACK;
+	protected Cursor cursorPipette;
 
 	// Bordel de seb !
 
-	private JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere;
-	private int startX, startY, currentX, currentY;
+	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave, btnImportSource;
+	protected int startX;
+	protected int startY;
+	protected int currentX;
+	protected int currentY;
+	private FrameImport sourceFrame;
 
-	private JComboBox JcbFigure;
-	private JLabel lblRect, lblOval;
-	private char typeSelection;
+	protected JComboBox JcbFigure;
+	protected JLabel lblRect, lblOval;
+	protected char typeSelection;
 
-	private JCheckBox chkCreateMode;
+	protected JCheckBox chkCreateMode;
 
 	@SuppressWarnings("unchecked")
 	public PanelImage(Controleur ctrl) {
@@ -52,6 +58,8 @@ public class PanelImage extends JPanel implements ActionListener {
 		});
 
 		this.chkCreateMode = new JCheckBox("Create Figure Mode", false);
+
+		this.btnImportSource = new JButton("Import Source");
 
 		JPanel panelTracer, panelAction;
 		this.typeSelection = 'c';
@@ -97,11 +105,13 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.btnArrierePlan = new JButton("Arrière plan");
 		this.btnAvant = new JButton("1 plan avant");
 		this.btnArriere = new JButton("1 plan arrière");
+		this.btnSave = new JButton("Sauvegarder");
 
 		// positionnement des composants
 		panelAction.add(this.JcbFigure);
 		panelAction.add(this.chkCreateMode);
-
+		panelAction.add(btnImportSource);
+		panelAction.add(this.btnSave);
 		panelAction.add(btnPremierPlan);
 		panelAction.add(btnArrierePlan);
 		panelAction.add(this.btnAvant);
@@ -112,16 +122,22 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		// activation des composants
 
-		
 		GereSouris gereSouris = new GereSouris();
 
 		btnPremierPlan.addActionListener(this);
 		btnArrierePlan.addActionListener(this);
 		this.btnAvant.addActionListener(this);
 		this.btnArriere.addActionListener(this);
+		this.btnSave.addActionListener(this);
+		btnImportSource.addActionListener(this);
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
+	
+
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+
 	}
 
 	@Override
@@ -220,6 +236,14 @@ public class PanelImage extends JPanel implements ActionListener {
 		enablePipetteMode(false);
 	}
 
+	private void openSourcePanel() {
+
+		sourceFrame = new FrameImport(this.ctrl);
+		sourceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		sourceFrame.setVisible(true);
+	}
+
 	public Point getImageLocationOnScreen() {
 		return this.getLocationOnScreen();
 	}
@@ -262,6 +286,66 @@ public class PanelImage extends JPanel implements ActionListener {
 				this.ctrl.planAvant(index); // Call ArrierePlan with the figure index
 				this.repaint();
 			}
+		} else if (evt.getSource() == this.btnSave) {
+			// Get the index of the selected figure
+			this.saveImageWithOverlap(new File("rendu.png"));
+		} else if (evt.getSource() == this.btnImportSource) {
+			// Get the index of the selected figure
+			this.openSourcePanel();
+		}
+
+	}
+
+	
+
+	public void saveImageWithOverlap(File outputFile) {
+		int imageX = (getWidth() - image.getWidth()) / 2;
+		int imageY = (getHeight() - image.getHeight()) / 2;
+		Rectangle imageBounds = new Rectangle(imageX, imageY, image.getWidth(), image.getHeight());
+
+		for (int i = 0; i < this.ctrl.getNbFigure(); i++) {
+			Figure figure = this.ctrl.getFigure(i);
+
+			// Figure bounds
+			int figureLeft = figure.getCentreX() - figure.getTailleX() / 2;
+			int figureTop = figure.getCentreY() - figure.getTailleY() / 2;
+			Rectangle figureBounds = new Rectangle(figureLeft, figureTop, figure.getTailleX(), figure.getTailleY());
+
+			// Intersection between figure and image
+			Rectangle intersection = figureBounds.intersection(imageBounds);
+
+			if (!intersection.isEmpty()) {
+				// Modify image pixels
+				for (int y = intersection.y; y < intersection.y + intersection.height; y++) {
+					for (int x = intersection.x; x < intersection.x + intersection.width; x++) {
+						// Calculate relative coordinates in the image
+						int relativeX = x - imageX;
+						int relativeY = y - imageY;
+
+						// Ensure coordinates are within bounds for the image
+						if (relativeX >= 0 && relativeX < image.getWidth() &&
+								relativeY >= 0 && relativeY < image.getHeight() &&
+								figure.possede(x, y)) {
+
+							int figureColor = figure.getFigureImage().getRGB(x - figureLeft, y - figureTop);
+
+							int alpha = (figureColor >> 24) & 0xFF;
+							if (alpha > 0) { // On dessinne seulement si ce n'est PAS TRANSPARENT
+
+								image.setRGB(relativeX, relativeY,
+										figure.getFigureImage().getRGB(x - figureLeft, y - figureTop));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		try {
+			// Save the modified image to the output file
+			ImageIO.write(image, "png", outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -289,7 +373,8 @@ public class PanelImage extends JPanel implements ActionListener {
 						fig.setSelected(false);
 					}
 				}
-				this.figSelected.setSelected(true);
+				if (this.figSelected != null)
+					this.figSelected.setSelected(true);
 
 				if (!foundFigure) {
 					for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
@@ -340,6 +425,7 @@ public class PanelImage extends JPanel implements ActionListener {
 				// Create the figure based on the selected type
 				if (JcbFigure.getSelectedItem() == lblRect) {
 					PanelImage.this.ctrl.ajouterFigure(x, y, width, height, 'r', image);
+
 				} else if (JcbFigure.getSelectedItem() == lblOval) {
 					PanelImage.this.ctrl.ajouterFigure(x, y, width, height, 'o', image);
 				}

@@ -74,5 +74,9 @@ public class Controleur {
 	}
 
     public static void main(String[] a){ new Controleur(); }
+
+	public void delFigure(Figure selectedFigure) {
+		this.metier.delFigure(selectedFigure);
+	}
     
 }
