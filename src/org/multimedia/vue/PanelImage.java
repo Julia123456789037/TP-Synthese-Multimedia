@@ -2,6 +2,7 @@ package org.multimedia.vue;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 import org.multimedia.composants.ImageTransform;
 import org.multimedia.composants.ModeEdition;
 import org.multimedia.main.Controleur;
+import org.multimedia.util.Arithmetique;
 
 public class PanelImage extends JPanel {
 	
@@ -53,8 +55,7 @@ public class PanelImage extends JPanel {
 			}
 		});
 	}
-
-	public void setImage(BufferedImage image) { this.image = image; repaint(); }
+	
 	public boolean isPotPeintureMode()		{  return this.mode == ModeEdition.POT_DE_PEINTURE; }
 	public boolean isPipetteMode()			{  return this.mode == ModeEdition.PIPETTE; }
 	public boolean isStyloMode()			{  return this.mode == ModeEdition.TEXTE; }
@@ -72,13 +73,33 @@ public class PanelImage extends JPanel {
 			int x = ( getWidth()  - image.getWidth()  ) / 2;
 			int y = ( getHeight() - image.getHeight() ) / 2;
 			
-			g.setColor( Color.WHITE );
-			g.fillRect( x, y, image.getWidth(), image.getHeight() );
+			g.drawImage(this.drawCheckerBoard(image.getWidth(), image.getHeight()), x, y, this);
 			
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage( image, x, y, this );
 		}
 		g.dispose();
+	}
+	
+	private BufferedImage drawCheckerBoard(int width, int height) {
+		BufferedImage res = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		int squareW = Arithmetique.commDiv(width, height) * 4;
+		
+		Graphics2D g2d = res.createGraphics();
+		
+		final Color darker   = new Color(125, 125, 125, 255 / 2);
+		final Color brighter = new Color(200, 200, 200, 255 / 2);
+		
+		for (int y = 0; y < height / squareW; y++) {
+			for (int x = 0; x < width / squareW; x++) {
+				g2d.setColor((x + y) % 2 == 0 ? brighter : darker);
+				g2d.fillRect(x * squareW, y * squareW, squareW, squareW);
+			}
+		}
+		g2d.dispose();
+		
+		return res;
 	}
 	
 	@Override
@@ -143,9 +164,11 @@ public class PanelImage extends JPanel {
 	}
 
 	private synchronized void paintColor(int x, int y) {
+		BufferedImage image = this.transform.applyTransforms(this.image);
+		
 		// Calculer la position de l'image dans le panneau
-		int imageX = x - ( getWidth()  - this.image.getWidth()  ) / 2;
-		int imageY = y - ( getHeight() - this.image.getHeight() ) / 2;
+		int imageX = x - (getWidth() - image.getWidth()) / 2;  // Décalage horizontal
+		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
 
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
@@ -155,9 +178,11 @@ public class PanelImage extends JPanel {
 	}
 
 	private synchronized void paintTexte(int x, int y) {
+		BufferedImage image = this.transform.applyTransforms(this.image);
+		
 		// Calculer la position de l'image dans le panneau
-		int imageX = x - ( getWidth()  - this.image.getWidth()  ) / 2;
-		int imageY = y - ( getHeight() - this.image.getHeight() ) / 2;
+		int imageX = x - (getWidth() - image.getWidth()) / 2;  // Décalage horizontal
+		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
 
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
