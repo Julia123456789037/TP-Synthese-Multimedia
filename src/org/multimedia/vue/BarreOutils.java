@@ -25,7 +25,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 	private Controleur ctrl;
 	private JButton		btnSauvegarder;
-	private JButton		btnImporteImage;
+	private JButton		btnOuvrirImage;
 	private JButton		btnPipette;
 	private JButton		btnPotPeinture;
 	private JButton		btnCouleur;
@@ -35,11 +35,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JButton 	btnUndo;
 	private JButton 	btnRedo;
 	private JButton 	btnCurseur;
-
-	private JComboBox<String> comboTailleTexte;
-
 	private JButton		btnAutreFrame;
 	private JButton		btnFondTransp;
+
+	private JComboBox<String> comboTailleTexte;
 	
 	private Color couleurSelectionnee = Color.BLACK;
 	private JTextField textFieldTexte; 
@@ -54,7 +53,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/* Création des composants       */
 		/*-------------------------------*/
 
-		// Bouton 1 avec une image
+
+		this.btnOuvrirImage = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnOuvrirImage.setToolTipText("changer d'image");
+		this.btnOuvrirImage.setActionCommand("changeImage");
+
 		this.btnSauvegarder = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
 		this.btnSauvegarder.setToolTipText("Sauvegarder");
 		this.btnSauvegarder.setActionCommand("Sauvegarder");
@@ -86,6 +89,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture.setToolTipText("Pot de peinture");
 		this.btnPotPeinture.setActionCommand("PotDePeinture");
 
+		this.btnFondTransp = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/fondTransp.png", true) ));
+		this.btnFondTransp.setToolTipText("Fond transparent");
+		this.btnFondTransp.setActionCommand("FondTransparent");
+
 		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/carrePointi.png", true) ));
 		this.btnCreerRectangle.setToolTipText("Copier un rectangle");
 		this.btnCreerRectangle.setActionCommand("CopierRectangle");
@@ -100,9 +107,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		String[] taillesTexte = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96"};
 		this.comboTailleTexte = new JComboBox<>(taillesTexte);
-		this.comboTailleTexte.setPreferredSize(new Dimension(70, 40));
-		this.comboTailleTexte.setMaximumSize(new Dimension(70, 40));
-		this.comboTailleTexte.setMinimumSize(new Dimension(70, 40));
+		this.comboTailleTexte.setPreferredSize(new Dimension(80, 40));
+		this.comboTailleTexte.setMaximumSize(new Dimension(80, 40));
+		this.comboTailleTexte.setMinimumSize(new Dimension(80, 40));
 		this.comboTailleTexte.setToolTipText("Taille du texte");
 		this.comboTailleTexte.setSelectedItem("12");
 
@@ -114,83 +121,103 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		this.textFieldTexte.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { onTextChanged(); }
+            public void insertUpdate( DocumentEvent e ) { onTextChanged(); }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { onTextChanged(); }
+            public void removeUpdate( DocumentEvent e ) { onTextChanged(); }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { onTextChanged(); }
+            public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
 
             // Méthode appelée à chaque changement de texte
             private void onTextChanged() {
                 String texte = textFieldTexte.getText();
-                ctrl.getFramePrinc().setTextTexte(texte); // Appeler la méthode dans FramePrinc
+                ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
             }
         });
 
 		this.comboTailleTexte.addActionListener(e -> {
-			String tailleSelectionnee = (String) comboTailleTexte.getSelectedItem();
-			if (tailleSelectionnee != null) {
-				int tailleTexte = Integer.parseInt(tailleSelectionnee);
-				this.ctrl.getFramePrinc().setTextSize(tailleTexte);
+			String tailleSelectionnee = ( String ) comboTailleTexte.getSelectedItem();
+			if ( tailleSelectionnee != null ) {
+				int tailleTexte = Integer.parseInt( tailleSelectionnee );
+				this.ctrl.getFramePrinc().setTextSize( tailleTexte );
 			}
 		});
 
-		
-	
-		//this.btnAutreFrame         = new ToolBarBouton("Importer une Image");
-		//this.btnFondTransp         = new ToolBarBouton("Fond Transparent");
+		this.btnAutreFrame = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnAutreFrame.setToolTipText("charger une autre image");
+		this.btnAutreFrame.setActionCommand("changeAutreImage");
 
 		
-		// Même taille des bouton pour tous
-		uniformiserBouton(this.btnSauvegarder);
-		uniformiserBouton(this.btnUndo);
-		uniformiserBouton(this.btnRedo);
-		uniformiserBouton(this.btnCurseur);
-		uniformiserBouton(this.btnCouleur);
-		uniformiserBouton(this.btnPipette);
-		uniformiserBouton(this.btnPotPeinture);
-		uniformiserBouton(this.btnCreerRectangle);
-		uniformiserBouton(this.btnCreerRond);
-		uniformiserBouton(this.btnAjouterTexte);
+		// Même taille des bouton pour tous 
+		uniformiserBouton( this.btnOuvrirImage );
+		uniformiserBouton( this.btnSauvegarder );
+		uniformiserBouton( this.btnUndo );
+		uniformiserBouton( this.btnRedo );
+		uniformiserBouton( this.btnCurseur );
+		uniformiserBouton( this.btnCouleur );
+		uniformiserBouton( this.btnPipette );
+		uniformiserBouton( this.btnPotPeinture );
+		uniformiserBouton( this.btnFondTransp );
+		uniformiserBouton( this.btnCreerRectangle );
+		uniformiserBouton( this.btnCreerRond );
+		uniformiserBouton( this.btnAjouterTexte );
+		uniformiserBouton( this.btnAutreFrame );
 
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add(this.btnSauvegarder);
-		this.add(this.btnUndo);
-		this.add(this.btnRedo);
-		this.add(this.btnCurseur);
-		this.add(this.btnCouleur);
-		this.add(this.btnPipette);
-		this.add(this.btnPotPeinture);
-		this.add(this.btnCreerRectangle);
-		this.add(this.btnCreerRond);
-		this.add(this.btnAjouterTexte);
-		this.add(this.comboTailleTexte);
-		this.add(this.textFieldTexte);
+		this.add( this.btnOuvrirImage );
+		this.add( this.btnSauvegarder );
+		this.add( this.btnUndo );
+		this.add( this.btnRedo );
+		this.add( this.btnCurseur );
+		this.add( this.btnCouleur );
+		this.add( this.btnPipette );
+		this.add( this.btnPotPeinture );
+		this.add( this.btnFondTransp );
+		this.add( this.btnCreerRectangle );
+		this.add( this.btnCreerRond );
+		this.add( this.btnAjouterTexte );
+		this.add( this.comboTailleTexte );
+		this.add( this.textFieldTexte );
+		this.add( this.btnAutreFrame );
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
-		this.btnSauvegarder   .addActionListener(this);
-		this.btnUndo          .addActionListener(this);
-		this.btnRedo          .addActionListener(this);
-		this.btnCouleur       .addActionListener(this);
-		this.btnPipette       .addActionListener(this);
-		this.btnPotPeinture   .addActionListener(this);
-		this.btnAjouterTexte  .addActionListener(this);
-		this.btnCreerRectangle.addActionListener(this);
-		this.btnCreerRond     .addActionListener(this);
-		this.btnCurseur       .addActionListener(this);
+		this.btnOuvrirImage    .addActionListener(this);
+		this.btnSauvegarder     .addActionListener(this);
+		this.btnUndo            .addActionListener(this);
+		this.btnRedo            .addActionListener(this);
+		this.btnCurseur         .addActionListener(this);
+		this.btnCouleur         .addActionListener(this);
+		this.btnPipette         .addActionListener(this);
+		this.btnPotPeinture     .addActionListener(this);
+		this.btnFondTransp      .addActionListener(this);
+		this.btnAjouterTexte    .addActionListener(this);
+		this.btnCreerRectangle  .addActionListener(this);
+		this.btnCreerRond       .addActionListener(this);
+		this.btnAutreFrame      .addActionListener(this);
 	}
 
-	public void setCouleurSelectionnee(Color couleur) {
-		this.ctrl.getFramePrinc().setSelectedColor(couleur);
+	public void setCouleurSelectionnee( Color couleur ) {
+		this.ctrl.getFramePrinc().setSelectedColor( couleur );
 		this.couleurSelectionnee = couleur;
-		this.btnCouleur.setBackground(couleur);
+		this.btnCouleur.setBackground( couleur );
+	}
+
+	public void updateComboBoxSize(int newSize) {
+		String newSizeStr = String.valueOf(newSize);
+	
+		// Vérifiez si la taille est dans le JComboBox et mettez-la à jour
+		for (int i = 0; i < this.comboTailleTexte.getItemCount(); i++) {
+			if (this.comboTailleTexte.getItemAt(i).equals(newSizeStr)) {
+				this.comboTailleTexte.setSelectedIndex(i);
+				break;
+			}
+		}
 	}
 
 	public void actionPerformed ( ActionEvent e)
@@ -199,9 +226,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		if (panelIm.getImage() == null)
 			return;
 		switch (e.getActionCommand()) {
+			case "changeImage" -> { this.ctrl.getFramePrinc().mnuOpenFileListener(e); }
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
-			case "Pipette"       -> panelIm.enablePipetteMode(true);
-			case "PotDePeinture" -> panelIm.enablePotPeintureMode(!panelIm.isPotPeintureMode());
+			case "Pipette"       -> panelIm.enablePipetteMode( ! panelIm.isPipetteMode() );
+			case "PotDePeinture" -> panelIm.enablePotPeintureMode( !panelIm.isPotPeintureMode() );
+			case "FondTransparent" 	-> {  }
 			case "Couleur"       -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
@@ -223,13 +252,14 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.transform.redo();
 				panelIm.updateUI();
 			}
-			case "SourisNormal" 	-> panelIm.curseurMode();
+			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
+			case "changeAutreImage" 	-> { /* TODO seb */ }
 		}
 	}
 
 	private void uniformiserBouton(JButton bouton) {
-		bouton.setPreferredSize(new Dimension(40, 40));
-		bouton.setMaximumSize(new Dimension(40, 40));
-		bouton.setMinimumSize(new Dimension(40, 40));
+		bouton.setPreferredSize ( new Dimension( 40, 40 ) );
+		bouton.setMaximumSize   ( new Dimension( 40, 40 ) );
+		bouton.setMinimumSize   ( new Dimension( 40, 40 ) );
 	}
 }
