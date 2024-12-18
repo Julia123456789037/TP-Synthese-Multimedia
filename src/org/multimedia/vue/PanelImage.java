@@ -158,7 +158,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 	public void setImage(BufferedImage image) {
 		this.image = image;
-		//repaint();
+		repaint();
 	}
 
 	public boolean isPotPeintureMode() {
@@ -271,7 +271,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	@Override
 	public void updateUI() {
 		super.updateUI();
-		////this.repaint();
+		this.repaint();
 	}
 
 	public void loadImage(BufferedImage image) {
@@ -393,7 +393,7 @@ public class PanelImage extends JPanel implements ActionListener {
 																					// selected figure index
 			if (index != -1) {
 				this.ctrl.premierPlan(index); // Call premierPlan with the figure index
-				//this.repaint();
+				this.repaint();
 			}
 		}
 
@@ -403,19 +403,19 @@ public class PanelImage extends JPanel implements ActionListener {
 			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
 				this.ctrl.ArrierePlan(index);
-				//this.repaint();
+				this.repaint();
 			}
 		} else if (evt.getSource() == this.btnArriere) {
 			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
 				this.ctrl.planArriere(index);
-				//this.repaint();
+				this.repaint();
 			}
 		} else if (evt.getSource() == this.btnAvant) {
 			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
 				this.ctrl.planAvant(index);
-				//this.repaint();
+				this.repaint();
 			}
 		} else if (evt.getSource() == this.btnSave) {
 			// Get the index of the selected figure
