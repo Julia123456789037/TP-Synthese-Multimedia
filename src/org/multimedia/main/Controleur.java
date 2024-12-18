@@ -1,11 +1,12 @@
 package org.multimedia.main;
 
+import javax.swing.SwingUtilities;
 import java.awt.image.BufferedImage;
 import org.multimedia.metier.*;
 import org.multimedia.vue.FramePrinc;
 
 public class Controleur {
-    private FramePrinc ihm;
+	private FramePrinc ihm;
 	private Metier  metier;
 
 	// Constructeur
@@ -73,10 +74,12 @@ public class Controleur {
 		this.metier.planArriere(numFigure);
 	}
 
-    public static void main(String[] a){ new Controleur(); }
+	public static void main(String[] a) {
+		SwingUtilities.invokeLater(Controleur::new);
+	}
 
 	public void delFigure(Figure selectedFigure) {
 		this.metier.delFigure(selectedFigure);
 	}
-    
+	
 }

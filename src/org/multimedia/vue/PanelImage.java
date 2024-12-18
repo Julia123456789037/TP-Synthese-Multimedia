@@ -1,6 +1,12 @@
 package org.multimedia.vue;
 
-import java.awt.*;
+import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
+import org.multimedia.main.Controleur;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
@@ -37,22 +43,43 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected JCheckBox chkCreateMode;
 
 	@SuppressWarnings("unchecked")
+import java.io.Serial;
+import javax.swing.JPanel;
+
+public class PanelImage extends JPanel {
+	
+	@Serial
+	private static final long serialVersionUID = 8341091164745892107L;
+	
+	private Controleur ctrl;
+	private BufferedImage image;
+	
+	private ModeEdition mode;
+	
+	final ImageTransform transform;
+
 	public PanelImage(Controleur ctrl) {
 		this.ctrl = ctrl;
 		this.image = null;
-
-		// Charger l'icône de pipette personnalisée pour le curseur
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Image pipetteImage = toolkit.getImage(getClass().getResource("/pipette.png"));
-		Point hotSpot = new Point(0, 0); // Position active de la pipette (pointe)
-		this.cursorPipette = toolkit.createCustomCursor(pipetteImage, hotSpot, "Pipette");
+		
+		this.transform = new ImageTransform();
+		this.mode = ModeEdition.NORMAL;
 
 		// Ajouter un écouteur de souris pour récupérer la couleur
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (pipetteMode && image != null) {
-					pickColor(e.getX(), e.getY());
+				if (PanelImage.this.image != null) {
+					int x = e.getX(), y = e.getY();
+					switch (PanelImage.this.mode) {
+					case NORMAL				-> {}
+					case PIPETTE			-> pickColor(x, y);
+					case POT_DE_PEINTURE	-> paintColor(x, y);
+					case STYLO 				-> paintTexte(x, y);
+					//case SELECTION_RECT 			-> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
+					//case SELECTION_ROND 			-> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
+					default              	-> {}
+					}
 				}
 			}
 		});
@@ -140,19 +167,32 @@ public class PanelImage extends JPanel implements ActionListener {
 
 	}
 
+	public void setImage(BufferedImage image) { this.image = image; repaint(); }
+	public boolean isPotPeintureMode()		{  if (this.mode == ModeEdition.POT_DE_PEINTURE )	{ return true; } else { return false; } }
+	public boolean isPipetteMode()			{  if (this.mode == ModeEdition.PIPETTE ) 			{ return true; } else { return false; } }
+	public boolean isStyloMode()			{  if (this.mode == ModeEdition.STYLO ) 			{ return true; } else { return false; } }
+	public boolean isSelectionRectMode()	{  if (this.mode == ModeEdition.SELECTION_RECT )	{ return true; } else { return false; } }
+	public boolean isSelectionRondMode() 	{  if (this.mode == ModeEdition.SELECTION_ROND )	{ return true; } else { return false; } }
+	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
+				Graphics2D g2 = (Graphics2D) g;
 
 		// Dessiner l'image si elle existe
 		if (this.image != null) {
-			int x = (getWidth() - this.image.getWidth()) / 2; // Centrer l'image horizontalement
-			int y = (getHeight() - this.image.getHeight()) / 2; // Centrer l'image verticalement
-
+			BufferedImage image = this.transform.applyTransforms(this.image);
+			int x = (getWidth() - image.getWidth()) / 2; // Centrer l'image horizontalement
+			int y = (getHeight() - image.getHeight()) / 2; // Centrer l'image verticalement
+			
+			g.setColor(Color.WHITE);
+			g.fillRect(x, y, image.getWidth(), image.getHeight());
+			
 			// Dessiner l'image avec ses dimensions d'origine
-			g.drawImage(this.image, x, y, this);
+			g.drawImage(image, x, y, this);
 		}
+		g.dispose();
 		// 2. Draw all figures
 		for (int i = 0; i < ctrl.getNbFigure(); i++) {
 			Figure fig = ctrl.getFigure(i);
@@ -198,22 +238,49 @@ public class PanelImage extends JPanel implements ActionListener {
 			}
 		}
 	}
-
-	public void setImage(BufferedImage image) {
-		this.image = image;
-		repaint();
+	
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		this.repaint();
 	}
+	
+	public void loadImage(BufferedImage image) { this.image = image; }
 
 	public void enablePipetteMode(boolean enable) {
-		this.pipetteMode = enable;
-		if (enable) {
-			setCursor(cursorPipette); // Appliquer le curseur pipette
-		} else {
-			setCursor(Cursor.getDefaultCursor());
-		}
+		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+	
+	public void enablePotPeintureMode(boolean enable) {
+		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
+		System.out.println("this.mode = "+this.mode);
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void enableStylo(boolean enable) {
+		this.mode = enable ? ModeEdition.STYLO : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void enableSelectionRect(boolean enable) {
+		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void enableSelectionRond(boolean enable) {
+		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
+	}
+
+	public void CurseurMode( ) { 
+		this.mode = ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor); 
 	}
 
 	private void pickColor(int x, int y) {
+		BufferedImage image = this.transform.applyTransforms(this.image);
+		
 		// Calculer le décalage de l'image dans le panneau
 		int imageX = x - (getWidth() - image.getWidth()) / 2; // Décalage horizontal
 		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
