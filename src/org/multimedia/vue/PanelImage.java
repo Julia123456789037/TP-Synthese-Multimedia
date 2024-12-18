@@ -1,9 +1,5 @@
 package org.multimedia.vue;
 
-import org.multimedia.composants.ImageTransform;
-import org.multimedia.composants.ModeEdition;
-import org.multimedia.main.Controleur;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -11,7 +7,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
+
 import javax.swing.JPanel;
+
+import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
+import org.multimedia.main.Controleur;
 
 public class PanelImage extends JPanel {
 	
@@ -28,8 +29,9 @@ public class PanelImage extends JPanel {
 	public PanelImage( Controleur ctrl ) {
 		this.ctrl = ctrl;
 		this.image = null;
+		this.setFocusable(true);
 		
-		this.transform = new ImageTransform();
+		this.transform = new ImageTransform(ctrl);
 		this.mode = ModeEdition.NORMAL;
 
 		// Ajouter un écouteur de souris pour récupérer la couleur
@@ -40,11 +42,11 @@ public class PanelImage extends JPanel {
 					int x = e.getX(), y = e.getY();
 					switch ( PanelImage.this.mode ) {
 					case NORMAL				-> {}
-					case PIPETTE			-> pickColor( x, y );
-					case POT_DE_PEINTURE	-> paintColor( x, y ); 
-					case STYLO 				-> paintTexte( x, y );
-					//case SELECTION_RECT 			-> fRect( x, y ); //TODO: fonction fRect est la fonctionde seb pour dessiner le rectangle
-					//case SELECTION_ROND 			-> fRond( x, y ); //TODO: fonction fRond est la fonctionde seb pour dessiner le rond
+					case PIPETTE			-> pickColor(x, y);
+					case POT_DE_PEINTURE	-> paintColor(x, y);
+					case TEXTE 				-> paintTexte(x, y);
+					//case SELECTION_RECT 			-> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
+					//case SELECTION_ROND 			-> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
 					default              	-> {}
 					}
 				}
@@ -52,13 +54,13 @@ public class PanelImage extends JPanel {
 		});
 	}
 
-	public void    setImage( BufferedImage image ) { this.image = image; repaint(); }
-	public boolean isPotPeintureMode()             { if (this.mode == ModeEdition.POT_DE_PEINTURE )   { return true; } else { return false; } }
-	public boolean isPipetteMode()                 { if (this.mode == ModeEdition.PIPETTE )           { return true; } else { return false; } }
-	public boolean isStyloMode()                   { if (this.mode == ModeEdition.STYLO )             { return true; } else { return false; } }
-	public boolean isSelectionRectMode()           { if (this.mode == ModeEdition.SELECTION_RECT )    { return true; } else { return false; } }
-	public boolean isSelectionRondMode()           { if (this.mode == ModeEdition.SELECTION_ROND )    { return true; } else { return false; } }
-	public Point   getImageLocationOnScreen()      { return this.getLocationOnScreen(); }
+	public void setImage(BufferedImage image) { this.image = image; repaint(); }
+	public boolean isPotPeintureMode()		{  return this.mode == ModeEdition.POT_DE_PEINTURE; }
+	public boolean isPipetteMode()			{  return this.mode == ModeEdition.PIPETTE; }
+	public boolean isStyloMode()			{  return this.mode == ModeEdition.TEXTE; }
+	public boolean isSelectionRectMode()	{  return this.mode == ModeEdition.SELECTION_RECT; }
+	public boolean isSelectionRondMode() 	{  return this.mode == ModeEdition.SELECTION_ROND; }
+	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
 
 	@Override
 	protected void paintComponent( Graphics g ) {
@@ -96,10 +98,14 @@ public class PanelImage extends JPanel {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
 		this.setCursor( this.mode.cursor );
 	}
+	
+	public BufferedImage getImage() {
+		return this.image;
+	}
 
-	public void enableStylo( boolean enable ) {
-		this.mode = enable ? ModeEdition.STYLO : ModeEdition.NORMAL;
-		this.setCursor( this.mode.cursor );
+	public void enableStylo(boolean enable) {
+		this.mode = enable ? ModeEdition.TEXTE : ModeEdition.NORMAL;
+		this.setCursor(this.mode.cursor);
 	}
 
 	public void enableSelectionRect( boolean enable ) {
@@ -112,7 +118,7 @@ public class PanelImage extends JPanel {
 		this.setCursor( this.mode.cursor );
 	}
 
-	public void CurseurMode( ) { 
+	public void curseurMode( ) { 
 		this.mode = ModeEdition.NORMAL;
 		this.setCursor( this.mode.cursor ); 
 	}
@@ -144,8 +150,8 @@ public class PanelImage extends JPanel {
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if ( frame != null ) { frame.PotPeint( imageX, imageY ); }
-		} else { System.out.println( "Les coordonnées sont en dehors de l'image." ); }
+			if (frame != null) { frame.potPeint( imageX, imageY ); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
 	private synchronized void paintTexte(int x, int y) {

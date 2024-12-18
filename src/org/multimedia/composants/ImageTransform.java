@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
 import org.multimedia.util.Text;
 
@@ -13,9 +14,12 @@ public class ImageTransform {
 	
 	private int currentIndex;
 	
-	public ImageTransform() {
+	private Controleur ctrl;
+	
+	public ImageTransform(Controleur ctrl) {
+		this.ctrl = ctrl;
 		this.operations = new LinkedList<>();
-		this.reset();
+		this.currentIndex = -1;
 	}
 
 	public void addRotation(int rotation) {
@@ -30,34 +34,53 @@ public class ImageTransform {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
 	}
 
-	public void fillColor( int x, int y, Color color ) {
-		this.addOperation(image -> ImageUtils.fill(image, x, y, color));
+	public void fillColor(int x, int y, Color color) {
+		this.addOperation(image -> {
+			try {
+				return ImageUtils.fill(image, x, y, color);
+			} catch (IllegalArgumentException e) {
+				return image;
+			}
+		});
 	}
 
 	public void applyBrightness( int brightness ) {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
-	}    
-
-	public void toGreyScale() { 
-		this.addOperation(image -> ImageUtils.toGreyScale( image )); 
 	}
+	
+	public void applyContrast(int contrast) {
+		this.addOperation(image -> ImageUtils.applyContrast(image, contrast));
+	}    
+	
+    public void toGreyScale() {
+        this.addOperation(image -> ImageUtils.toGreyScale( image ));
+    }
+    
+    public void undo() {
+    	if (!this.canEdit())
+			return;
+        this.currentIndex = Math.max(-1, this.currentIndex - 1);
+        this.ctrl.getFramePrinc().setModified();
+    }
+	public void redo() {
+		if (!this.canEdit())
+			return;
+        this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1);
+        this.ctrl.getFramePrinc().setModified();
+    }
 
 	public void writeText(String text, int x, int y, int size, Color color) { 
 		this.addOperation(image -> ImageUtils.writeText( image, new Text.Builder(text, x, y).size(size).color(color).build() )); 
 	}
 	
-	public void undo() { 
-		this.currentIndex = Math.max(-1, this.currentIndex - 1); 
-	}
-	public void redo() { 
-		this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1); 
-	}
-	
 	private void addOperation(Operation o) {
+		if (!this.canEdit())
+			return;
 		while (this.currentIndex + 1 != this.operations.size())
 			this.operations.removeLast();
 		this.operations.add(o);
 		this.currentIndex++;
+		this.ctrl.getFramePrinc().setModified();
 	}
 	
 	public BufferedImage applyTransforms(BufferedImage image) {
@@ -67,9 +90,18 @@ public class ImageTransform {
 		return res;
 	}
 	
+	public boolean canEdit() {
+		return this.ctrl.getFramePrinc().getPanelImage().getImage() != null;
+	}
+	
 	public void reset() {
 		this.operations.clear();
 		this.currentIndex = -1;
+		this.ctrl.getFramePrinc().setModified();
+	}
+	
+	public boolean hasOperations() {
+		return this.operations.size() == this.currentIndex + 1 && this.operations.size() > 0;
 	}
 	
 	public static interface Operation {

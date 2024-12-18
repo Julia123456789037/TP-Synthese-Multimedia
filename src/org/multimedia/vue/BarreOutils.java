@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
-import javax.swing.event.DocumentEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -12,6 +11,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.multimedia.composants.ToolBarBouton;
@@ -46,6 +46,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public BarreOutils(Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
+		this.setBackground(new Color(200, 200, 200));
+		this.setFocusable(false);
 		
 		/*-------------------------------*/
 		/* Création des composants       */
@@ -195,15 +197,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture     .addActionListener(this);
 		this.btnFondTransp      .addActionListener(this);
 		this.btnAjouterTexte    .addActionListener(this);
-		this.btnCouleur         .addActionListener(this);
 		this.btnCreerRectangle  .addActionListener(this);
 		this.btnCreerRond       .addActionListener(this);
 		this.btnAutreFrame      .addActionListener(this);
-		
 	}
-	
-	@Override
-	public int getHeight() { return 40; }
 
 	public void setCouleurSelectionnee( Color couleur ) {
 		this.ctrl.getFramePrinc().setSelectedColor( couleur );
@@ -214,13 +211,15 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public void actionPerformed ( ActionEvent e)
 	{
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
-		switch ( e.getActionCommand() ) {
+		if (panelIm.getImage() == null)
+			return;
+		switch (e.getActionCommand()) {
 			case "changeImage" -> { this.ctrl.getFramePrinc().mnuOpenFileListener(e); }
-			case "Sauvegarder" -> { /*this.ctrl.sauvegarder ();*/ }
-			case "Pipette" 			-> { panelIm.enablePipetteMode( ! panelIm.isPipetteMode() ); }
-			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( ! panelIm.isPotPeintureMode() ); }
+			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
+			case "Pipette"       -> panelIm.enablePipetteMode( ! panelIm.isPipetteMode() );
+			case "PotDePeinture" -> panelIm.enablePotPeintureMode( !panelIm.isPotPeintureMode() );
 			case "FondTransparent" 	-> {  }
-			case "Couleur" -> {
+			case "Couleur"       -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
 
@@ -241,7 +240,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.transform.redo();
 				panelIm.updateUI();
 			}
-			case "SourisNormal" 	-> { panelIm.CurseurMode( ); }
+			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
 			case "changeAutreImage" 	-> { /* TODO seb */ }
 		}
 	}

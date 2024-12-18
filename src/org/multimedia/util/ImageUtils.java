@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -396,7 +398,8 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, 0, 0, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
+//		pixelLoop(img, 0, 0, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
+		pixelLoop(img, (x0, y0) -> res.setRGB(x + x0, y + y0, img.getRGB(x0, y0)));
 		return res;
 	}
 	
@@ -432,7 +435,13 @@ public class ImageUtils
 		if (x < 0 || y < 0 || x + img.getWidth() > source.getWidth() || y + img.getHeight() > source.getHeight())
 			throw new IndexOutOfBoundsException("Include coordinates out of bounds on source image");
 		BufferedImage res = Builder.deepClone0(source);
-		pixelLoop(img, 0, 0, (x0, y0) ->
+//		pixelLoop(img, 0, 0, (x0, y0) ->
+//		{
+//			int rgb0 = img.getRGB(x0, y0);
+//			if (rgb0 != rgb)
+//				res.setRGB(x + x0, y + y0, rgb0);
+//		});
+		pixelLoop(img, (x0, y0) ->
 		{
 			int rgb0 = img.getRGB(x0, y0);
 			if (rgb0 != rgb)
@@ -484,12 +493,10 @@ public class ImageUtils
 	 * @param angle
 	 * @return
 	 */
-	public static BufferedImage rotate(BufferedImage image, double angle)
-	{
-		int largeur = image.getWidth();
+	public static BufferedImage rotate(BufferedImage image, double angle) {
+	    int largeur = image.getWidth();
 	    int hauteur = image.getHeight();
 	    
-	    // Calculer la taille de la nouvelle image
 	    double radians = Math.toRadians(angle);
 	    double sin = Math.abs(Math.sin(radians));
 	    double cos = Math.abs(Math.cos(radians));
@@ -497,46 +504,37 @@ public class ImageUtils
 	    int nouvelleHauteur = (int) Math.ceil(hauteur * cos + largeur * sin);
 	    
 	    BufferedImage resultat = new BufferedImage(nouvelleLargeur, nouvelleHauteur, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2d = resultat.createGraphics();
 	    
-	    // Calculer le centre de l'image originale et de la nouvelle image
-	    double x0 = 0.5 * (largeur - 1);
-	    double y0 = 0.5 * (hauteur - 1);
-	    double xc = 0.5 * (nouvelleLargeur - 1);
-	    double yc = 0.5 * (nouvelleHauteur - 1);
+	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
+	    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_QUALITY);
 	    
-	    for (int y = 0; y < nouvelleHauteur; y++)
-	    {
-	        for (int x = 0; x < nouvelleLargeur; x++)
-	        {
-	            // Calculer la position relative au centre de la nouvelle image
-	            double a = x - xc;
-	            double b = y - yc;
-	            
-	            // Appliquer la rotation inverse et translater vers le centre de l'image originale
-	            int xx = (int) (a * Math.cos(radians) + b * Math.sin(radians) + x0);
-	            int yy = (int) (-a * Math.sin(radians) + b * Math.cos(radians) + y0);
-	            
-	            if (xx >= 0 && xx < largeur && yy >= 0 && yy < hauteur)
-	            {
-	                resultat.setRGB(x, y, image.getRGB(xx, yy));
-	            }
-	        }
-	    }
+	    AffineTransform at = new AffineTransform();
+	    at.translate((nouvelleLargeur - largeur) / 2, (nouvelleHauteur - hauteur) / 2);
+	    at.rotate(radians, largeur / 2, hauteur / 2);
+	    
+	    g2d.setTransform(at);
+	    g2d.drawImage(image, 0, 0, null);
+	    g2d.dispose();
 	    
 	    return resultat;
 	}
+
 	
 	public static BufferedImage invertHorizontal(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int width = res.getWidth();
-		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+//		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
+		pixelLoop(img, (x, y) -> res.setRGB(width - x - 1, y, img.getRGB(x, y)));
 		return res;
 	}
 	
 	public static BufferedImage invertVertical(BufferedImage img) {
 		BufferedImage res = Builder.clone(img);
 		int height = res.getHeight();
-		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+//		pixelLoop(img, 0, 0, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
+		pixelLoop(img, (x, y) -> res.setRGB(x, height - y - 1, img.getRGB(x, y)));
 		return res;
 	}
 	
@@ -575,7 +573,8 @@ public class ImageUtils
 	public static BufferedImage invertFilter(BufferedImage img)
 	{
 		BufferedImage tmp = Builder.clone(img);
-		pixelLoop(img, 0, 0, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
+//		pixelLoop(img, 0, 0, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
+		pixelLoop(img, (x, y) -> tmp.setRGB(x, y, img.getRGB(x, y) & 0xFFFFFF));
 		return tmp;
 	}
 	
@@ -585,17 +584,27 @@ public class ImageUtils
 	 * @param img
 	 * @param pi
 	 */
-	static void pixelLoop(BufferedImage img, int x, int y, PixelIterator pi)
+	static void pixelLoop(BufferedImage img, PixelIterator pi)
 	{
-		if (img == null || pi == null)
-			return;
-		if (x >= img.getWidth() || y >= img.getHeight())
-			return;
-		pi.applyFilter(x, y);
-		pixelLoop(img, x + 1, y,     pi);
-		pixelLoop(img, x,     y + 1, pi);
-		pixelLoop(img, x + 1, y + 1, pi);
+		for (int x = 0; x < img.getWidth(); x++)
+		{
+			for (int y = 0; y < img.getHeight(); y++)
+			{
+				pi.applyFilter(x, y);
+			}
+		}
 	}
+//	static void pixelLoop(BufferedImage img, int x, int y, PixelIterator pi)
+//	{
+//		if (img == null || pi == null)
+//			return;
+//		if (x >= img.getWidth() || y >= img.getHeight())
+//			return;
+//		pi.applyFilter(x, y);
+//		pixelLoop(img, x + 1, y,     pi);
+//		pixelLoop(img, x,     y + 1, pi);
+//		pixelLoop(img, x + 1, y + 1, pi);
+//	}
 	
 	public static List<BufferedImage> cutOut(BufferedImage img, int width, int height) {
 		List<BufferedImage> lst = new ArrayList<>();
