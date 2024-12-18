@@ -341,9 +341,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		public void onResult(JFileChooser fileChooser, int result);
 	}
 
-	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(true); }
-	
-	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
+	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(! this.panelImage.isStyloMode()); }
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
 	public void setTextSize(int size) { 
 		this.textSize = size; 
