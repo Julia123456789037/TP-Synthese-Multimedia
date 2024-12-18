@@ -34,6 +34,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JButton		btnCreerRond;
 	private JButton 	btnUndo;
 	private JButton 	btnRedo;
+	private JButton 	btnCurseur;
 
 	private JComboBox<String> comboTailleTexte;
 
@@ -64,6 +65,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnRedo.setToolTipText("Refaire");
 		this.btnRedo.setActionCommand("Redo");
 
+		this.btnCurseur = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/curseur.png", true)));
+		this.btnCurseur.setToolTipText("Souris normal");
+		this.btnCurseur.setActionCommand("SourisNormal");
+
 		this.btnCouleur = new ToolBarBouton();
 		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
 		this.btnCouleur.setActionCommand("Couleur");
@@ -79,11 +84,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture.setToolTipText("Pot de peinture");
 		this.btnPotPeinture.setActionCommand("PotDePeinture");
 
-		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
+		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/carrePointi.png", true) ));
 		this.btnCreerRectangle.setToolTipText("Copier un rectangle");
 		this.btnCreerRectangle.setActionCommand("CopierRectangle");
 
-		this.btnCreerRond = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/noirblanc.png", true) ));
+		this.btnCreerRond = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/rondPointi.png", true) ));
 		this.btnCreerRond.setToolTipText("Copier un rond");
 		this.btnCreerRond.setActionCommand("CopierRond");
 
@@ -129,6 +134,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 				this.ctrl.getFramePrinc().setTextSize(tailleTexte);
 			}
 		});
+
+		
 	
 		//this.btnAutreFrame         = new ToolBarBouton("Importer une Image");
 		//this.btnFondTransp         = new ToolBarBouton("Fond Transparent");
@@ -138,6 +145,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		uniformiserBouton(this.btnSauvegarder);
 		uniformiserBouton(this.btnUndo);
 		uniformiserBouton(this.btnRedo);
+		uniformiserBouton(this.btnCurseur);
 		uniformiserBouton(this.btnCouleur);
 		uniformiserBouton(this.btnPipette);
 		uniformiserBouton(this.btnPotPeinture);
@@ -152,6 +160,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.add(this.btnSauvegarder);
 		this.add(this.btnUndo);
 		this.add(this.btnRedo);
+		this.add(this.btnCurseur);
 		this.add(this.btnCouleur);
 		this.add(this.btnPipette);
 		this.add(this.btnPotPeinture);
@@ -167,6 +176,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnSauvegarder 	.addActionListener(this);
 		this.btnUndo			.addActionListener(this);
 		this.btnRedo			.addActionListener(this);
+		this.btnCurseur			.addActionListener(this);
 		this.btnCouleur			.addActionListener(this);
 		this.btnPipette     	.addActionListener(this);
 		this.btnPotPeinture 	.addActionListener(this);
@@ -214,6 +224,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.transform.redo();
 				panelIm.updateUI();
 			}
+			case "SourisNormal" 	-> { panelIm.CurseurMode( ); }
 		}
 	}
 

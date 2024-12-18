@@ -1,5 +1,9 @@
 package org.multimedia.vue;
 
+import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
+import org.multimedia.main.Controleur;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -7,13 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
-
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.multimedia.composants.ImageTransform;
-import org.multimedia.composants.ModeEdition;
-import org.multimedia.main.Controleur;
 
 public class PanelImage extends JPanel {
 	
@@ -83,9 +81,7 @@ public class PanelImage extends JPanel {
 		this.repaint();
 	}
 	
-	public void loadImage(BufferedImage image) {
-		this.image = image;
-	}
+	public void loadImage(BufferedImage image) { this.image = image; }
 
 	public void enablePipetteMode(boolean enable) {
 		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
@@ -106,6 +102,8 @@ public class PanelImage extends JPanel {
 		this.mode = enable ? ModeEdition.SELECTION : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
 	}
+
+	public void CurseurMode( ) { this.setCursor(ModeEdition.NORMAL.cursor); }
 
 	private void pickColor(int x, int y) {
 		BufferedImage image = this.transform.applyTransforms(this.image);
