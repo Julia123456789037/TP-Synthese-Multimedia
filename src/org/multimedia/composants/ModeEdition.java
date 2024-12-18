@@ -10,13 +10,12 @@ public enum ModeEdition {
 	PIPETTE			(getCursor("/pipette.png",     new Point( 0, 20))),
 	POT_DE_PEINTURE	(getCursor("/potPeinture.png", new Point(15, 10))),
 	STYLO			(getCursor("/stylo.png", new Point(0, 0))), //TODO changer les points
-	SELECTION		(getCursor("/plus.png", new Point(0, 0)));
+	SELECTION_RECT	(getCursor("/plus.png", new Point(0, 0))),
+	SELECTION_ROND	(getCursor("/plus.png", new Point(0, 0)));
 	
 	public final Cursor cursor;
 	
-	private ModeEdition(Cursor cursor) {
-		this.cursor = cursor;
-	}
+	private ModeEdition(Cursor cursor) { this.cursor = cursor; }
 	
 //	private static Cursor getCursor(String file) {
 //		return ModeEdition.getCursor(file, new Point(0, 0));
