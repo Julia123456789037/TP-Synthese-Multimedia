@@ -190,9 +190,9 @@ public class FramePrinc extends JFrame
 
 		this.mnuSombre = new JMenuItem( "Rendre plus Sombre" );
 		this.mnuSombre.setIcon( new ImageIcon( ImageUtils.openImg("/Assombrir.png", true) ) );
-		this.mnuSombre.setMnemonic( 'Y' );
+		this.mnuSombre.setMnemonic( 'J' );
 		this.mnuSombre.addActionListener( this::mnuSombreListener );
-		this.mnuSombre.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK) );
+		this.mnuSombre.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK) );
 		this.mnuEdit.add(this.mnuSombre);
 		
 		this.mnuEdit.addSeparator();

@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.event.DocumentListener;
 
+import org.multimedia.composants.ModeEdition;
 import org.multimedia.composants.ToolBarBouton;
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
@@ -201,8 +202,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
 		switch (e.getActionCommand()) {
 			case "Sauvegarder" -> { /*this.ctrl.sauvegarder ();*/ }
-			case "Pipette" 			-> { panelIm.enablePipetteMode(true); }
-			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( !panelIm.isPotPeintureMode() ); }
+			case "Pipette" 			-> { panelIm.enablePipetteMode(! panelIm.isPipetteMode() ); }
+			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( ! panelIm.isPotPeintureMode() ); }
 			case "Couleur" -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
@@ -213,9 +214,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
 			}
-			case "CopierRectangle" 	-> { panelIm.enableSelection(true); }
-			case "CopierRond" 		-> { panelIm.enableSelection(true); }
-			case "AjouterDuTexte" 	-> { panelIm.enableStylo(true); }
+			case "CopierRectangle" 	-> { panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() ); }
+			case "CopierRond" 		-> { panelIm.enableSelectionRond( ! panelIm.isSelectionRondMode() ); }
+			case "AjouterDuTexte" 	-> { panelIm.enableStylo( ! panelIm.isStyloMode() ); }
 			case "Undo" -> {
 				panelIm.transform.undo();
 				panelIm.updateUI();
@@ -227,8 +228,6 @@ public class BarreOutils extends JToolBar implements ActionListener
 			case "SourisNormal" 	-> { panelIm.CurseurMode( ); }
 		}
 	}
-
-	
 
 	private void uniformiserBouton(JButton bouton) {
 		bouton.setPreferredSize(new Dimension(40, 40));
