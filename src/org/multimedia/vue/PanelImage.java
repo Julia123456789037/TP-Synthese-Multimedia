@@ -4,9 +4,16 @@ import org.multimedia.composants.ImageTransform;
 import org.multimedia.composants.ModeEdition;
 import org.multimedia.main.Controleur;
 
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
@@ -20,6 +27,8 @@ import org.multimedia.main.Controleur;
 import org.multimedia.metier.Figure;
 import org.multimedia.vue.FrameImport;
 
+import java.io.Serial;
+
 public class PanelImage extends JPanel implements ActionListener {
 	protected Controleur ctrl;
 	protected BufferedImage image;
@@ -27,8 +36,8 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected Color couleurSelectionnee = Color.BLACK;
 	protected Cursor cursorPipette;
 
-	// Bordel de seb !
-
+	
+	protected char creationFigure = ' ';
 	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave, btnImportSource;
 	protected int startX;
 	protected int startY;
@@ -40,28 +49,20 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected JLabel lblRect, lblOval;
 	protected char typeSelection;
 
-	protected JCheckBox chkCreateMode;
 
-	@SuppressWarnings("unchecked")
-import java.io.Serial;
-import javax.swing.JPanel;
 
-public class PanelImage extends JPanel {
-	
 	@Serial
 	private static final long serialVersionUID = 8341091164745892107L;
-	
-	private Controleur ctrl;
-	private BufferedImage image;
-	
+
 	private ModeEdition mode;
-	
+
 	final ImageTransform transform;
 
+	@SuppressWarnings("unchecked")
 	public PanelImage(Controleur ctrl) {
 		this.ctrl = ctrl;
 		this.image = null;
-		
+
 		this.transform = new ImageTransform();
 		this.mode = ModeEdition.NORMAL;
 
@@ -69,22 +70,25 @@ public class PanelImage extends JPanel {
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
 				if (PanelImage.this.image != null) {
 					int x = e.getX(), y = e.getY();
 					switch (PanelImage.this.mode) {
-					case NORMAL				-> {}
-					case PIPETTE			-> pickColor(x, y);
-					case POT_DE_PEINTURE	-> paintColor(x, y);
-					case STYLO 				-> paintTexte(x, y);
-					//case SELECTION_RECT 			-> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
-					//case SELECTION_ROND 			-> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
-					default              	-> {}
+						case NORMAL -> {
+						}
+						case PIPETTE -> pickColor(x, y);
+						case POT_DE_PEINTURE -> paintColor(x, y);
+						case STYLO -> paintTexte(x, y);
+						//case SELECTION_RECT -> ; 
+						//case SELECTION_ROND -> PanelImage.this.setCreationFigure('o');  
+						default -> {
+						}
 					}
 				}
 			}
 		});
 
-		this.chkCreateMode = new JCheckBox("Create Figure Mode", false);
+		
 
 		this.btnImportSource = new JButton("Import Source");
 
@@ -98,35 +102,13 @@ public class PanelImage extends JPanel {
 		panelAction = new JPanel(new FlowLayout());
 
 		panelTracer.setOpaque(false);
-		panelAction.setOpaque(false);
+		panelAction.setOpaque(true);
 
 		this.lblOval = new JLabel("Ovale");
 		this.lblRect = new JLabel("Rectangle");
 
 		// initialisation de la JCOMBOBOX
-		this.JcbFigure = new JComboBox<>(new JLabel[] { lblOval, lblRect });
-		JcbFigure.setRenderer(new ListCellRenderer<Object>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
-					boolean isSelected, boolean cellHasFocus) {
-				if (value instanceof JLabel) {
-					JLabel label = (JLabel) value;
-					JLabel displayLabel = new JLabel(label.getText()); // Display only the text
-					displayLabel.setOpaque(true);
-
-					// Customize appearance for selection and focus
-					if (isSelected) {
-						displayLabel.setBackground(list.getSelectionBackground());
-						displayLabel.setForeground(list.getSelectionForeground());
-					} else {
-						displayLabel.setBackground(list.getBackground());
-						displayLabel.setForeground(list.getForeground());
-					}
-					return displayLabel;
-				}
-				return new JLabel(); // Fallback for unexpected types
-			}
-		});
+		
 
 		this.btnPremierPlan = new JButton("1er plan");
 		this.btnArrierePlan = new JButton("Arrière plan");
@@ -135,17 +117,21 @@ public class PanelImage extends JPanel {
 		this.btnSave = new JButton("Sauvegarder");
 
 		// positionnement des composants
-		panelAction.add(this.JcbFigure);
-		panelAction.add(this.chkCreateMode);
-		panelAction.add(btnImportSource);
-		panelAction.add(this.btnSave);
-		panelAction.add(btnPremierPlan);
-		panelAction.add(btnArrierePlan);
-		panelAction.add(this.btnAvant);
-		panelAction.add(this.btnArriere);
 
-		this.add(panelTracer, BorderLayout.CENTER);
-		this.add(panelAction, BorderLayout.SOUTH);
+		// this.add(panelTracer, BorderLayout.CENTER);
+		SwingUtilities.invokeLater(() -> {
+			// Modifications des composants ici
+			panelAction.add(btnImportSource);
+			panelAction.add(this.btnSave);
+			panelAction.add(btnPremierPlan);
+			panelAction.add(btnArrierePlan);
+			panelAction.add(this.btnAvant);
+			panelAction.add(this.btnArriere);
+			panelAction.revalidate();
+			panelAction.repaint();
+		});
+		this.add(panelAction, BorderLayout.NORTH);
+
 
 		// activation des composants
 
@@ -160,39 +146,80 @@ public class PanelImage extends JPanel {
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
-	
 
 		this.setFocusable(true);
 		this.requestFocusInWindow();
-
 	}
 
-	public void setImage(BufferedImage image) { this.image = image; repaint(); }
-	public boolean isPotPeintureMode()		{  if (this.mode == ModeEdition.POT_DE_PEINTURE )	{ return true; } else { return false; } }
-	public boolean isPipetteMode()			{  if (this.mode == ModeEdition.PIPETTE ) 			{ return true; } else { return false; } }
-	public boolean isStyloMode()			{  if (this.mode == ModeEdition.STYLO ) 			{ return true; } else { return false; } }
-	public boolean isSelectionRectMode()	{  if (this.mode == ModeEdition.SELECTION_RECT )	{ return true; } else { return false; } }
-	public boolean isSelectionRondMode() 	{  if (this.mode == ModeEdition.SELECTION_ROND )	{ return true; } else { return false; } }
-	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
+	public void setCreationFigure(char c) {
+		this.creationFigure = c;
+		System.out.println(c);
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
+		//repaint();
+	}
+
+	public boolean isPotPeintureMode() {
+		if (this.mode == ModeEdition.POT_DE_PEINTURE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isPipetteMode() {
+		if (this.mode == ModeEdition.PIPETTE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isStyloMode() {
+		if (this.mode == ModeEdition.STYLO) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isSelectionRectMode() {
+		if (this.mode == ModeEdition.SELECTION_RECT) {
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isSelectionRondMode() {
+		if (this.mode == ModeEdition.SELECTION_ROND) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-				Graphics2D g2 = (Graphics2D) g;
+		Graphics2D g2 = (Graphics2D) g;
 
 		// Dessiner l'image si elle existe
 		if (this.image != null) {
 			BufferedImage image = this.transform.applyTransforms(this.image);
 			int x = (getWidth() - image.getWidth()) / 2; // Centrer l'image horizontalement
 			int y = (getHeight() - image.getHeight()) / 2; // Centrer l'image verticalement
-			
+
 			g.setColor(Color.WHITE);
 			g.fillRect(x, y, image.getWidth(), image.getHeight());
-			
+
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage(image, x, y, this);
 		}
-		g.dispose();
+	
 		// 2. Draw all figures
 		for (int i = 0; i < ctrl.getNbFigure(); i++) {
 			Figure fig = ctrl.getFigure(i);
@@ -202,6 +229,7 @@ public class PanelImage extends JPanel {
 				int top = fig.getCentreY() - fig.getTailleY() / 2;
 
 				BufferedImage figureImage = fig.getFigureImage();
+				
 				if (figureImage != null) {
 					g2.drawImage(figureImage, left, top, null);
 				}
@@ -222,7 +250,7 @@ public class PanelImage extends JPanel {
 		}
 
 		// 3. Draw the preview of the figure being created (if in create mode)
-		if (chkCreateMode.isSelected()) {
+		if (creationFigure != ' ') {
 			int left = Math.min(startX, currentX);
 			int top = Math.min(startY, currentY);
 			int width = Math.abs(currentX - startX);
@@ -231,30 +259,33 @@ public class PanelImage extends JPanel {
 			g2.setColor(Color.GRAY);
 			g2.setStroke(new BasicStroke(2));
 
-			if (JcbFigure.getSelectedItem() == lblRect) {
+			if (creationFigure == 'r') {
 				g2.drawRect(left, top, width, height);
-			} else if (JcbFigure.getSelectedItem() == lblOval) {
+			} else if (creationFigure == 'o') {
 				g2.drawOval(left, top, width, height);
 			}
 		}
+		g.dispose();
 	}
-	
+
 	@Override
 	public void updateUI() {
 		super.updateUI();
-		this.repaint();
+		////this.repaint();
 	}
-	
-	public void loadImage(BufferedImage image) { this.image = image; }
+
+	public void loadImage(BufferedImage image) {
+		this.image = image;
+	}
 
 	public void enablePipetteMode(boolean enable) {
 		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
 	}
-	
+
 	public void enablePotPeintureMode(boolean enable) {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
-		System.out.println("this.mode = "+this.mode);
+		System.out.println("this.mode = " + this.mode);
 		this.setCursor(this.mode.cursor);
 	}
 
@@ -265,22 +296,26 @@ public class PanelImage extends JPanel {
 
 	public void enableSelectionRect(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
+		char c = enable ? 'r' : ' ';
+		PanelImage.this.setCreationFigure(c);
 		this.setCursor(this.mode.cursor);
 	}
 
 	public void enableSelectionRond(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
+		char c = enable ? 'o' : ' ';
+		PanelImage.this.setCreationFigure(c);
 		this.setCursor(this.mode.cursor);
 	}
 
-	public void CurseurMode( ) { 
+	public void CurseurMode() {
 		this.mode = ModeEdition.NORMAL;
-		this.setCursor(this.mode.cursor); 
+		this.setCursor(this.mode.cursor);
 	}
 
 	private void pickColor(int x, int y) {
 		BufferedImage image = this.transform.applyTransforms(this.image);
-		
+
 		// Calculer le décalage de l'image dans le panneau
 		int imageX = x - (getWidth() - image.getWidth()) / 2; // Décalage horizontal
 		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
@@ -301,6 +336,38 @@ public class PanelImage extends JPanel {
 
 		// Désactiver le mode pipette après avoir sélectionné la couleur
 		enablePipetteMode(false);
+	}
+
+	private synchronized void paintColor(int x, int y) {
+		// Calculer la position de l'image dans le panneau
+		int imageX = x - (getWidth() - this.image.getWidth()) / 2; // Décalage horizontal
+		int imageY = y - (getHeight() - this.image.getHeight()) / 2; // Décalage vertical
+
+		// Vérification que les coordonnées sont dans les limites de l'image
+		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+			FramePrinc frame = this.ctrl.getFramePrinc();
+			if (frame != null) {
+				frame.PotPeint(imageX, imageY);
+			}
+		} else {
+			System.out.println("Les coordonnées sont en dehors de l'image.");
+		}
+	}
+
+	private synchronized void paintTexte(int x, int y) {
+		// Calculer la position de l'image dans le panneau
+		int imageX = x - (getWidth() - this.image.getWidth()) / 2; // Décalage horizontal
+		int imageY = y - (getHeight() - this.image.getHeight()) / 2; // Décalage vertical
+
+		// Vérification que les coordonnées sont dans les limites de l'image
+		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+			FramePrinc frame = this.ctrl.getFramePrinc();
+			if (frame != null) {
+				frame.writeText(imageX, imageY);
+			}
+		} else {
+			System.out.println("Les coordonnées sont en dehors de l'image.");
+		}
 	}
 
 	private void openSourcePanel() {
@@ -326,32 +393,29 @@ public class PanelImage extends JPanel {
 																					// selected figure index
 			if (index != -1) {
 				this.ctrl.premierPlan(index); // Call premierPlan with the figure index
-				this.repaint();
+				//this.repaint();
 			}
 		}
 
 		// Handle send to back action
 		else if (evt.getSource() == this.btnArrierePlan) {
 			// Get the index of the selected figure
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); // Replace with your method to get the
-																					// selected figure index
+			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
-				this.ctrl.ArrierePlan(index); // Call ArrierePlan with the figure index
-				this.repaint();
+				this.ctrl.ArrierePlan(index);
+				//this.repaint();
 			}
 		} else if (evt.getSource() == this.btnArriere) {
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); // Replace with your method to get the
-																					// selected figure index
+			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
-				this.ctrl.planArriere(index); // Call ArrierePlan with the figure index
-				this.repaint();
+				this.ctrl.planArriere(index);
+				//this.repaint();
 			}
 		} else if (evt.getSource() == this.btnAvant) {
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); // Replace with your method to get the
-																					// selected figure index
+			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 			if (index != -1) {
-				this.ctrl.planAvant(index); // Call ArrierePlan with the figure index
-				this.repaint();
+				this.ctrl.planAvant(index);
+				//this.repaint();
 			}
 		} else if (evt.getSource() == this.btnSave) {
 			// Get the index of the selected figure
@@ -362,8 +426,6 @@ public class PanelImage extends JPanel {
 		}
 
 	}
-
-	
 
 	public void saveImageWithOverlap(File outputFile) {
 		int imageX = (getWidth() - image.getWidth()) / 2;
@@ -422,7 +484,7 @@ public class PanelImage extends JPanel {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (chkCreateMode.isSelected()) {
+			if (creationFigure != ' ') {
 				startX = e.getX();
 				startY = e.getY();
 				currentX = startX;
@@ -455,7 +517,7 @@ public class PanelImage extends JPanel {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (chkCreateMode.isSelected()) {
+			if (creationFigure!=' ') {
 				currentX = e.getX();
 				currentY = e.getY();
 				PanelImage.this.repaint(); // Repaint to update the preview
@@ -472,7 +534,7 @@ public class PanelImage extends JPanel {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (chkCreateMode.isSelected()) {
+			if (creationFigure != ' ') {
 				// Calculate the width and height of the figure
 				int width = Math.abs(currentX - startX);
 				int height = Math.abs(currentY - startY);
@@ -490,14 +552,14 @@ public class PanelImage extends JPanel {
 				y -= offsetY;
 
 				// Create the figure based on the selected type
-				if (JcbFigure.getSelectedItem() == lblRect) {
-					PanelImage.this.ctrl.ajouterFigure(x, y, width, height, 'r', image);
+				
+				
+				PanelImage.this.ctrl.ajouterFigure(x, y, width, height, creationFigure, image);
 
-				} else if (JcbFigure.getSelectedItem() == lblOval) {
-					PanelImage.this.ctrl.ajouterFigure(x, y, width, height, 'o', image);
-				}
-
-				chkCreateMode.setSelected(false); // Disable create mode after figure creation
+				
+				PanelImage.this.enableSelectionRect(false);
+				PanelImage.this.enableSelectionRond(false);
+				PanelImage.this.setCreationFigure(' ');
 				PanelImage.this.repaint();
 			}
 		}

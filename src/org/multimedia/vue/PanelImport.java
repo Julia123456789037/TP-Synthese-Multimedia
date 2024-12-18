@@ -21,7 +21,7 @@ public class PanelImport extends PanelImage {
 		super(ctrl);
 		this.lstImport = new ArrayList<>(); // Initialize with an empty list of figures specific to PanelImport
 	}
-
+/*
 	// Add figures to the secondary list and shared controller
 	public void addToSecondaryList(int x, int y, int tx, int ty, char c, BufferedImage bi) {
 		// This adds the figure only to lstImport, not to the global figure list in ctrl
@@ -89,6 +89,6 @@ public class PanelImport extends PanelImage {
 				g2.drawOval(left, top, width, height);
 			}
 		}
-	}
+	} */
 
 }

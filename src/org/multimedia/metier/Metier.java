@@ -12,20 +12,15 @@ public class Metier {
 		this.lstFigure = new ArrayList<Figure>();
 	}
 
-	// ---------------
-	// Pour exercice 3
-	// ---------------
-
+	
 	public void ajouterFigure(int x, int y, int tx, int ty, char c, BufferedImage bi) {
-		// System.out.println("Adding Figure: x=" + x + ", y=" + y + ", width=" + tx +
-		// ", height=" + ty + ", type=" + c);
+		System.out.println("Adding Figure: ");
 		if (c == 'r') {
 			this.lstFigure.add(new Rectangle(x, y, tx, ty, c, bi));
 		}
 		if (c == 'o') {
 			this.lstFigure.add(new Ovale(x, y, tx, ty, c, bi));
 		}
-
 	}
 
 	public int getNbFigure() {
@@ -33,16 +28,7 @@ public class Metier {
 	}
 
 	public Figure getFigure(int num) {
-		/*
-		 * System.out.println("Retrieving Figure at index " + num);
-		 * Figure fig = this.lstFigure.get(num);
-		 * if (fig != null) {
-		 * System.out.println("Retrieved Figure: x=" + fig.getCentreX() + ", y=" +
-		 * fig.getCentreY() +
-		 * ", width=" + fig.getTailleX() + ", height=" + fig.getTailleY() + ", type=" +
-		 * fig.getType());
-		 * }
-		 */
+		
 		return this.lstFigure.get(num);
 	}
 
@@ -82,13 +68,7 @@ public class Metier {
 
 	}
 
-	// ---------------
-	// Pour exercice 4
-	// ---------------
-
-	// On recherrche la figure dont le point x y fait partie de la figure
-	// On retourne l'indice de la premiÃ¨re figure trouvÃ©e
-
+	
 	public Integer getIndiceFigure(int x, int y) {
 		for (int cpt = 0; cpt < this.lstFigure.size(); cpt++)
 			if (this.lstFigure.get(cpt).possede(x, y))
