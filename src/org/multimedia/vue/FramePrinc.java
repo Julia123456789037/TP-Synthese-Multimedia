@@ -128,7 +128,7 @@ public class FramePrinc extends JFrame
 		
 		// Définition du menu déroulant "Edition d'image" et de son contenu
 		JMenu mnuEdit = new JMenu( "Edition d'image" );
-		mnuEdit.setMnemonic( 'I' );
+		mnuEdit.setMnemonic( 'i' );
 		
 		JMenuItem mnuRotG = new JMenuItem( "Rotation à gauche" );
 		mnuRotG.setIcon( new ImageIcon( ImageUtils.openImg("/undo.png", true) ) );
