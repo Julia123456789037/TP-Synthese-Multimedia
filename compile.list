@@ -2,6 +2,10 @@
 ./src/org/multimedia/composants/ModeEdition.java
 ./src/org/multimedia/composants/ToolBarBouton.java
 ./src/org/multimedia/main/Controleur.java
+./src/org/multimedia/metier/Figure.java
+./src/org/multimedia/metier/Metier.java
+./src/org/multimedia/metier/Ovale.java
+./src/org/multimedia/metier/Rectangle.java
 ./src/org/multimedia/test/TestFondTransparent.java
 ./src/org/multimedia/test/TestJToolBar.java
 ./src/org/multimedia/test/TestLinkedList.java
@@ -11,5 +15,7 @@
 ./src/org/multimedia/util/PixelIterator.java
 ./src/org/multimedia/util/Text.java
 ./src/org/multimedia/vue/BarreOutils.java
+./src/org/multimedia/vue/FrameImport.java
 ./src/org/multimedia/vue/FramePrinc.java
 ./src/org/multimedia/vue/PanelImage.java
+./src/org/multimedia/vue/PanelImport.java

@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
-
 import org.multimedia.util.Arithmetique;
 import org.multimedia.util.DisplayImage;
-import org.multimedia.util.ImageUtils;
 
 public class TestCheckerBoard {
 	
