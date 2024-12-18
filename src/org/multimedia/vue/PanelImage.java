@@ -41,10 +41,10 @@ public class PanelImage extends JPanel {
 					switch ( PanelImage.this.mode ) {
 					case NORMAL				-> {}
 					case PIPETTE			-> pickColor( x, y );
-					case POT_DE_PEINTURE	-> paintColor( x, y );
+					case POT_DE_PEINTURE	-> paintColor( x, y ); 
 					case STYLO 				-> paintTexte( x, y );
-					//case SELECTION_RECT 			-> fRect( x, y ); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
-					//case SELECTION_ROND 			-> fRond( x, y ); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
+					//case SELECTION_RECT 			-> fRect( x, y ); //TODO: fonction fRect est la fonctionde seb pour dessiner le rectangle
+					//case SELECTION_ROND 			-> fRond( x, y ); //TODO: fonction fRond est la fonctionde seb pour dessiner le rond
 					default              	-> {}
 					}
 				}

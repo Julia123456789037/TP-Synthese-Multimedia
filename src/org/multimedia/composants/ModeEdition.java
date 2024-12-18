@@ -8,7 +8,7 @@ import java.awt.Toolkit;
 public enum ModeEdition {
 	NORMAL			(Cursor.getDefaultCursor()),
 	PIPETTE			(getCursor("/pipette.png",     new Point( 0, 20))),
-	POT_DE_PEINTURE	(getCursor("/potPeinture.png", new Point(15, 10))),
+	POT_DE_PEINTURE	(getCursor("/potPeinture64.png", new Point(15, 10))),
 	STYLO			(getCursor("/stylo.png", new Point(0, 0))), //TODO changer les points
 	SELECTION_RECT	(getCursor("/plus.png", new Point(0, 0))),
 	SELECTION_ROND	(getCursor("/plus.png", new Point(0, 0)));

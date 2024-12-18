@@ -25,7 +25,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 	private Controleur ctrl;
 	private JButton		btnSauvegarder;
-	private JButton		btnImporteImage;
+	private JButton		btnOuvrirImage;
 	private JButton		btnPipette;
 	private JButton		btnPotPeinture;
 	private JButton		btnCouleur;
@@ -35,11 +35,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JButton 	btnUndo;
 	private JButton 	btnRedo;
 	private JButton 	btnCurseur;
-
-	private JComboBox<String> comboTailleTexte;
-
 	private JButton		btnAutreFrame;
 	private JButton		btnFondTransp;
+
+	private JComboBox<String> comboTailleTexte;
 	
 	private Color couleurSelectionnee = Color.BLACK;
 	private JTextField textFieldTexte; 
@@ -53,9 +52,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/*-------------------------------*/
 
 
-		this.btnImporteImage = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
-		this.btnImporteImage.setToolTipText("changer d'image");
-		this.btnImporteImage.setActionCommand("changeImage");
+		this.btnOuvrirImage = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnOuvrirImage.setToolTipText("changer d'image");
+		this.btnOuvrirImage.setActionCommand("changeImage");
 
 		this.btnSauvegarder = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/save.png", true) ));
 		this.btnSauvegarder.setToolTipText("Sauvegarder");
@@ -87,6 +86,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnPotPeinture = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/potPeinture.png", true) ));
 		this.btnPotPeinture.setToolTipText("Pot de peinture");
 		this.btnPotPeinture.setActionCommand("PotDePeinture");
+
+		this.btnFondTransp = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/fondTransp.png", true) ));
+		this.btnFondTransp.setToolTipText("Fond transparent");
+		this.btnFondTransp.setActionCommand("FondTransparent");
 
 		this.btnCreerRectangle = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/carrePointi.png", true) ));
 		this.btnCreerRectangle.setToolTipText("Copier un rectangle");
@@ -139,14 +142,13 @@ public class BarreOutils extends JToolBar implements ActionListener
 			}
 		});
 
-		
-	
-		//this.btnAutreFrame         = new ToolBarBouton("Importer une Image");
-		//this.btnFondTransp         = new ToolBarBouton("Fond Transparent");
+		this.btnAutreFrame = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnAutreFrame.setToolTipText("charger une autre image");
+		this.btnAutreFrame.setActionCommand("changeAutreImage");
 
 		
-		// Même taille des bouton pour tous
-		uniformiserBouton( this.btnImporteImage );
+		// Même taille des bouton pour tous 
+		uniformiserBouton( this.btnOuvrirImage );
 		uniformiserBouton( this.btnSauvegarder );
 		uniformiserBouton( this.btnUndo );
 		uniformiserBouton( this.btnRedo );
@@ -154,15 +156,17 @@ public class BarreOutils extends JToolBar implements ActionListener
 		uniformiserBouton( this.btnCouleur );
 		uniformiserBouton( this.btnPipette );
 		uniformiserBouton( this.btnPotPeinture );
+		uniformiserBouton( this.btnFondTransp );
 		uniformiserBouton( this.btnCreerRectangle );
 		uniformiserBouton( this.btnCreerRond );
 		uniformiserBouton( this.btnAjouterTexte );
+		uniformiserBouton( this.btnAutreFrame );
 
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add( this.btnImporteImage );
+		this.add( this.btnOuvrirImage );
 		this.add( this.btnSauvegarder );
 		this.add( this.btnUndo );
 		this.add( this.btnRedo );
@@ -170,27 +174,31 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.add( this.btnCouleur );
 		this.add( this.btnPipette );
 		this.add( this.btnPotPeinture );
+		this.add( this.btnFondTransp );
 		this.add( this.btnCreerRectangle );
 		this.add( this.btnCreerRond );
 		this.add( this.btnAjouterTexte );
 		this.add( this.comboTailleTexte );
 		this.add( this.textFieldTexte );
+		this.add( this.btnAutreFrame );
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
-		this.btnImporteImage 	.addActionListener(this);
-		this.btnSauvegarder 	.addActionListener(this);
-		this.btnUndo			.addActionListener(this);
-		this.btnRedo			.addActionListener(this);
-		this.btnCurseur			.addActionListener(this);
-		this.btnCouleur			.addActionListener(this);
-		this.btnPipette     	.addActionListener(this);
-		this.btnPotPeinture 	.addActionListener(this);
-		this.btnAjouterTexte	.addActionListener(this);
-		this.btnCouleur			.addActionListener(this);
-		this.btnCreerRectangle	.addActionListener(this);
-		this.btnCreerRond		.addActionListener(this);
+		this.btnOuvrirImage    .addActionListener(this);
+		this.btnSauvegarder     .addActionListener(this);
+		this.btnUndo            .addActionListener(this);
+		this.btnRedo            .addActionListener(this);
+		this.btnCurseur         .addActionListener(this);
+		this.btnCouleur         .addActionListener(this);
+		this.btnPipette         .addActionListener(this);
+		this.btnPotPeinture     .addActionListener(this);
+		this.btnFondTransp      .addActionListener(this);
+		this.btnAjouterTexte    .addActionListener(this);
+		this.btnCouleur         .addActionListener(this);
+		this.btnCreerRectangle  .addActionListener(this);
+		this.btnCreerRond       .addActionListener(this);
+		this.btnAutreFrame      .addActionListener(this);
 		
 	}
 	
@@ -211,6 +219,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			case "Sauvegarder" -> { /*this.ctrl.sauvegarder ();*/ }
 			case "Pipette" 			-> { panelIm.enablePipetteMode( ! panelIm.isPipetteMode() ); }
 			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( ! panelIm.isPotPeintureMode() ); }
+			case "FondTransparent" 	-> {  }
 			case "Couleur" -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
@@ -233,6 +242,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.updateUI();
 			}
 			case "SourisNormal" 	-> { panelIm.CurseurMode( ); }
+			case "changeAutreImage" 	-> { /* TODO seb */ }
 		}
 	}
 
