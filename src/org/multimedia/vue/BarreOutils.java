@@ -193,10 +193,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCouleur.setBackground(couleur);
 	}
 
+	@Override
 	public void actionPerformed ( ActionEvent e)
 	{
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
-		if (panelIm.getImage() == null)
+		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur"))
 			return;
 		switch (e.getActionCommand()) {
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);

@@ -77,8 +77,8 @@ public class PanelImage extends JPanel implements ActionListener {
 							case PIPETTE         -> pickColor(x, y);
 							case POT_DE_PEINTURE -> paintColor(x, y);
 							case TEXTE           -> paintTexte(x, y);
-//							case SELECTION_RECT  -> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
-//							case SELECTION_ROND  -> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
+//							case SELECTION_RECT  -> fRect(x, y); // TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
+//							case SELECTION_ROND  -> fRond(x, y); // TODO fonction fRond est la fonctionde seb pour dessiner le rond
 							default              -> {}
 						}
 				}

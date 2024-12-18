@@ -15,7 +15,7 @@ public class TestTransparent {
 
 	}
 	
-	private static void removeTransparencySlider(JColorChooser jc) throws Exception {
+	static void removeTransparencySlider(JColorChooser jc) throws Exception {
 
 	    AbstractColorChooserPanel[] colorPanels = jc.getChooserPanels();
 	    for (int i = 1; i < colorPanels.length; i++) {

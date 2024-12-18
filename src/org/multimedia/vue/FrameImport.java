@@ -1,30 +1,14 @@
 package org.multimedia.vue;
 
-import org.multimedia.main.Controleur;
-import org.multimedia.util.ImageUtils;
-
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.awt.Color;
 import java.io.Serial;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import java.awt.image.BufferedImage;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import org.multimedia.main.Controleur;
 
 public class FrameImport extends FramePrinc {
+	
+	@Serial
+	private static final long serialVersionUID = 8413036037505934111L;
 
 	public FrameImport(Controleur ctrl) {
 		super(ctrl);

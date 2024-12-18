@@ -56,6 +56,10 @@ public class ImageTransform {
         this.addOperation(image -> ImageUtils.toGreyScale( image ));
     }
     
+    public void applyZoom(double zoom) {
+    	this.addOperation(image -> ImageUtils.applyZoom(image, zoom));
+    }
+    
     public void undo() {
     	if (!this.canEdit())
 			return;
