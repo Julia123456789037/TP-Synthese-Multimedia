@@ -39,6 +39,8 @@ public class FramePrinc extends JFrame
 	BufferedImage bFimage;
 	int angle;
 	private Color selectedColor = Color.BLACK;
+    private int textSize = 12;
+    private String textTexte = "";
 
 	public FramePrinc(Controleur ctrl)
 	{
@@ -127,7 +129,7 @@ public class FramePrinc extends JFrame
 		
 		// Définition du menu déroulant "Edition d'image" et de son contenu
 		JMenu mnuEdit = new JMenu( "Edition d'image" );
-		mnuEdit.setMnemonic( 'I' );
+		mnuEdit.setMnemonic( 'i' );
 		
 		JMenuItem mnuRotG = new JMenuItem( "Rotation à gauche" );
 		mnuRotG.setIcon( new ImageIcon( ImageUtils.openImg("/undo.png", true) ) );
@@ -267,9 +269,6 @@ public class FramePrinc extends JFrame
 				this.panelImage.transform.reset();
 				this.panelImage.updateUI();
 
-				// Message de confirmation
-//				JOptionPane.showMessageDialog(this, "Image chargée : " + filePath);
-
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Erreur lors du chargement de l'image.");
@@ -312,9 +311,16 @@ public class FramePrinc extends JFrame
 
 	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
+	public void setTextSize(int size) { this.textSize = size; }
+	public void setTextTexte(String texte) { this.textTexte = texte; }
 
 	public void PotPeint( int x, int y ) {
 		this.panelImage.transform.fillColor(x, y, this.selectedColor);
+		this.panelImage.updateUI();
+	}
+
+    public void writeText( int x, int y )  {
+		this.panelImage.transform.writeText(this.textTexte, x, y, this.textSize, this.selectedColor);
 		this.panelImage.updateUI();
 	}
 	
