@@ -36,7 +36,7 @@ public class BarreOutilsImport extends BarreOutils  {
 		else if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur")) { return; }
 			
 		switch (e.getActionCommand()) {
-			case "CopierRectangle" 	-> { System.out.println("Rectangle"); panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() ); }
+			case "CopierRectangle" 	-> { panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() ); }
 			case "CopierRond" 		-> { panelIm.enableSelectionRond( ! panelIm.isSelectionRondMode() ); }
 			case "Undo" -> {
 				panelIm.transform.undo();

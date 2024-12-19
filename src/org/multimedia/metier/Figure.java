@@ -30,7 +30,7 @@ public abstract class Figure {
 		// Fill all pixels with transparency
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				figureImage.setRGB(x, y, 0x00000000); // Fully transparent
+				figureImage.setRGB(x, y, 0x00000000); 
 			}
 		}
 	}
