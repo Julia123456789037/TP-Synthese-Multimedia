@@ -54,7 +54,7 @@ public class BarreOutilsImport extends BarreOutils  {
 			}
 			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
 			case "changeAutreImage" -> { panelIm.openSourcePanel(); }
-			case "collerForme"      -> { panelIm.saveImageWithOverlap(new File("rendu.png"));}
+			case "collerForme"      -> { panelIm.saveImageWithOverlap();}
 			case "1erPlan"          -> { panelIm.premPlan(); }
 			case "passe1niv"        -> { panelIm.avanverUnPlan(); }
 			case "reculer1niv"      -> { panelIm.reculerUnPlan(); }
