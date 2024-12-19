@@ -254,7 +254,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.updateUI();
 			}
 			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
-			case "changeAutreImage" 	-> { /* TODO seb */ }
+			case "changeAutreImage" 	-> { panelIm.openSourcePanel(); }
 		}
 	}
 

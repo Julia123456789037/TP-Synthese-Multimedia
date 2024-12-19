@@ -40,7 +40,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected Cursor cursorPipette;
 	
 	protected char creationFigure = ' ';
-	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave, btnImportSource;
+	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave;
 	protected int startX;
 	protected int startY;
 	protected int currentX;
@@ -83,8 +83,6 @@ public class PanelImage extends JPanel implements ActionListener {
 				}
 			}
 		});
-		
-		this.btnImportSource = new JButton("Import Source");
 
 		JPanel panelTracer, panelAction;
 		this.typeSelection = 'c';
@@ -115,7 +113,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		// this.add(panelTracer, BorderLayout.CENTER);
 		SwingUtilities.invokeLater(() -> {
 			// Modifications des composants ici
-			panelAction.add(btnImportSource);
 			panelAction.add(this.btnSave);
 			panelAction.add(btnPremierPlan);
 			panelAction.add(btnArrierePlan);
@@ -136,7 +133,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.btnAvant.addActionListener(this);
 		this.btnArriere.addActionListener(this);
 		this.btnSave.addActionListener(this);
-		btnImportSource.addActionListener(this);
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
@@ -340,7 +336,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
-	private void openSourcePanel() {
+	public void openSourcePanel() {
 
 		sourceFrame = new FrameImport(this.ctrl);
 		sourceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -383,9 +379,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		} else if (evt.getSource() == this.btnSave) {
 			// Get the index of the selected figure
 			this.saveImageWithOverlap(new File("rendu.png"));
-		} else if (evt.getSource() == this.btnImportSource) {
-			// Get the index of the selected figure
-			this.openSourcePanel();
 		}
 
 	}
