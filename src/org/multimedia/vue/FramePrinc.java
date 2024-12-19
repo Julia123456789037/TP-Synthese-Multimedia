@@ -1,5 +1,9 @@
 package org.multimedia.vue;
 
+import org.multimedia.main.Controleur;
+import org.multimedia.metier.Figure;
+import org.multimedia.util.ImageUtils;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,7 +18,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -29,10 +36,7 @@ import javax.swing.JSlider;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.multimedia.main.Controleur;
-import org.multimedia.metier.Figure;
-import org.multimedia.util.ImageUtils;
+import java.awt.Desktop;
 
 
 public class FramePrinc extends JFrame implements WindowListener, ComponentListener, ActionListener
@@ -126,7 +130,6 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 	}
 
 	protected JMenuBar createMenuBar() {
-
 		// La barre de menu à proprement parler
 		JMenuBar menuBar = new JMenuBar();
 
@@ -312,6 +315,23 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		JMenu mnuHelp = new JMenu( "Help" );
 		mnuHelp.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(mnuHelp);
+
+
+		JMenuItem mnuGitHub = new JMenuItem("GitHub Repository");
+		mnuGitHub.setMnemonic(KeyEvent.VK_G);
+		mnuHelp.add(mnuGitHub);
+
+		// Ajout d'une action à l'élément du menu
+		mnuGitHub.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try { Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
+				} catch (IOException | URISyntaxException ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(FramePrinc.this, "Impossible d'ouvrir la page web.", "Erreur", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		
 		return menuBar;
 	}
