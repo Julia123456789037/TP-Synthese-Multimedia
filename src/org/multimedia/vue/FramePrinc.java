@@ -53,6 +53,8 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
     private int textSize = 12;
     private String textTexte = "";
     
+    private int tolerance;
+    
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
@@ -377,9 +379,13 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
 	public void setTextSize(int size) { this.textSize = size; }
 	public void setTextTexte(String texte) { this.textTexte = texte; }
-
+	
+	public void setTolerance(int tolerance) {
+		this.tolerance = tolerance;
+	}
+	
 	public void potPeint( int x, int y ) {
-		this.panelImage.transform.fillColor(x, y, this.selectedColor);
+		this.panelImage.transform.fillColor(x, y, this.selectedColor, this.tolerance);
 		this.panelImage.updateUI();
 	}
 
@@ -407,6 +413,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		Graphics2D g2 = out.createGraphics();
 		g2.drawImage(image, 0, 0, null);
+		
 		g2.dispose();
 		try {
 			ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert);

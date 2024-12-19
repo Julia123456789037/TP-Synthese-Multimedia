@@ -1,21 +1,18 @@
 package org.multimedia.vue;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import javax.swing.*;
-
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
-import java.awt.event.*;
+import java.util.List;
 
 import org.multimedia.main.Controleur;
 import org.multimedia.metier.Figure;
-import java.util.Collections;
 
 public class PanelImport extends PanelImage {
-	private ArrayList<Figure> lstImport;
+	
+	@Serial
+	private static final long serialVersionUID = 3841243917777198924L;
+	
+	private List<Figure> lstImport;
 
 	public PanelImport(Controleur ctrl) {
 		super(ctrl);

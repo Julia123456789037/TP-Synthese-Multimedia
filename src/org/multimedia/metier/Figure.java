@@ -2,17 +2,19 @@ package org.multimedia.metier;
 
 import java.awt.image.BufferedImage;
 
+import org.multimedia.composants.FormeFigure;
+
 public abstract class Figure {
 	private int centreX;
 	private int centreY;
 	private int tailleX;
 	private int tailleY;
-	private char type;
+	private FormeFigure type;
 	private BufferedImage figureImage;
 	private boolean pixelsCaptured; // New flag to track pixel capture
 	private boolean selected;
 
-	public Figure(int centreX, int centreY, int tailleX, int tailleY, char type) {
+	public Figure(int centreX, int centreY, int tailleX, int tailleY, FormeFigure type) {
 		this.centreX = centreX;
 		this.centreY = centreY;
 		this.tailleX = tailleX;
@@ -53,7 +55,7 @@ public abstract class Figure {
 		return tailleY;
 	}
 
-	public char getType() {
+	public FormeFigure getType() {
 		return type;
 	}
 

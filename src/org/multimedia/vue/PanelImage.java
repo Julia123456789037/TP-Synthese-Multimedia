@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.multimedia.composants.FormeFigure;
 import org.multimedia.composants.ImageTransform;
 import org.multimedia.composants.ModeEdition;
 import org.multimedia.main.Controleur;
@@ -39,7 +40,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected Color couleurSelectionnee = Color.BLACK;
 	protected Cursor cursorPipette;
 	
-	protected char creationFigure = ' ';
+	protected FormeFigure creationFigure = FormeFigure.VIDE;
 	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave, btnImportSource;
 	protected int startX;
 	protected int startY;
@@ -153,11 +154,12 @@ public class PanelImage extends JPanel implements ActionListener {
 	public boolean isSelectionRondMode() 	{  return this.mode == ModeEdition.SELECTION_ROND; }
 	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
 
-	public void setCreationFigure(char c) {
+	public void setCreationFigure(FormeFigure c) {
 		this.creationFigure = c;
 		System.out.println(c);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -191,20 +193,15 @@ public class PanelImage extends JPanel implements ActionListener {
 				if (fig.isSelected()) {
 					g2.setColor(this.couleurSelectionnee);
 					switch (fig.getType()) {
-						case 'r':
-							g2.drawRect(left, top, fig.getTailleX(), fig.getTailleY());
-							break;
-
-						case 'o':
-							g2.drawOval(left, top, fig.getTailleX(), fig.getTailleY());
-							break;
+						case RECTANGLE -> g2.drawRect(left, top, fig.getTailleX(), fig.getTailleY());
+						case OVAL      -> g2.drawOval(left, top, fig.getTailleX(), fig.getTailleY());
 					}
 				}
 			}
 		}
 
 		// 3. Draw the preview of the figure being created (if in create mode)
-		if (creationFigure != ' ') {
+		if (!this.creationFigure.equals(FormeFigure.VIDE)) {
 			int left = Math.min(startX, currentX);
 			int top = Math.min(startY, currentY);
 			int width = Math.abs(currentX - startX);
@@ -212,11 +209,10 @@ public class PanelImage extends JPanel implements ActionListener {
 
 			g2.setColor(Color.GRAY);
 			g2.setStroke(new BasicStroke(2));
-
-			if (creationFigure == 'r') {
-				g2.drawRect(left, top, width, height);
-			} else if (creationFigure == 'o') {
-				g2.drawOval(left, top, width, height);
+			
+			switch (this.creationFigure) {
+				case RECTANGLE -> g2.drawRect(left, top, width, height);
+				case OVAL      -> g2.drawOval(left, top, width, height);
 			}
 		}
 		g.dispose();
@@ -275,15 +271,13 @@ public class PanelImage extends JPanel implements ActionListener {
 
 	public void enableSelectionRect(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
-		char c = enable ? 'r' : ' ';
-		PanelImage.this.setCreationFigure(c);
+		PanelImage.this.setCreationFigure(enable ? FormeFigure.RECTANGLE : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
 	}
 
 	public void enableSelectionRond(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
-		char c = enable ? 'o' : ' ';
-		PanelImage.this.setCreationFigure(c);
+		PanelImage.this.setCreationFigure(enable ? FormeFigure.OVAL : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
 	}
 	
@@ -398,6 +392,10 @@ public class PanelImage extends JPanel implements ActionListener {
 		}
 
 	}
+	
+	public Color getColor() {
+		return this.couleurSelectionnee;
+	}
 
 	public void saveImageWithOverlap(File outputFile) {
 		int imageX = (getWidth() - image.getWidth()) / 2;
@@ -456,7 +454,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (creationFigure != ' ') {
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
 				startX = e.getX();
 				startY = e.getY();
 				currentX = startX;
@@ -489,7 +487,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (creationFigure!=' ') {
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
 				currentX = e.getX();
 				currentY = e.getY();
 				PanelImage.this.repaint(); // Repaint to update the preview
@@ -506,7 +504,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (creationFigure != ' ') {
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
 				// Calculate the width and height of the figure
 				int width = Math.abs(currentX - startX);
 				int height = Math.abs(currentY - startY);
@@ -531,7 +529,7 @@ public class PanelImage extends JPanel implements ActionListener {
 				
 				PanelImage.this.enableSelectionRect(false);
 				PanelImage.this.enableSelectionRond(false);
-				PanelImage.this.setCreationFigure(' ');
+				PanelImage.this.setCreationFigure(FormeFigure.VIDE);
 				PanelImage.this.repaint();
 			}
 		}

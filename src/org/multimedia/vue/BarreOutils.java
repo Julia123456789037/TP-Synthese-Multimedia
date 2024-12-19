@@ -1,6 +1,9 @@
 package org.multimedia.vue;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
@@ -9,6 +12,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
@@ -42,13 +48,16 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JButton		btnFondTransp;
 	
 	private Color couleurSelectionnee = Color.BLACK;
-	private JTextField textFieldTexte; 
+	private JTextField textFieldTexte;
+	
+	public final JPanel extraToolbar;
 
 	public BarreOutils(Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
 		this.setBackground(new Color(200, 200, 200));
 		this.setFocusable(false);
+		this.setLayout(new BorderLayout());
 		
 		/*-------------------------------*/
 		/* Création des composants       */
@@ -159,18 +168,28 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
-		this.add(this.btnSauvegarder);
-		this.add(this.btnUndo);
-		this.add(this.btnRedo);
-		this.add(this.btnCurseur);
-		this.add(this.btnCouleur);
-		this.add(this.btnPipette);
-		this.add(this.btnPotPeinture);
-		this.add(this.btnCreerRectangle);
-		this.add(this.btnCreerRond);
-		this.add(this.btnAjouterTexte);
-		this.add(this.comboTailleTexte);
-		this.add(this.textFieldTexte);
+		
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		panel.add(this.btnSauvegarder);
+		panel.add(this.btnUndo);
+		panel.add(this.btnRedo);
+		panel.add(this.btnCurseur);
+		panel.add(this.btnCouleur);
+		panel.add(this.btnPipette);
+		panel.add(this.btnPotPeinture);
+		panel.add(this.btnCreerRectangle);
+		panel.add(this.btnCreerRond);
+		panel.add(this.btnAjouterTexte);
+		panel.add(this.comboTailleTexte);
+		panel.add(this.textFieldTexte);
+		
+		this.add(panel, BorderLayout.CENTER);
+		
+		this.extraToolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		this.extraToolbar.setSize(this.getWidth(), this.extraToolbar.getHeight());
+		this.add(this.extraToolbar, BorderLayout.SOUTH);
+		
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
@@ -199,10 +218,24 @@ public class BarreOutils extends JToolBar implements ActionListener
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
 		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur"))
 			return;
+		for (Component c : this.extraToolbar.getComponents())
+			this.extraToolbar.remove(c);
 		switch (e.getActionCommand()) {
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
 			case "Pipette"       -> panelIm.enablePipetteMode(true);
-			case "PotDePeinture" -> panelIm.enablePotPeintureMode(!panelIm.isPotPeintureMode());
+			case "PotDePeinture" -> {
+				panelIm.enablePotPeintureMode(!panelIm.isPotPeintureMode());
+				if (panelIm.isPotPeintureMode()) {
+					JSlider contrastSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 10);
+					contrastSlider.setMajorTickSpacing(5);
+					contrastSlider.setPaintTicks(true);
+					contrastSlider.setPaintLabels(true);
+					contrastSlider.addChangeListener(ev -> this.ctrl.getFramePrinc().setTolerance(contrastSlider.getValue()));
+					
+					this.extraToolbar.add(new JLabel("Tolérance :"));
+					this.extraToolbar.add(contrastSlider);
+				}
+			}
 			case "Couleur"       -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
@@ -226,6 +259,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			}
 			case "SourisNormal" 	-> panelIm.curseurMode();
 		}
+		this.updateUI();
 	}
 
 	private void uniformiserBouton(JButton bouton) {

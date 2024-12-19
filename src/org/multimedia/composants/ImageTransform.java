@@ -34,10 +34,10 @@ public class ImageTransform {
 		this.addOperation(image -> ImageUtils.invertVertical(image));
 	}
 
-	public void fillColor(int x, int y, Color color) {
+	public void fillColor(int x, int y, Color color, int tolerance) {
 		this.addOperation(image -> {
 			try {
-				return ImageUtils.fill(image, x, y, color);
+				return ImageUtils.fill(image, x, y, color, tolerance);
 			} catch (IllegalArgumentException e) {
 				return image;
 			}
@@ -61,13 +61,13 @@ public class ImageTransform {
     }
     
     public void undo() {
-    	if (!this.canEdit())
+    	if (!this.canEdit() || this.currentIndex == -1)
 			return;
         this.currentIndex = Math.max(-1, this.currentIndex - 1);
         this.ctrl.getFramePrinc().setModified();
     }
 	public void redo() {
-		if (!this.canEdit())
+		if (!this.canEdit() || this.currentIndex == this.operations.size() - 1)
 			return;
         this.currentIndex = Math.min(this.operations.size() - 1, this.currentIndex + 1);
         this.ctrl.getFramePrinc().setModified();
