@@ -1,4 +1,5 @@
 package org.multimedia.vue;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -19,31 +20,34 @@ import org.multimedia.composants.ToolBarBouton;
 import org.multimedia.main.Controleur;
 import org.multimedia.util.ImageUtils;
 
-public class BarreOutils extends JToolBar implements ActionListener
-{
+public class BarreOutils extends JToolBar implements ActionListener {
 	@Serial
 	private static final long serialVersionUID = 6326511901738014336L;
 
 	private Controleur ctrl;
-	private JButton		btnSauvegarder;
-	private JButton		btnImporteImage;
-	private JButton		btnPipette;
-	private JButton		btnPotPeinture;
-	private JButton		btnCouleur;
-	private JButton 	btnAjouterTexte;
-	private JButton		btnCreerRectangle;
-	private JButton		btnCreerRond;
-	private JButton 	btnUndo;
-	private JButton 	btnRedo;
-	private JButton 	btnCurseur;
+	private JButton btnSauvegarder;
+	private JButton btnImporteImage;
+	private JButton btnPipette;
+	private JButton btnPotPeinture;
+	private JButton btnCouleur;
+	private JButton btnAjouterTexte;
+	private JButton btnCreerRectangle;
+	private JButton btnCreerRond;
+	private JButton btnUndo;
+	private JButton btnRedo;
+	private JButton btnCurseur;
+	private JButton btnPlanArriere;
+	private JButton btnPlanAvant;
+	private JButton btnArrierePlan;
+	private JButton btnPremierPlan;
 
 	private JComboBox<String> comboTailleTexte;
 
-	private JButton		btnAutreFrame;
-	private JButton		btnFondTransp;
-	
+	private JButton btnAutreFrame;
+	private JButton btnFondTransp;
+
 	private Color couleurSelectionnee = Color.BLACK;
-	private JTextField textFieldTexte; 
+	private JTextField textFieldTexte;
 
 	public BarreOutils(Controleur ctrl) 
 	{
@@ -97,6 +101,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnAjouterTexte.setToolTipText("Ajouter du texte");
 		this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
 
+		
 		String[] taillesTexte = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96"};
 		this.comboTailleTexte = new JComboBox<>(taillesTexte);
 		this.comboTailleTexte.setPreferredSize(new Dimension(70, 40));
@@ -187,9 +192,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCreerRond		.addActionListener(this);
 		
 	}
-	
+
 	@Override
-	public int getHeight() { return 40; }
+	public int getHeight() {
+		return 40;
+	}
 
 	public void setCouleurSelectionnee(Color couleur) {
 		this.ctrl.getFramePrinc().setSelectedColor(couleur);
@@ -197,13 +204,17 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCouleur.setBackground(couleur);
 	}
 
-	public void actionPerformed ( ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
 		switch (e.getActionCommand()) {
-			case "Sauvegarder" -> { /*this.ctrl.sauvegarder ();*/ }
-			case "Pipette" 			-> { panelIm.enablePipetteMode(! panelIm.isPipetteMode() ); }
-			case "PotDePeinture" 	-> { panelIm.enablePotPeintureMode( ! panelIm.isPotPeintureMode() ); }
+			case "Sauvegarder" -> {
+				/* this.ctrl.sauvegarder (); */ }
+			case "Pipette" -> {
+				panelIm.enablePipetteMode(!panelIm.isPipetteMode());
+			}
+			case "PotDePeinture" -> {
+				panelIm.enablePotPeintureMode(!panelIm.isPotPeintureMode());
+			}
 			case "Couleur" -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
@@ -214,9 +225,15 @@ public class BarreOutils extends JToolBar implements ActionListener
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
 			}
-			case "CopierRectangle" 	-> { panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() ); }
-			case "CopierRond" 		-> { panelIm.enableSelectionRond( ! panelIm.isSelectionRondMode() ); }
-			case "AjouterDuTexte" 	-> { panelIm.enableStylo( ! panelIm.isStyloMode() ); }
+			case "CopierRectangle" -> {
+				panelIm.enableSelectionRect(!panelIm.isSelectionRectMode());
+			}
+			case "CopierRond" -> {
+				panelIm.enableSelectionRond(!panelIm.isSelectionRondMode());
+			}
+			case "AjouterDuTexte" -> {
+				panelIm.enableStylo(!panelIm.isStyloMode());
+			}
 			case "Undo" -> {
 				panelIm.transform.undo();
 				panelIm.updateUI();
@@ -225,7 +242,21 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.transform.redo();
 				panelIm.updateUI();
 			}
-			case "SourisNormal" 	-> { panelIm.CurseurMode( ); }
+			case "SourisNormal" -> {
+				panelIm.CurseurMode();
+			}
+			case "premierPlan" -> {
+				this.ctrl.premierPlan();
+			}
+			case "ArrierePlan" -> {
+				this.ctrl.ArrierePlan();
+			}
+			case "PlanAvant" -> {
+				this.ctrl.PlanAvant();
+			}
+			case "PlanArriere" -> {
+				this.ctrl.PlanArriere();
+			}
 		}
 	}
 

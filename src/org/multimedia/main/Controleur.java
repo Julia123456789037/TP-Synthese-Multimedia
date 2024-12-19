@@ -81,5 +81,21 @@ public class Controleur {
 	public void delFigure(Figure selectedFigure) {
 		this.metier.delFigure(selectedFigure);
 	}
+
+	public void premierPlan() {
+		this.metier.premierPlan(this.getIndiceFigure(this.getSelectedFigure()));
+	}
+
+	public void ArrierePlan() {
+		this.metier.ArrierePlan(this.getIndiceFigure(this.getSelectedFigure()));
+	}
+
+	public void PlanAvant() {
+		this.metier.planAvant(this.getIndiceFigure(this.getSelectedFigure()));
+	}
+
+	public void PlanArriere() {
+		this.metier.planArriere(this.getIndiceFigure(this.getSelectedFigure()));
+	}
 	
 }
