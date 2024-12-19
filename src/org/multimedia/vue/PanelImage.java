@@ -1,5 +1,12 @@
 package org.multimedia.vue;
 
+import org.multimedia.composants.FormeFigure;
+import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
+import org.multimedia.main.Controleur;
+import org.multimedia.metier.Figure;
+import org.multimedia.util.Arithmetique;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,19 +25,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.multimedia.composants.FormeFigure;
-import org.multimedia.composants.ImageTransform;
-import org.multimedia.composants.ModeEdition;
-import org.multimedia.main.Controleur;
-import org.multimedia.metier.Figure;
-import org.multimedia.util.Arithmetique;
 
 public class PanelImage extends JPanel {
-	protected Controleur ctrl;
-	protected BufferedImage image;
-	protected boolean pipetteMode = false; // Mode pipette activé/désactivé
-	protected Color couleurSelectionnee = Color.BLACK;
-	protected Cursor cursorPipette;
+	protected Controleur     ctrl;
+	protected BufferedImage  image;
+	protected boolean        pipetteMode = false; // Mode pipette activé/désactivé
+	protected Color          couleurSelectionnee = Color.BLACK;
+	protected Cursor         cursorPipette;
 	
 	protected FormeFigure creationFigure = FormeFigure.VIDE;
 	
@@ -38,7 +39,6 @@ public class PanelImage extends JPanel {
 	protected int startY;
 	protected int currentX;
 	protected int currentY;
-	private FrameImport sourceFrame;
 
 	protected JComboBox<String> JcbFigure;
 	protected JLabel lblRect, lblOval;
@@ -48,6 +48,7 @@ public class PanelImage extends JPanel {
 	private static final long serialVersionUID = 8341091164745892107L;
 
 	private ModeEdition mode;
+	private FrameImport sourceFrame;
 
 	final ImageTransform transform;
 	public GereSouris gereSouris;
@@ -100,14 +101,15 @@ public class PanelImage extends JPanel {
 		this.requestFocusInWindow();
 	}
 
-	public boolean isPotPeintureMode()      { return this.mode == ModeEdition.POT_DE_PEINTURE; }
-	public boolean isPipetteMode()          { return this.mode == ModeEdition.PIPETTE; }
-	public boolean isStyloMode()            { return this.mode == ModeEdition.TEXTE; }
-	public boolean isSelectionRectMode()    { return this.mode == ModeEdition.SELECTION_RECT; }
-	public boolean isSelectionRondMode()    { return this.mode == ModeEdition.SELECTION_ROND; }
-	public Point getImageLocationOnScreen() { return this.getLocationOnScreen(); }
-	public BufferedImage getImage()         { return this.image; }
-	public Color getColor()                 { return this.couleurSelectionnee; }
+	public boolean       isPotPeintureMode()        { return this.mode == ModeEdition.POT_DE_PEINTURE; }
+	public boolean       isPipetteMode()            { return this.mode == ModeEdition.PIPETTE; }
+	public boolean       isStyloMode()              { return this.mode == ModeEdition.TEXTE; }
+	public boolean       isSelectionRectMode()      { return this.mode == ModeEdition.SELECTION_RECT; }
+	public boolean       isSelectionRondMode()      { return this.mode == ModeEdition.SELECTION_ROND; }
+	public Point         getImageLocationOnScreen() { return this.getLocationOnScreen(); }
+	public BufferedImage getImage()                 { return this.image; }
+	public Color         getColor()                 { return this.couleurSelectionnee; }
+	public void          loadImage( BufferedImage image ) { this.image = image; }
 
 	public void setCreationFigure(FormeFigure c) {
 		this.creationFigure = c;
@@ -195,10 +197,6 @@ public class PanelImage extends JPanel {
 	public void updateUI() {
 		super.updateUI();
 		this.repaint();
-	}
-
-	public void loadImage(BufferedImage image) {
-		this.image = image;
 	}
 
 	public void enablePipetteMode(boolean enable) {
