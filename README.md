@@ -22,8 +22,8 @@ Système d'exploitation windows ou linux. Préférence sur Linux.
 ## 1. Installation de l'application
 
 Sur la page github du répertoire : 
-  Cliquer sur le bouton <b>"<> Code"<b/> .
-  Sélectionner <b>"Download zip"<b/> .
+  Cliquer sur le bouton <b> "<> Code" </b> .
+  Sélectionner <b>"Download zip"</b> .
   Avec un logiciel de gestion d'archives (7zip,winRar, ...), extraire l'archive à l'emplacement voulu.
 
 
@@ -34,7 +34,7 @@ Sur la page github du répertoire :
 sur linux : 
      2 Méthodes : 
        1.Lancer lancement.sh
-           Si ça ne fonctionne pas, lancer d'abord compile.sh et déplacez vous ensuite dans le dossier "bin" et lancer la commande sur un terminal <b> java org.multimedia.main.Controleur <b/>
+           Si ça ne fonctionne pas, lancer d'abord compile.sh et déplacez vous ensuite dans le dossier "bin" et lancer la commande sur un terminal <b> java org.multimedia.main.Controleur </b>
 
 Sur windows : 
 
@@ -48,8 +48,8 @@ Cette application respecte beaucoup de raccourcis usuels comme ctrl+O pour ouvri
   Le premier bouton et le plus intéressant est "ouvrir une image". Ce bouton vous ouvre une fenêtre de dialogue où vous pouvez aller chercher votre image.
   L'image est maintenant sur l'application ! 
   On peut donc commencer les traitements dans les menus : 
-         Dans l'onglet <b>image<b/> se trouvent les boutons pour tourner et retourner l'image.
-         Dans l'onglet <b>ajustements <b/>, on peut augmenter et diminuer le contraste et la luminosité, sans oublier une option pour passer l'image en noir et blanc.
+         Dans l'onglet <b>image</b> se trouvent les boutons pour tourner et retourner l'image.
+         Dans l'onglet <b>ajustements </b>, on peut augmenter et diminuer le contraste et la luminosité, sans oublier une option pour passer l'image en noir et blanc.
 
 Dans la barre d'outils se trouvent bien d'autres fonctionnalités pour vous aider à personnaliser vos images ! 
 Dans l'ordre : 
