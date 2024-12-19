@@ -1,11 +1,8 @@
 package org.multimedia.vue;
 
-import org.multimedia.main.Controleur;
-import org.multimedia.metier.Figure;
-import org.multimedia.util.ImageUtils;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -36,7 +33,10 @@ import javax.swing.JSlider;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.Desktop;
+
+import org.multimedia.main.Controleur;
+import org.multimedia.metier.Figure;
+import org.multimedia.util.ImageUtils;
 
 
 public class FramePrinc extends JFrame implements WindowListener, ComponentListener, ActionListener
@@ -312,26 +312,22 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		menuBar.add(menuAjust);
 		
 		// Définition du menu déroulant "Help" et de son contenu
-		JMenu mnuHelp = new JMenu( "Help" );
+		JMenu mnuHelp = new JMenu( "Aide" );
 		mnuHelp.setMnemonic(KeyEvent.VK_H);
-		menuBar.add(mnuHelp);
-
-
-		JMenuItem mnuGitHub = new JMenuItem("GitHub Repository");
-		mnuGitHub.setMnemonic(KeyEvent.VK_G);
-		mnuHelp.add(mnuGitHub);
-
-		// Ajout d'une action à l'élément du menu
-		mnuGitHub.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try { Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
-				} catch (IOException | URISyntaxException ex) {
-					ex.printStackTrace();
-					JOptionPane.showMessageDialog(FramePrinc.this, "Impossible d'ouvrir la page web.", "Erreur", JOptionPane.ERROR_MESSAGE);
-				}
+		
+		JMenuItem itemGit = new JMenuItem("Répertoire GIT");
+		itemGit.setIcon(new ImageIcon(ImageUtils.openImg("/git.png", true)));
+		itemGit.setMnemonic(KeyEvent.VK_R);
+		itemGit.addActionListener(e -> {
+			try {
+				Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
+			} catch (IOException | URISyntaxException e1) {
+				e1.printStackTrace();
 			}
 		});
+		mnuHelp.add(itemGit);
+		
+		menuBar.add(mnuHelp);
 		
 		return menuBar;
 	}

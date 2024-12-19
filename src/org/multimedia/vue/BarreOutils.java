@@ -53,9 +53,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 	protected JComboBox<String> comboTailleTexte;
 	public final JPanel extraToolbar;
+	
 	protected Color couleurSelectionnee = Color.BLACK;
 	protected JTextField textFieldTexte; 
-
+	
 	public BarreOutils(Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
