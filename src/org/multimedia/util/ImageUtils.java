@@ -377,11 +377,11 @@ public class ImageUtils
             }
         }
     }
+    */
 
     private static boolean isEqualRgba(int[] pix1, int[] pix2) {
         return Math.abs(pix1[0] - pix2[0]) == 0 && Math.abs(pix1[1] - pix2[1]) == 0 && Math.abs(pix1[2] - pix2[2]) == 0 && Math.abs(pix1[3] - pix2[3]) == 0;
     }
-    */
 	
 	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb, int tolerance) {
 	    if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
@@ -442,6 +442,29 @@ public class ImageUtils
 	           Math.abs(pix1[3] - pix2[3]) <= tolerance;
 	}
 
+
+    public static BufferedImage replaceColorWithTransparency(BufferedImage img, Color targetColor) {
+        // Clone l'image pour ne pas modifier l'originale
+        BufferedImage res = Builder.deepClone(img);
+    
+        WritableRaster raster = res.getRaster();
+        int[] target = new int[]{targetColor.getRed(), targetColor.getGreen(), targetColor.getBlue(), targetColor.getAlpha()};
+        int[] transparent = new int[]{0, 0, 0, 0}; // Couleur transparente (RGBA)
+    
+        // Parcourt tous les pixels de l'image
+        Rectangle bounds = raster.getBounds();
+        int[] aux = {255, 255, 255, 255}; // Tampon temporaire pour lire les pixels
+    
+        for (int y = 0; y < bounds.height; y++) {
+            for (int x = 0; x < bounds.width; x++) {
+                int[] pixel = raster.getPixel(x, y, aux);
+    
+                // Si la couleur du pixel correspond à la couleur cible, le remplace par du transparent
+                if (isEqualRgba(pixel, target)) { raster.setPixel(x, y, transparent); }
+            }
+        }
+        return res;
+    }
 
 	
 	/**

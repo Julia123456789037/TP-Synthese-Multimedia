@@ -13,7 +13,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -41,20 +40,15 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
-	
+	private JMenu mnuTailTe;
 	private Color selectedColor = Color.BLACK;
-	
 	private boolean isSaved;
-	
 	public final String titre;
-	
 	private File fichierOuvert;
+	private int textSize = 12;
+	private String textTexte = "";
+	private int tolerance;
 	
-    private int textSize = 12;
-    private String textTexte = "";
-    
-    private int tolerance;
-    
 	public FramePrinc(Controleur ctrl)
 	{
 		this.ctrl = ctrl;
@@ -157,7 +151,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
 		mnuSaveFileAs.setMnemonic(KeyEvent.VK_E);
 		mnuSaveFileAs.addActionListener(this::saveAs);
-		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
+		mnuSaveFileAs.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
 		
 		mnuFile.addSeparator();
@@ -254,30 +248,22 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuAjTe.addActionListener( this::mnuAjTeListener );
 		mnuAjTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK) );
 		mnuTexte.add(mnuAjTe);
-		
-		JMenuItem mnuTailTe = new JMenuItem( "Taille du texte" );
-		mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuTailTe.setMnemonic(KeyEvent.VK_T);
-		mnuTailTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
-		mnuTexte.add(mnuTailTe);
+
+		this.mnuTailTe = new JMenu("Taille du texte");
+		this.mnuTailTe.setIcon( new ImageIcon( ImageUtils.openImg("/tailleTexte.png", true) ) );
+		this.mnuTailTe.setMnemonic('T');
 		
 		String[] tailles = { "8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96" };
-		
+
 		for (String taille : tailles) {
 			JMenuItem menuItem = new JMenuItem(taille);
+			menuItem.setOpaque(true);
 			menuItem.addActionListener(e -> { setTextSize(Integer.parseInt(taille)); });
-			mnuTailTe.add(menuItem);
+			this.mnuTailTe.add(menuItem);
+			if ( Integer.parseInt(taille) == this.textSize ) { menuItem.setBackground(Color.GRAY); }
 		}
-		mnuTexte.add(mnuTailTe);
-		
-		menuBar.add(mnuTexte);
-		
-		JMenuItem mnuCoulTe = new JMenuItem( "Couleur du texte" );
-		mnuCoulTe.setIcon( new ImageIcon( ImageUtils.openImg("/redo.png", true) ) );
-		mnuCoulTe.setMnemonic(KeyEvent.VK_C);
-		mnuCoulTe.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK) );
-		mnuTexte.add(mnuCoulTe);
 
+		mnuTexte.add( this.mnuTailTe );
 		menuBar.add(mnuTexte);
 		
 		// Définition de menu "Ajustements"
@@ -303,7 +289,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		
 		menuAjust.addSeparator();
 
-        JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
+		JMenuItem mnuLumineux = new JMenuItem( "Rendre plus lumineux" );
 		mnuLumineux.setIcon( new ImageIcon( ImageUtils.openImg("/luminosite.png", true) ) );
 		mnuLumineux.setMnemonic(KeyEvent.VK_U);
 		mnuLumineux.addActionListener(this);
@@ -373,15 +359,29 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		public void onResult(JFileChooser fileChooser, int result);
 	}
 
-	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(true); }
-	
-	public void activatePipetteMode() { this.panelImage.enablePipetteMode(true); }
+	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(! this.panelImage.isStyloMode()); }
 	public void setSelectedColor(Color color) { this.selectedColor = color; }
-	public void setTextSize(int size) { this.textSize = size; }
+	public void setTextSize(int size) { 
+		this.textSize = size; 
+		this.getBarreOutils().updateComboBoxSize(size);
+		this.updateMenuTextSize(size);
+	}
 	public void setTextTexte(String texte) { this.textTexte = texte; }
 	
 	public void setTolerance(int tolerance) {
 		this.tolerance = tolerance;
+	}
+	
+	public void updateMenuTextSize(int newSize) {
+		for (int i = 0; i < this.mnuTailTe.getItemCount(); i++) {
+			JMenuItem item = this.mnuTailTe.getItem(i);
+			item.setBackground(null);
+	
+			if (item.getText().equals(String.valueOf(newSize))) {
+				item.setSelected(true); // Mettre en surbrillance l'élément sélectionné
+				item.setBackground(Color.GRAY);
+			}
+		}
 	}
 	
 	public void potPeint( int x, int y ) {
@@ -389,7 +389,12 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.panelImage.updateUI();
 	}
 
-    public void writeText( int x, int y )  {
+    public void transp() {
+		this.panelImage.transform.fillTransp( this.selectedColor );
+		this.panelImage.updateUI();
+	}
+
+	public void writeText( int x, int y )  {
 		this.panelImage.transform.writeText(this.textTexte, x, y, this.textSize, this.selectedColor);
 		this.panelImage.updateUI();
 	}
@@ -407,19 +412,16 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	}
 	
 	public void save(ActionEvent e) {
-		if (this.fichierOuvert == null)
-			return;
+		if (this.fichierOuvert == null){ return; }
+        this.panelImage.saveImageWithOverlap(new File("rendu.png"));
 		BufferedImage image = this.panelImage.transform.applyTransforms(this.panelImage.getImage());
 		BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		Graphics2D g2 = out.createGraphics();
 		g2.drawImage(image, 0, 0, null);
 		
 		g2.dispose();
-		try {
-			ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		try { ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert); } 
+        catch (Exception ex) { ex.printStackTrace(); }
 		
 		this.isSaved = true;
 		this.setTitle(this.titre + (this.panelImage.getImage() != null ? " - " + this.fichierOuvert.getName() : ""));

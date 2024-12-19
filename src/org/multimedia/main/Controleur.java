@@ -50,8 +50,7 @@ public class Controleur {
 		return this.metier.getFigureSelected();
 	}
 
-	public void deselectFigure()
-	{
+	public void deselectFigure() {
 		this.metier.deselectFigure();
 	}
 

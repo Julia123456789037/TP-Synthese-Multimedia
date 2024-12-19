@@ -41,7 +41,8 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected Cursor cursorPipette;
 	
 	protected FormeFigure creationFigure = FormeFigure.VIDE;
-	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave, btnImportSource;
+	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere;
+	
 	protected int startX;
 	protected int startY;
 	protected int currentX;
@@ -59,7 +60,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 	final ImageTransform transform;
 
-	public PanelImage(Controleur ctrl) {
+	public PanelImage( Controleur ctrl ) {
 		this.ctrl = ctrl;
 		this.image = null;
 		this.setFocusable(true);
@@ -69,24 +70,21 @@ public class PanelImage extends JPanel implements ActionListener {
 		// Ajouter un écouteur de souris pour récupérer la couleur
 		this.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				if (PanelImage.this.image != null) {
+			public void mouseClicked( MouseEvent e ) {
+				if ( PanelImage.this.image != null ) {
 					int x = e.getX(), y = e.getY();
-					switch (PanelImage.this.mode) {
-							case NORMAL          -> {}
-							case PIPETTE         -> pickColor(x, y);
-							case POT_DE_PEINTURE -> paintColor(x, y);
-							case TEXTE           -> paintTexte(x, y);
-//							case SELECTION_RECT  -> fRect(x, y); // TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
-//							case SELECTION_ROND  -> fRond(x, y); // TODO fonction fRond est la fonctionde seb pour dessiner le rond
-							default              -> {}
-						}
+					switch ( PanelImage.this.mode ) {
+					case NORMAL				-> {}
+					case PIPETTE			-> pickColor(x, y);
+					case POT_DE_PEINTURE	-> paintColor(x, y);
+					case TEXTE 				-> paintTexte(x, y);
+					//case SELECTION_RECT 			-> fRect(x, y); //TODO fonction fRect est la fonctionde seb pour dessiner le rectangle
+					//case SELECTION_ROND 			-> fRond(x, y); //TODO fonction fRond est la fonctionde seb pour dessiner le rond
+					default              	-> {}
+					}
 				}
 			}
 		});
-		
-		this.btnImportSource = new JButton("Import Source");
 
 		JPanel panelTracer, panelAction;
 		this.typeSelection = 'c';
@@ -110,15 +108,12 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.btnArrierePlan = new JButton("Arrière plan");
 		this.btnAvant       = new JButton("1 plan avant");
 		this.btnArriere     = new JButton("1 plan arrière");
-		this.btnSave        = new JButton("Sauvegarder");
 
 		// positionnement des composants
 
 		// this.add(panelTracer, BorderLayout.CENTER);
 		SwingUtilities.invokeLater(() -> {
 			// Modifications des composants ici
-			panelAction.add(btnImportSource);
-			panelAction.add(this.btnSave);
 			panelAction.add(btnPremierPlan);
 			panelAction.add(btnArrierePlan);
 			panelAction.add(this.btnAvant);
@@ -137,8 +132,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		btnArrierePlan.addActionListener(this);
 		this.btnAvant.addActionListener(this);
 		this.btnArriere.addActionListener(this);
-		this.btnSave.addActionListener(this);
-		btnImportSource.addActionListener(this);
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
@@ -166,14 +159,14 @@ public class PanelImage extends JPanel implements ActionListener {
 		Graphics2D g2 = (Graphics2D) g;
 
 		// Dessiner l'image si elle existe
-		if (this.image != null) {
-			BufferedImage image = this.transform.applyTransforms(this.image);
-			int x = (getWidth() - image.getWidth()) / 2; // Centrer l'image horizontalement
-			int y = (getHeight() - image.getHeight()) / 2; // Centrer l'image verticalement
+		if ( this.image != null ) {
+			BufferedImage image = this.transform.applyTransforms( this.image );
+			int x = ( getWidth()  - image.getWidth()  ) / 2;
+			int y = ( getHeight() - image.getHeight() ) / 2;
 			
 			g.drawImage(this.drawCheckerBoard(image.getWidth(), image.getHeight()), x, y, this);
 			// Dessiner l'image avec ses dimensions d'origine
-			g.drawImage(image, x, y, this);
+			g.drawImage( image, x, y, this );
 		}
 	
 		// 2. Draw all figures
@@ -245,19 +238,16 @@ public class PanelImage extends JPanel implements ActionListener {
 		////this.repaint();
 	}
 
-	public void loadImage(BufferedImage image) {
-		this.image = image;
-	}
+	public void loadImage( BufferedImage image ) { this.image = image; }
 
-	public void enablePipetteMode(boolean enable) {
+	public void enablePipetteMode( boolean enable ) {
 		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
-		this.setCursor(this.mode.cursor);
+		this.setCursor( this.mode.cursor );
 	}
-
-	public void enablePotPeintureMode(boolean enable) {
+	
+	public void enablePotPeintureMode( boolean enable ) {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
-		System.out.println("this.mode = " + this.mode);
-		this.setCursor(this.mode.cursor);
+		this.setCursor( this.mode.cursor );
 	}
 	
 	public BufferedImage getImage() {
@@ -269,13 +259,13 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.setCursor(this.mode.cursor);
 	}
 
-	public void enableSelectionRect(boolean enable) {
+	public void enableSelectionRect( boolean enable ) {
 		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
 		PanelImage.this.setCreationFigure(enable ? FormeFigure.RECTANGLE : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
 	}
 
-	public void enableSelectionRond(boolean enable) {
+	public void enableSelectionRond( boolean enable ) {
 		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
 		PanelImage.this.setCreationFigure(enable ? FormeFigure.OVAL : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
@@ -283,29 +273,23 @@ public class PanelImage extends JPanel implements ActionListener {
 	
 	public void curseurMode() { 
 		this.mode = ModeEdition.NORMAL;
-		this.setCursor(this.mode.cursor);
+		this.setCursor( this.mode.cursor ); 
 	}
 
 	private void pickColor(int x, int y) {
 		BufferedImage image = this.transform.applyTransforms(this.image);
-
-		// Calculer le décalage de l'image dans le panneau
-		int imageX = x - (getWidth() - image.getWidth()) / 2; // Décalage horizontal
-		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
+		int imageX = x - ( getWidth()  - image.getWidth()  ) / 2;
+		int imageY = y - ( getHeight() - image.getHeight() ) / 2;
 
 		// Vérification que les coordonnées sont dans les limites de l'image
-		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
-			int rgb = image.getRGB(imageX, imageY);
-			Color selectedColor = new Color(rgb);
+		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
+			int rgb = image.getRGB( imageX, imageY );
+			Color selectedColor = new Color( rgb );
 
 			// Mettre à jour la couleur dans la barre d'outils
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.getBarreOutils().setCouleurSelectionnee(selectedColor);
-			}
-		} else {
-			System.out.println("Les coordonnées sont en dehors de l'image.");
-		}
+			if ( frame != null ) { frame.getBarreOutils().setCouleurSelectionnee( selectedColor ); }
+		} else { System.out.println( "Les coordonnées sont en dehors de l'image." ); }
 
 		// Désactiver le mode pipette après avoir sélectionné la couleur
 		enablePipetteMode(false);
@@ -319,10 +303,15 @@ public class PanelImage extends JPanel implements ActionListener {
 		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
 
 		// Vérification que les coordonnées sont dans les limites de l'image
-		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
 			if (frame != null) { frame.potPeint( imageX, imageY ); }
 		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
+	}
+
+    public synchronized void paintTransp() {
+		FramePrinc frame = this.ctrl.getFramePrinc();
+		if (frame != null) { frame.transp( ); }
 	}
 
 	private synchronized void paintTexte(int x, int y) {
@@ -333,23 +322,51 @@ public class PanelImage extends JPanel implements ActionListener {
 		int imageY = y - (getHeight() - image.getHeight()) / 2; // Décalage vertical
 
 		// Vérification que les coordonnées sont dans les limites de l'image
-		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
+		if ( imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight() ) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.writeText(imageX, imageY);
-			}
-		} else {
-			System.out.println("Les coordonnées sont en dehors de l'image.");
-		}
+			if (frame != null) { frame.writeText(imageX, imageY); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
-	private void openSourcePanel() {
+	public void openSourcePanel() {
 
 		sourceFrame = new FrameImport(this.ctrl);
 		sourceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		sourceFrame.setVisible(true);
 	}
+
+	public void premPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); 
+		if (index != -1) {
+			this.ctrl.premierPlan(index); // Call premierPlan with the figure index
+			//this.repaint();
+		}
+    }
+
+	public void avanverUnPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.planAvant(index);
+			//this.repaint();
+		}
+    }
+
+	public void reculerUnPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.planArriere(index);
+			//this.repaint();
+		}
+    }
+
+	public void dernPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.ArrierePlan(index);
+			//this.repaint();
+		}
+    }
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
@@ -383,13 +400,7 @@ public class PanelImage extends JPanel implements ActionListener {
 				this.ctrl.planAvant(index);
 				//this.repaint();
 			}
-		} else if (evt.getSource() == this.btnSave) {
-			// Get the index of the selected figure
-			this.saveImageWithOverlap(new File("rendu.png"));
-		} else if (evt.getSource() == this.btnImportSource) {
-			// Get the index of the selected figure
-			this.openSourcePanel();
-		}
+		} 
 
 	}
 	
@@ -440,12 +451,8 @@ public class PanelImage extends JPanel implements ActionListener {
 			}
 		}
 
-		try {
-			// Save the modified image to the output file
-			ImageIO.write(image, "png", outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		try { ImageIO.write(image, "png", outputFile); } 
+		catch (IOException e) { e.printStackTrace(); }
 	}
 
 	private class GereSouris extends MouseAdapter {
@@ -468,9 +475,7 @@ public class PanelImage extends JPanel implements ActionListener {
 						startX = e.getX();
 						startY = e.getY();
 						foundFigure = true;
-					} else {
-						fig.setSelected(false);
-					}
+					} else { fig.setSelected(false); }
 				}
 				if (this.figSelected != null)
 					this.figSelected.setSelected(true);
@@ -522,7 +527,6 @@ public class PanelImage extends JPanel implements ActionListener {
 				y -= offsetY;
 
 				// Create the figure based on the selected type
-				
 				
 				PanelImage.this.ctrl.ajouterFigure(x, y, width, height, creationFigure, image);
 
