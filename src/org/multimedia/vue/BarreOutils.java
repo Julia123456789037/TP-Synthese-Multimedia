@@ -298,7 +298,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			}
 			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
 			case "changeAutreImage" -> { panelIm.openSourcePanel(); }
-			case "collerForme"      -> { panelIm.saveImageWithOverlap(new File("rendu.png"));}
+			case "collerForme"      -> { panelIm.saveImageWithOverlap(this.ctrl.getFramePrinc().getFichier());}
 			case "1erPlan"          -> { panelIm.premPlan(); }
 			case "passe1niv"        -> { panelIm.avanverUnPlan(); }
 			case "reculer1niv"      -> { panelIm.reculerUnPlan(); }

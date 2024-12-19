@@ -14,7 +14,7 @@ public class Metier {
 
 	
 	public void ajouterFigure(int x, int y, int tx, int ty, char c, BufferedImage bi) {
-		System.out.println("Adding Figure: ");
+		//System.out.println("Adding Figure: ");
 		if (c == 'r') {
 			this.lstFigure.add(new Rectangle(x, y, tx, ty, c, bi));
 		}

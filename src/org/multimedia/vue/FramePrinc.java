@@ -339,6 +339,8 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 			}
 		});
 	}
+
+    public File getFichier() { return this.fichierOuvert;}
 	
 	public void openFileChooser(String titre, IFileChooser action) {
 		// Créer un JFileChooser pour sélectionner un fichier
@@ -408,14 +410,17 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	
 	public void save(ActionEvent e) {
 		if (this.fichierOuvert == null){ return; }
-        this.panelImage.saveImageWithOverlap(new File("rendu.png"));
+        
 		BufferedImage image = this.panelImage.transform.applyTransforms(this.panelImage.getImage());
+       
 		BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		Graphics2D g2 = out.createGraphics();
 		g2.drawImage(image, 0, 0, null);
 		g2.dispose();
 		try { ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert); } 
         catch (Exception ex) { ex.printStackTrace(); }
+        this.panelImage.setImage(out);
+        this.panelImage.saveImageWithOverlap(this.fichierOuvert);
 		
 		this.isSaved = true;
 		this.setTitle(this.titre + (this.panelImage.getImage() != null ? " - " + this.fichierOuvert.getName() : ""));
@@ -432,7 +437,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.save(e);
 	}
 	
-	private String getFileExtension(File file) {
+	public String getFileExtension(File file) {
 		if (file == null)
 			return null;
 		if (file.isDirectory())

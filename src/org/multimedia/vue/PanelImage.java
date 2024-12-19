@@ -145,10 +145,8 @@ public class PanelImage extends JPanel implements ActionListener {
 	public boolean isSelectionRondMode() 	{  return this.mode == ModeEdition.SELECTION_ROND; }
 	public Point getImageLocationOnScreen()	{ return this.getLocationOnScreen(); }
 
-	public void setCreationFigure(char c) {
-		this.creationFigure = c;
-		System.out.println(c);
-	}
+	public void setCreationFigure(char c) { this.creationFigure = c; }
+	public void setImage(BufferedImage bi){ this.image = bi; }
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -345,7 +343,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); 
 		if (index != -1) {
 			this.ctrl.premierPlan(index); // Call premierPlan with the figure index
-			//this.repaint();
+			this.repaint();
 		}
     }
 
@@ -353,7 +351,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.planAvant(index);
-			//this.repaint();
+			this.repaint();
 		}
     }
 
@@ -361,7 +359,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.planArriere(index);
-			//this.repaint();
+			this.repaint();
 		}
     }
 
@@ -369,7 +367,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.ArrierePlan(index);
-			//this.repaint();
+			this.repaint();
 		}
     }
 	
@@ -410,6 +408,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	}
 
 	public void saveImageWithOverlap(File outputFile) {
+		BufferedImage image = this.transform.applyTransforms(this.image);
 		int imageX = (getWidth() - image.getWidth()) / 2;
 		int imageY = (getHeight() - image.getHeight()) / 2;
 		Rectangle imageBounds = new Rectangle(imageX, imageY, image.getWidth(), image.getHeight());
@@ -432,7 +431,6 @@ public class PanelImage extends JPanel implements ActionListener {
 						// Calculate relative coordinates in the image
 						int relativeX = x - imageX;
 						int relativeY = y - imageY;
-
 						// Ensure coordinates are within bounds for the image
 						if (relativeX >= 0 && relativeX < image.getWidth() &&
 								relativeY >= 0 && relativeY < image.getHeight() &&
@@ -451,9 +449,12 @@ public class PanelImage extends JPanel implements ActionListener {
 				}
 			}
 		}
+			System.out.println(outputFile.getAbsolutePath());
+		//try { ImageIO.write(image, "png", outputFile); } 
+		//catch (IOException e) { e.printStackTrace(); }
 
-		try { ImageIO.write(image, "png", outputFile); } 
-		catch (IOException e) { e.printStackTrace(); }
+		try { ImageIO.write(image, this.ctrl.getFramePrinc().getFileExtension(outputFile), outputFile); } 
+        catch (Exception ex) { ex.printStackTrace(); }
 	}
 
 	private class GereSouris extends MouseAdapter {
