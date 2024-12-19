@@ -152,7 +152,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			}
 		});
 
-		this.btnAutreFrame = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
+		this.btnAutreFrame = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/importeAutreIm.png", true) ));
 		this.btnAutreFrame.setToolTipText("charger une autre image");
 		this.btnAutreFrame.setActionCommand("changeAutreImage");
 
