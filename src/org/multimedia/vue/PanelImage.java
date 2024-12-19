@@ -110,11 +110,7 @@ public class PanelImage extends JPanel {
 	public BufferedImage getImage()                 { return this.image; }
 	public Color         getColor()                 { return this.couleurSelectionnee; }
 	public void          loadImage( BufferedImage image ) { this.image = image; }
-
-	public void setCreationFigure(FormeFigure c) {
-		this.creationFigure = c;
-		System.out.println(c);
-	}
+	public void setCreationFigure(FormeFigure c)    { this.creationFigure = c; }
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
@@ -284,7 +280,6 @@ public class PanelImage extends JPanel {
 	}
 
 	public void openSourcePanel() {
-		System.out.println("hey ho");
 		sourceFrame = new FrameImport(this.ctrl);
 		sourceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -343,7 +338,6 @@ public class PanelImage extends JPanel {
 
 			if (!intersection.isEmpty()) {
 				// Modify image pixels
-				System.out.println("Got here!");
 				this.transform.drawCalc(intersection, imageX, imageY, figure, figureLeft, figureTop);
 			}
 		}

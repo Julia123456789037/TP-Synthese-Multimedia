@@ -60,7 +60,6 @@ public class PanelImport extends PanelImage {
 		this.ctrl.ajouterFigure(x, y, tx, ty, c, bi);
 		lstImport.add(this.ctrl.getFigure(this.ctrl.getNbFigure() - 1));
 		repaint();
-		System.out.println("Figure added to import list");
 	}
 
 	@Override

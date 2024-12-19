@@ -9,9 +9,9 @@ public enum ModeEdition {
 	NORMAL          (Cursor.getDefaultCursor()),
 	PIPETTE         (getCursor("/pipette.png",     new Point( 0, 20))),
 	POT_DE_PEINTURE	(getCursor("/potPeinture.png", new Point(17, 12))),
-	TEXTE           (getCursor("/stylo.png", new Point(0, 0))), // TODO: Changer les coordonnées de la pointe.
-	SELECTION_RECT  (getCursor("/plus.png", new Point(12, 12))),  // TODO: Changer les coordonnées de la pointe.
-	SELECTION_ROND  (getCursor("/plus.png", new Point(12, 12)));  // TODO: Changer les coordonnées de la pointe.
+	TEXTE           (getCursor("/stylo.png",       new Point(0,  0 ))), 
+	SELECTION_RECT  (getCursor("/plus.png",        new Point(12, 12))),  
+	SELECTION_ROND  (getCursor("/plus.png",        new Point(12, 12))); 
 	
 	public final Cursor cursor;
 	

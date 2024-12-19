@@ -17,7 +17,6 @@ public class Metier {
 
 	
 	public void ajouterFigure(int x, int y, int tx, int ty, FormeFigure c, BufferedImage bi) {
-		System.out.println("Adding Figure: ");
 		this.lstFigure.add(switch (c) {
 			case RECTANGLE -> new Rectangle(x, y, tx, ty, c, bi);
 			case OVAL      -> new Ovale(x, y, tx, ty, c, bi);
