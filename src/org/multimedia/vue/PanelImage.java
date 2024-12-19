@@ -71,8 +71,7 @@ public class PanelImage extends JPanel {
 						case PIPETTE -> pickColor(x, y);
 						case POT_DE_PEINTURE -> paintColor(x, y);
 						case TEXTE -> paintTexte(x, y);
-						default -> {
-						}
+						default -> { }
 					}
 				}
 			}

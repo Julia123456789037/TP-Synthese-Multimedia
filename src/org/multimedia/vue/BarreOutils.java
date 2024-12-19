@@ -92,9 +92,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCouleur = new ToolBarBouton();
 		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
 		this.btnCouleur.setActionCommand("Couleur");
-		this.btnCouleur.setBackground(this.couleurSelectionnee); 
-		this.btnCouleur.setOpaque(true);
-		this.btnCouleur.setBorderPainted(true);
+		this.btnCouleur.setOpaque(true); // Assurez que le bouton est opaque
+		this.btnCouleur.setContentAreaFilled(true); // Remplit tout le bouton
+		this.btnCouleur.setBorderPainted(false); // Désactive les bordures, si souhaité
+		this.btnCouleur.setBackground(this.couleurSelectionnee);
 
 		this.btnPipette = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
 		this.btnPipette.setToolTipText("Pipette");

@@ -85,5 +85,7 @@ public class Controleur {
 	public void delFigure(Figure selectedFigure) {
 		this.metier.delFigure(selectedFigure);
 	}
+
+    public Metier getMetier() { return this.metier; }
 	
 }

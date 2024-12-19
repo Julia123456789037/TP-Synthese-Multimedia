@@ -108,7 +108,7 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK), e -> this.saveAs(e));
 		
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), e -> {
-			Figure f = this.ctrl.metier.getFigureSelected();
+			Figure f = this.ctrl.getMetier().getFigureSelected();
 			if (f != null) {
 				this.ctrl.metier.delFigure(f);
 			}
