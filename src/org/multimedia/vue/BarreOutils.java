@@ -55,7 +55,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JTextField textFieldTexte;
 	
 	public final JPanel extraToolbar;
-
+	
 	public BarreOutils(Controleur ctrl) 
 	{
 		this.ctrl = ctrl;
@@ -93,6 +93,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCouleur.setActionCommand("Couleur");
 		this.btnCouleur.setBackground(this.couleurSelectionnee); 
 		this.btnCouleur.setOpaque(true);
+		this.btnCouleur.setContentAreaFilled(true);
 		this.btnCouleur.setBorderPainted(true);
 
 		this.btnPipette = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
