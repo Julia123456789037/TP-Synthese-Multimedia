@@ -340,6 +340,38 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		sourceFrame.setVisible(true);
 	}
+
+	public void premPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); 
+		if (index != -1) {
+			this.ctrl.premierPlan(index); // Call premierPlan with the figure index
+			//this.repaint();
+		}
+    }
+
+	public void avanverUnPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.planAvant(index);
+			//this.repaint();
+		}
+    }
+
+	public void reculerUnPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.planArriere(index);
+			//this.repaint();
+		}
+    }
+
+	public void dernPlan(){
+		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
+		if (index != -1) {
+			this.ctrl.ArrierePlan(index);
+			//this.repaint();
+		}
+    }
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {

@@ -162,19 +162,19 @@ public class BarreOutils extends JToolBar implements ActionListener
 
 		this.btnPremPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/1erPlan.png", true) ));
 		this.btnPremPlan.setToolTipText("Passer au 1er plan");
-		this.btnPremPlan.setActionCommand("collerForme");
+		this.btnPremPlan.setActionCommand("1erPlan");
 
 		this.btnDeuxPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/passe1niv.png", true) ));
 		this.btnDeuxPlan.setToolTipText("Faire avancer d'un niveau");
-		this.btnDeuxPlan.setActionCommand("collerForme");
+		this.btnDeuxPlan.setActionCommand("passe1niv");
 
 		this.btnAvDerPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/reculer1niv.png", true) ));
 		this.btnAvDerPlan.setToolTipText("Faire reculer d'un niveau");
-		this.btnAvDerPlan.setActionCommand("collerForme");
+		this.btnAvDerPlan.setActionCommand("reculer1niv");
 
 		this.btnArrPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/dernierPlan.png", true) ));
 		this.btnArrPlan.setToolTipText("Passer a l'arrière plan");
-		this.btnArrPlan.setActionCommand("collerForme");
+		this.btnArrPlan.setActionCommand("dernierPlan");
 
 		
 		// Même taille des bouton pour tous 
@@ -299,6 +299,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
 			case "changeAutreImage" -> { panelIm.openSourcePanel(); }
 			case "collerForme"      -> { panelIm.saveImageWithOverlap(new File("rendu.png"));}
+			case "1erPlan"          -> { panelIm.premPlan(); }
+			case "passe1niv"        -> { panelIm.avanverUnPlan(); }
+			case "reculer1niv"      -> { panelIm.reculerUnPlan(); }
+			case "dernierPlan"      -> { panelIm.dernPlan(); }
 		}
 	}
 
