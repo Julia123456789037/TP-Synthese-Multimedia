@@ -44,6 +44,13 @@ public class ImageTransform {
 		});
 	}
 
+    public void fillTransp( Color color ) {
+		this.addOperation(image -> {
+			try { return ImageUtils.replaceColorWithTransparency(image, color); } 
+            catch (IllegalArgumentException e) { return image; }
+		});
+	}
+
 	public void applyBrightness( int brightness ) {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
 	}

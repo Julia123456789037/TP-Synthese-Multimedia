@@ -230,7 +230,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
 			case "Pipette"       -> panelIm.enablePipetteMode( ! panelIm.isPipetteMode() );
 			case "PotDePeinture" -> panelIm.enablePotPeintureMode( !panelIm.isPotPeintureMode() );
-			case "FondTransparent" 	-> {  }
+			case "FondTransparent" 	-> panelIm.paintTransp( );
 			case "Couleur"       -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);

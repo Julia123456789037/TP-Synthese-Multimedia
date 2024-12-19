@@ -362,6 +362,11 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.panelImage.updateUI();
 	}
 
+    public void transp() {
+		this.panelImage.transform.fillTransp( this.selectedColor );
+		this.panelImage.updateUI();
+	}
+
 	public void writeText( int x, int y )  {
 		this.panelImage.transform.writeText(this.textTexte, x, y, this.textSize, this.selectedColor);
 		this.panelImage.updateUI();

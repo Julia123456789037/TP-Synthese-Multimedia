@@ -177,6 +177,11 @@ public class PanelImage extends JPanel {
 		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
+    public synchronized void paintTransp() {
+		FramePrinc frame = this.ctrl.getFramePrinc();
+		if (frame != null) { frame.transp( ); }
+	}
+
 	private synchronized void paintTexte(int x, int y) {
 		BufferedImage image = this.transform.applyTransforms(this.image);
 		
