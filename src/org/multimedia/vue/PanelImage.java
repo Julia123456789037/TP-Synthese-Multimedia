@@ -40,7 +40,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	protected Cursor cursorPipette;
 	
 	protected char creationFigure = ' ';
-	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere, btnSave;
+	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere;
 	protected int startX;
 	protected int startY;
 	protected int currentX;
@@ -106,14 +106,12 @@ public class PanelImage extends JPanel implements ActionListener {
 		this.btnArrierePlan = new JButton("Arrière plan");
 		this.btnAvant       = new JButton("1 plan avant");
 		this.btnArriere     = new JButton("1 plan arrière");
-		this.btnSave        = new JButton("Sauvegarder");
 
 		// positionnement des composants
 
 		// this.add(panelTracer, BorderLayout.CENTER);
 		SwingUtilities.invokeLater(() -> {
 			// Modifications des composants ici
-			panelAction.add(this.btnSave);
 			panelAction.add(btnPremierPlan);
 			panelAction.add(btnArrierePlan);
 			panelAction.add(this.btnAvant);
@@ -132,7 +130,6 @@ public class PanelImage extends JPanel implements ActionListener {
 		btnArrierePlan.addActionListener(this);
 		this.btnAvant.addActionListener(this);
 		this.btnArriere.addActionListener(this);
-		this.btnSave.addActionListener(this);
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
@@ -376,10 +373,7 @@ public class PanelImage extends JPanel implements ActionListener {
 				this.ctrl.planAvant(index);
 				//this.repaint();
 			}
-		} else if (evt.getSource() == this.btnSave) {
-			// Get the index of the selected figure
-			this.saveImageWithOverlap(new File("rendu.png"));
-		}
+		} 
 
 	}
 

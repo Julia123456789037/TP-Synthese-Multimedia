@@ -3,8 +3,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serial;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -37,6 +39,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 	private JButton 	btnCurseur;
 	private JButton		btnAutreFrame;
 	private JButton		btnFondTransp;
+	private JButton		btnColerForme;
+	private JButton 	btnPremPlan;
+	private JButton		btnDeuxPlan;
+	private JButton		btnAvDerPlan;
+	private JButton		btnArrPlan;
 
 	private JComboBox<String> comboTailleTexte;
 	
@@ -105,6 +112,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnAjouterTexte.setToolTipText("Ajouter du texte");
 		this.btnAjouterTexte.setActionCommand("AjouterDuTexte");
 
+
 		String[] taillesTexte = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "30", "36", "48", "60", "70", "96"};
 		this.comboTailleTexte = new JComboBox<>(taillesTexte);
 		this.comboTailleTexte.setPreferredSize(new Dimension(80, 40));
@@ -114,27 +122,27 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.comboTailleTexte.setSelectedItem("12");
 
 		this.textFieldTexte = new JTextField();
-        this.textFieldTexte.setPreferredSize(new Dimension(250, 40));
-        this.textFieldTexte.setMaximumSize(new Dimension(250, 40));
-        this.textFieldTexte.setMinimumSize(new Dimension(250, 40));
-        this.textFieldTexte.setToolTipText("Entrez du texte");
+		this.textFieldTexte.setPreferredSize(new Dimension(250, 40));
+		this.textFieldTexte.setMaximumSize(new Dimension(250, 40));
+		this.textFieldTexte.setMinimumSize(new Dimension(250, 40));
+		this.textFieldTexte.setToolTipText("Entrez du texte");
 
 		this.textFieldTexte.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate( DocumentEvent e ) { onTextChanged(); }
+			@Override
+			public void insertUpdate( DocumentEvent e ) { onTextChanged(); }
 
-            @Override
-            public void removeUpdate( DocumentEvent e ) { onTextChanged(); }
+			@Override
+			public void removeUpdate( DocumentEvent e ) { onTextChanged(); }
 
-            @Override
-            public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
+			@Override
+			public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
 
-            // Méthode appelée à chaque changement de texte
-            private void onTextChanged() {
-                String texte = textFieldTexte.getText();
-                ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
-            }
-        });
+			// Méthode appelée à chaque changement de texte
+			private void onTextChanged() {
+				String texte = textFieldTexte.getText();
+				ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
+			}
+		});
 
 		this.comboTailleTexte.addActionListener(e -> {
 			String tailleSelectionnee = ( String ) comboTailleTexte.getSelectedItem();
@@ -147,6 +155,26 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnAutreFrame = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/open.png", true) ));
 		this.btnAutreFrame.setToolTipText("charger une autre image");
 		this.btnAutreFrame.setActionCommand("changeAutreImage");
+
+		this.btnColerForme = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/paste.png", true) ));
+		this.btnColerForme.setToolTipText("Coller les formes");
+		this.btnColerForme.setActionCommand("collerForme");
+
+		this.btnPremPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/1erPlan.png", true) ));
+		this.btnPremPlan.setToolTipText("Passer au 1er plan");
+		this.btnPremPlan.setActionCommand("collerForme");
+
+		this.btnDeuxPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/passe1niv.png", true) ));
+		this.btnDeuxPlan.setToolTipText("Faire avancer d'un niveau");
+		this.btnDeuxPlan.setActionCommand("collerForme");
+
+		this.btnAvDerPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/reculer1niv.png", true) ));
+		this.btnAvDerPlan.setToolTipText("Faire reculer d'un niveau");
+		this.btnAvDerPlan.setActionCommand("collerForme");
+
+		this.btnArrPlan = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/dernierPlan.png", true) ));
+		this.btnArrPlan.setToolTipText("Passer a l'arrière plan");
+		this.btnArrPlan.setActionCommand("collerForme");
 
 		
 		// Même taille des bouton pour tous 
@@ -163,6 +191,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		uniformiserBouton( this.btnCreerRond );
 		uniformiserBouton( this.btnAjouterTexte );
 		uniformiserBouton( this.btnAutreFrame );
+		uniformiserBouton( this.btnColerForme );
+		uniformiserBouton( this.btnPremPlan );
+		uniformiserBouton( this.btnDeuxPlan );
+		uniformiserBouton( this.btnAvDerPlan );
+		uniformiserBouton( this.btnArrPlan );
 
 
 		/*-------------------------------*/
@@ -177,12 +210,17 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.add( this.btnPipette );
 		this.add( this.btnPotPeinture );
 		this.add( this.btnFondTransp );
-		this.add( this.btnCreerRectangle );
-		this.add( this.btnCreerRond );
 		this.add( this.btnAjouterTexte );
 		this.add( this.comboTailleTexte );
 		this.add( this.textFieldTexte );
 		this.add( this.btnAutreFrame );
+		this.add( this.btnCreerRectangle );
+		this.add( this.btnCreerRond );
+		this.add( this.btnColerForme );
+		this.add( this.btnPremPlan );
+		this.add( this.btnDeuxPlan );
+		this.add( this.btnAvDerPlan );
+		this.add( this.btnArrPlan );
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
@@ -200,6 +238,11 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCreerRectangle  .addActionListener(this);
 		this.btnCreerRond       .addActionListener(this);
 		this.btnAutreFrame      .addActionListener(this);
+		this.btnColerForme      .addActionListener(this);
+		this.btnPremPlan        .addActionListener(this);
+		this.btnDeuxPlan        .addActionListener(this);
+		this.btnAvDerPlan       .addActionListener(this);
+		this.btnArrPlan         .addActionListener(this);
 	}
 
 	public void setCouleurSelectionnee( Color couleur ) {
@@ -254,7 +297,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 				panelIm.updateUI();
 			}
 			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
-			case "changeAutreImage" 	-> { panelIm.openSourcePanel(); }
+			case "changeAutreImage" -> { panelIm.openSourcePanel(); }
+			case "collerForme"      -> { panelIm.saveImageWithOverlap(new File("rendu.png"));}
 		}
 	}
 
