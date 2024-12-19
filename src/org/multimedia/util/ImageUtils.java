@@ -146,7 +146,7 @@ public class ImageUtils
 					case 3  -> (int) (r * 0.299 + g * 0.587 + b * 0.114) / 3;
 					default -> throw new NoSuchAlgorithmException();
 				};
-				res.setRGB(x, y, RGB.parse(greyscale, greyscale, greyscale));
+				res.setRGB(x, y, RGB.parse(RGB.getAlpha(rgb), greyscale, greyscale, greyscale));
 			}
 		}
 		return res;
@@ -179,7 +179,7 @@ public class ImageUtils
 				g = RGB.limit(g + brightness);
 				b = RGB.limit(b + brightness);
 				
-				res.setRGB(x, y, RGB.parse(r, g, b));
+				res.setRGB(x, y, RGB.parse(RGB.getAlpha(rgb), r, g, b));
 			}
 		}
 		
@@ -216,7 +216,7 @@ public class ImageUtils
 				r = RGB.limit((int) ((r - 127) * tmp + 127));
 				g = RGB.limit((int) ((g - 127) * tmp + 127));
 				b = RGB.limit((int) ((b - 127) * tmp + 127));
-				res.setRGB(x, y, RGB.parse(r, g, b));
+				res.setRGB(x, y, RGB.parse(RGB.getAlpha(rgb), r, g, b));
 			}
 		}
 		return res;
@@ -232,11 +232,11 @@ public class ImageUtils
 	 * @param color
 	 * @return
 	 */
-	public static BufferedImage fill(BufferedImage img, int x, int y, Color color)
+	public static BufferedImage fill(BufferedImage img, int x, int y, Color color, int tolerance)
 	{
 		if (color == null)
 			return null;
-		return fill(img, x, y, color.getRGB());
+		return fill(img, x, y, color.getRGB(), tolerance);
 	}
 	
 	/**
@@ -325,6 +325,7 @@ public class ImageUtils
 	}
 	*/
 	
+	/*
 	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb) {
         if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
             throw new IllegalArgumentException();
@@ -376,10 +377,71 @@ public class ImageUtils
             }
         }
     }
+    */
 
     private static boolean isEqualRgba(int[] pix1, int[] pix2) {
         return Math.abs(pix1[0] - pix2[0]) == 0 && Math.abs(pix1[1] - pix2[1]) == 0 && Math.abs(pix1[2] - pix2[2]) == 0 && Math.abs(pix1[3] - pix2[3]) == 0;
     }
+	
+	public static BufferedImage fill(BufferedImage img, int x, int y, int rgb, int tolerance) {
+	    if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) {
+	        throw new IllegalArgumentException();
+	    }
+	    
+	    BufferedImage res = Builder.deepClone(img);
+
+	    WritableRaster raster = res.getRaster();
+	    int[] fill = new int[]{RGB.getRed(rgb), RGB.getGreen(rgb), RGB.getBlue(rgb), RGB.getAlpha(rgb)};
+	    int[] old = raster.getPixel(x, y, new int[4]);
+
+	    // Checks trivial case where loc is of the fill color
+	    if (isWithinTolerance(fill, old, tolerance)) {
+	        return res;
+	    }
+
+	    floodLoop(raster, x, y, fill, old, tolerance);
+	    return res;
+	}
+
+	// Recursively fills surrounding pixels of the old color
+	private static void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old, int tolerance) {
+	    Rectangle bounds = raster.getBounds();
+	    int[] aux = {255, 255, 255, 255};
+
+	    // finds the left side, filling along the way
+	    int fillL = x;
+	    do {
+	        raster.setPixel(fillL, y, fill);
+	        fillL--;
+	    } while (fillL >= 0 && isWithinTolerance(raster.getPixel(fillL, y, aux), old, tolerance));
+	    fillL++;
+
+	    // find the right right side, filling along the way
+	    int fillR = x;
+	    do {
+	        raster.setPixel(fillR, y, fill);
+	        fillR++;
+	    } while (fillR < bounds.width - 1 && isWithinTolerance(raster.getPixel(fillR, y, aux), old, tolerance));
+	    fillR--;
+
+	    // checks if applicable up or down
+	    for (int i = fillL; i <= fillR; i++) {
+	        if (y > 0 && isWithinTolerance(raster.getPixel(i, y - 1, aux), old, tolerance)) {
+	            floodLoop(raster, i, y - 1, fill, old, tolerance);
+	        }
+	        if (y < bounds.height - 1 && isWithinTolerance(raster.getPixel(i, y + 1, aux), old, tolerance)) {
+	            floodLoop(raster, i, y + 1, fill, old, tolerance);
+	        }
+	    }
+	}
+
+	private static boolean isWithinTolerance(int[] pix1, int[] pix2, int tolerance) {
+	    return Math.abs(pix1[0] - pix2[0]) <= tolerance &&
+	           Math.abs(pix1[1] - pix2[1]) <= tolerance &&
+	           Math.abs(pix1[2] - pix2[2]) <= tolerance &&
+	           Math.abs(pix1[3] - pix2[3]) <= tolerance;
+	}
+
 
     public static BufferedImage replaceColorWithTransparency(BufferedImage img, Color targetColor) {
         // Clone l'image pour ne pas modifier l'originale
@@ -532,6 +594,7 @@ public class ImageUtils
 	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
 	    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_QUALITY);
+	    g2d.setRenderingHint(RenderingHints.KEY_RESOLUTION_VARIANT, RenderingHints.VALUE_RESOLUTION_VARIANT_SIZE_FIT);
 	    
 	    AffineTransform at = new AffineTransform();
 	    at.translate((nouvelleLargeur - largeur) / 2, (nouvelleHauteur - hauteur) / 2);
@@ -541,7 +604,64 @@ public class ImageUtils
 	    g2d.drawImage(image, 0, 0, null);
 	    g2d.dispose();
 	    
-	    return resultat;
+	    return cropTransparent(resultat, image);
+	}
+	
+	private static BufferedImage cropTransparent(BufferedImage img, BufferedImage initialImage) {
+		int width  = img.getWidth();
+		int height = img.getHeight();
+		
+		int top = 0, left = 0, bottom = height - 1, right = width - 1;
+		
+		// Trouver la première ligne non transparente
+		outerLoop:
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (RGB.getAlpha(img.getRGB(x, y)) != 0x00) { // Si ce n'est pas transparent
+					top = y;
+					break outerLoop;
+				}
+			}
+		}
+
+		// Trouver la dernière ligne non transparente
+		outerLoop:
+		for (int y = height - 1; y >= 0; y--) {
+			for (int x = 0; x < width; x++) {
+				if (RGB.getAlpha(img.getRGB(x, y)) != 0x00) {
+					bottom = y;
+					break outerLoop;
+				}
+			}
+		}
+
+		// Trouver la première colonne non transparente
+		outerLoop:
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (RGB.getAlpha(img.getRGB(x, y)) != 0x00) {
+					left = x;
+					break outerLoop;
+				}
+			}
+		}
+
+		// Trouver la dernière colonne non transparente
+		outerLoop:
+		for (int x = width - 1; x >= 0; x--) {
+			for (int y = 0; y < height; y++) {
+				if (RGB.getAlpha(img.getRGB(x, y)) != 0x00) {
+					right = x;
+					break outerLoop;
+				}
+			}
+		}
+		
+		// Recadrer l'image en fonction des bordures détectées
+		int newWidth = right - left + 1;
+		int newHeight = bottom - top + 1;
+
+		return img.getSubimage(left, top, newWidth, newHeight);
 	}
 	
 	public static BufferedImage applyZoom(BufferedImage img, double zoom) {
@@ -551,8 +671,8 @@ public class ImageUtils
 		Graphics2D g2d = res.createGraphics();
 		
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	    g2d.scale(zoom, zoom);
-	    g2d.drawImage(img, 0, 0, null);
+		g2d.scale(zoom, zoom);
+		g2d.drawImage(img, 0, 0, null);
 		g2d.dispose();
 		
 		return res;

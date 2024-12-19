@@ -1,4 +1,4 @@
-package org.multimedia.metier;
+package org.multimedia.test;
 
 import java.awt.image.BufferedImage;
 

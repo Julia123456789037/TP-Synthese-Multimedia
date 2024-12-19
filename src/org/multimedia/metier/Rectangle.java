@@ -2,10 +2,12 @@ package org.multimedia.metier;
 
 import java.awt.image.BufferedImage;
 
+import org.multimedia.composants.FormeFigure;
+
 public class Rectangle extends Figure {
 	private boolean pixelsCaptured = false; // To ensure pixels are captured only once
 
-	public Rectangle(int centreX, int centreY, int tailleX, int tailleY, char c, BufferedImage background) {
+	public Rectangle(int centreX, int centreY, int tailleX, int tailleY, FormeFigure c, BufferedImage background) {
 		super(centreX, centreY, tailleX, tailleY, c);
 
 		// Capture pixels only when the figure is created
