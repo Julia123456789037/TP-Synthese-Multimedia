@@ -1,5 +1,12 @@
 package org.multimedia.vue;
 
+import org.multimedia.composants.FormeFigure;
+import org.multimedia.composants.ImageTransform;
+import org.multimedia.composants.ModeEdition;
+import org.multimedia.main.Controleur;
+import org.multimedia.metier.Figure;
+import org.multimedia.util.Arithmetique;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,19 +25,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.multimedia.composants.FormeFigure;
-import org.multimedia.composants.ImageTransform;
-import org.multimedia.composants.ModeEdition;
-import org.multimedia.main.Controleur;
-import org.multimedia.metier.Figure;
-import org.multimedia.util.Arithmetique;
 
 public class PanelImage extends JPanel {
-	protected Controleur ctrl;
-	protected BufferedImage image;
-	protected boolean pipetteMode = false; // Mode pipette activé/désactivé
-	protected Color couleurSelectionnee = Color.BLACK;
-	protected Cursor cursorPipette;
+	protected Controleur     ctrl;
+	protected BufferedImage  image;
+	protected boolean        pipetteMode = false; // Mode pipette activé/désactivé
+	protected Color          couleurSelectionnee = Color.BLACK;
+	protected Cursor         cursorPipette;
 	
 	protected FormeFigure creationFigure = FormeFigure.VIDE;
 	
@@ -38,7 +39,6 @@ public class PanelImage extends JPanel {
 	protected int startY;
 	protected int currentX;
 	protected int currentY;
-	private FrameImport sourceFrame;
 
 	protected JComboBox<String> JcbFigure;
 	protected JLabel lblRect, lblOval;
@@ -48,6 +48,7 @@ public class PanelImage extends JPanel {
 	private static final long serialVersionUID = 8341091164745892107L;
 
 	private ModeEdition mode;
+	private FrameImport sourceFrame;
 
 	final ImageTransform transform;
 	public GereSouris gereSouris;
@@ -71,12 +72,7 @@ public class PanelImage extends JPanel {
 						case PIPETTE -> pickColor(x, y);
 						case POT_DE_PEINTURE -> paintColor(x, y);
 						case TEXTE -> paintTexte(x, y);
-						// case SELECTION_RECT -> fRect(x, y); //TODO fonction fRect est la fonctionde
-						// seb pour dessiner le rectangle
-						// case SELECTION_ROND -> fRond(x, y); //TODO fonction fRond est la fonctionde
-						// seb pour dessiner le rond
-						default -> {
-						}
+						default -> { }
 					}
 				}
 			}
@@ -89,12 +85,10 @@ public class PanelImage extends JPanel {
 
 		// crÃ©ation des composants;
 		panelTracer = new JPanel();
-
 		panelTracer.setOpaque(false);
 
 		this.lblOval = new JLabel("Ovale");
 		this.lblRect = new JLabel("Rectangle");
-
 
 		// activation des composants
 
@@ -107,29 +101,15 @@ public class PanelImage extends JPanel {
 		this.requestFocusInWindow();
 	}
 
-	public boolean isPotPeintureMode() {
-		return this.mode == ModeEdition.POT_DE_PEINTURE;
-	}
-
-	public boolean isPipetteMode() {
-		return this.mode == ModeEdition.PIPETTE;
-	}
-
-	public boolean isStyloMode() {
-		return this.mode == ModeEdition.TEXTE;
-	}
-
-	public boolean isSelectionRectMode() {
-		return this.mode == ModeEdition.SELECTION_RECT;
-	}
-
-	public boolean isSelectionRondMode() {
-		return this.mode == ModeEdition.SELECTION_ROND;
-	}
-
-	public Point getImageLocationOnScreen() {
-		return this.getLocationOnScreen();
-	}
+	public boolean       isPotPeintureMode()        { return this.mode == ModeEdition.POT_DE_PEINTURE; }
+	public boolean       isPipetteMode()            { return this.mode == ModeEdition.PIPETTE; }
+	public boolean       isStyloMode()              { return this.mode == ModeEdition.TEXTE; }
+	public boolean       isSelectionRectMode()      { return this.mode == ModeEdition.SELECTION_RECT; }
+	public boolean       isSelectionRondMode()      { return this.mode == ModeEdition.SELECTION_ROND; }
+	public Point         getImageLocationOnScreen() { return this.getLocationOnScreen(); }
+	public BufferedImage getImage()                 { return this.image; }
+	public Color         getColor()                 { return this.couleurSelectionnee; }
+	public void          loadImage( BufferedImage image ) { this.image = image; }
 
 	public void setCreationFigure(FormeFigure c) {
 		this.creationFigure = c;
@@ -162,9 +142,7 @@ public class PanelImage extends JPanel {
 
 				BufferedImage figureImage = fig.getFigureImage();
 
-				if (figureImage != null) {
-					g2.drawImage(figureImage, left, top, null);
-				}
+				if (figureImage != null) { g2.drawImage(figureImage, left, top, null); }
 
 				if (fig.isSelected()) {
 					g2.setColor(this.couleurSelectionnee);
@@ -221,10 +199,6 @@ public class PanelImage extends JPanel {
 		this.repaint();
 	}
 
-	public void loadImage(BufferedImage image) {
-		this.image = image;
-	}
-
 	public void enablePipetteMode(boolean enable) {
 		this.mode = enable ? ModeEdition.PIPETTE : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
@@ -233,10 +207,6 @@ public class PanelImage extends JPanel {
 	public void enablePotPeintureMode(boolean enable) {
 		this.mode = enable ? ModeEdition.POT_DE_PEINTURE : ModeEdition.NORMAL;
 		this.setCursor(this.mode.cursor);
-	}
-
-	public BufferedImage getImage() {
-		return this.image;
 	}
 
 	public void enableStylo(boolean enable) {
@@ -273,12 +243,8 @@ public class PanelImage extends JPanel {
 
 			// Mettre à jour la couleur dans la barre d'outils
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.getBarreOutils().setCouleurSelectionnee(selectedColor);
-			}
-		} else {
-			System.out.println("Les coordonnées sont en dehors de l'image.");
-		}
+			if (frame != null) { frame.getBarreOutils().setCouleurSelectionnee(selectedColor); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 
 		// Désactiver le mode pipette après avoir sélectionné la couleur
 		enablePipetteMode(false);
@@ -294,19 +260,13 @@ public class PanelImage extends JPanel {
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.potPeint(imageX, imageY);
-			}
-		} else {
-			System.out.println("Les coordonnées sont en dehors de l'image.");
-		}
+			if (frame != null) { frame.potPeint(imageX, imageY); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
 	public synchronized void paintTransp() {
 		FramePrinc frame = this.ctrl.getFramePrinc();
-		if (frame != null) {
-			frame.transp();
-		}
+		if (frame != null) { frame.transp(); }
 	}
 
 	private synchronized void paintTexte(int x, int y) {
@@ -319,12 +279,8 @@ public class PanelImage extends JPanel {
 		// Vérification que les coordonnées sont dans les limites de l'image
 		if (imageX >= 0 && imageY >= 0 && imageX < image.getWidth() && imageY < image.getHeight()) {
 			FramePrinc frame = this.ctrl.getFramePrinc();
-			if (frame != null) {
-				frame.writeText(imageX, imageY);
-			}
-		} else {
-			System.out.println("Les coordonnées sont en dehors de l'image.");
-		}
+			if (frame != null) { frame.writeText(imageX, imageY); }
+		} else { System.out.println("Les coordonnées sont en dehors de l'image."); }
 	}
 
 	public void openSourcePanel() {
@@ -366,10 +322,6 @@ public class PanelImage extends JPanel {
 			this.repaint();
 		}
     }
-	
-	public Color getColor() {
-		return this.couleurSelectionnee;
-	}
 
 	public void saveImageWithOverlap() {
 		BufferedImage image = this.transform.applyTransforms(this.image);
@@ -415,12 +367,9 @@ public class PanelImage extends JPanel {
 						startX = e.getX();
 						startY = e.getY();
 						foundFigure = true;
-					} else {
-						fig.setSelected(false);
-					}
+					} else { fig.setSelected(false); }
 				}
-				if (this.figSelected != null)
-					this.figSelected.setSelected(true);
+				if (this.figSelected != null) { this.figSelected.setSelected(true); }
 
 				if (!foundFigure) {
 					for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
