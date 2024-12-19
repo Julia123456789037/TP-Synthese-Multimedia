@@ -17,8 +17,7 @@ public class Texte extends Rectangle {
 	
 	@Override
 	public void selectPixels(BufferedImage background) {
-		// TODO Auto-generated method stub
-
-	}
+        
+    }
 	
 }

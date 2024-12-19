@@ -27,34 +27,35 @@ import org.multimedia.util.ImageUtils;
 public class BarreOutils extends JToolBar implements ActionListener
 {
 	@Serial
-	private static final long serialVersionUID = 6326511901738014336L;
+	protected static final long serialVersionUID = 6326511901738014336L;
 
-	private Controleur ctrl;
-	private JButton		btnSauvegarder;
-	private JButton		btnOuvrirImage;
-	private JButton		btnPipette;
-	private JButton		btnPotPeinture;
-	private JButton		btnCouleur;
-	private JButton 	btnAjouterTexte;
-	private JButton		btnCreerRectangle;
-	private JButton		btnCreerRond;
-	private JButton 	btnUndo;
-	private JButton 	btnRedo;
-	private JButton 	btnCurseur;
-	private JButton		btnAutreFrame;
-	private JButton		btnFondTransp;
-	private JButton		btnColerForme;
-	private JButton 	btnPremPlan;
-	private JButton		btnDeuxPlan;
-	private JButton		btnAvDerPlan;
-	private JButton		btnArrPlan;
+	protected Controleur ctrl;
+	protected final JPanel  panel;
 
-	private JComboBox<String> comboTailleTexte;
-	
-	private Color couleurSelectionnee = Color.BLACK;
-	private JTextField textFieldTexte;
-	
+	protected JButton       btnSauvegarder;
+	protected JButton       btnOuvrirImage;
+	protected JButton       btnPipette;
+	protected JButton       btnPotPeinture;
+	protected JButton       btnCouleur;
+	protected JButton       btnAjouterTexte;
+	protected JButton       btnCreerRectangle;
+	protected JButton       btnCreerRond;
+	protected JButton       btnUndo;
+	protected JButton       btnRedo;
+	protected JButton       btnCurseur;
+	protected JButton       btnAutreFrame;
+	protected JButton       btnFondTransp;
+	protected JButton       btnColerForme;
+	protected JButton       btnPremPlan;
+	protected JButton       btnDeuxPlan;
+	protected JButton       btnAvDerPlan;
+	protected JButton       btnArrPlan;
+
+	protected JComboBox<String> comboTailleTexte;
 	public final JPanel extraToolbar;
+	
+	protected Color couleurSelectionnee = Color.BLACK;
+	protected JTextField textFieldTexte; 
 	
 	public BarreOutils(Controleur ctrl) 
 	{
@@ -91,10 +92,10 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnCouleur = new ToolBarBouton();
 		this.btnCouleur.setToolTipText("Couleur Sélectionnée");
 		this.btnCouleur.setActionCommand("Couleur");
-		this.btnCouleur.setBackground(this.couleurSelectionnee); 
-		this.btnCouleur.setOpaque(true);
-		this.btnCouleur.setContentAreaFilled(true);
-		this.btnCouleur.setBorderPainted(true);
+		this.btnCouleur.setOpaque(true); // Assurez que le bouton est opaque
+		this.btnCouleur.setContentAreaFilled(true); // Remplit tout le bouton
+		this.btnCouleur.setBorderPainted(false); // Désactive les bordures, si souhaité
+		this.btnCouleur.setBackground(this.couleurSelectionnee);
 
 		this.btnPipette = new ToolBarBouton(new ImageIcon(ImageUtils.openImg("/pipette.png", true) ));
 		this.btnPipette.setToolTipText("Pipette");
@@ -146,7 +147,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
 
 			// Méthode appelée à chaque changement de texte
-			private void onTextChanged() {
+			protected void onTextChanged() {
 				String texte = textFieldTexte.getText();
 				ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
 			}
@@ -210,7 +211,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		/* Positionnement des composants */
 		/*-------------------------------*/
 		
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		this.panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		panel.add( this.btnOuvrirImage );
 		panel.add( this.btnSauvegarder );
@@ -235,7 +236,6 @@ public class BarreOutils extends JToolBar implements ActionListener
 		
 		this.add(panel, BorderLayout.CENTER);
 		
-//		this.extraToolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		this.extraToolbar = new JPanel();
 		this.add(this.extraToolbar, BorderLayout.SOUTH);
 		
@@ -262,6 +262,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.btnArrPlan        .addActionListener(this);
 	}
 
+
 	public void setCouleurSelectionnee( Color couleur ) {
 		this.ctrl.getFramePrinc().setSelectedColor( couleur );
 		this.couleurSelectionnee = couleur;
@@ -284,10 +285,9 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public void actionPerformed ( ActionEvent e)
 	{
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
-		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur") && !e.getActionCommand().equals("changeImage"))
-			return;
-		for (Component c : this.extraToolbar.getComponents())
-			this.extraToolbar.remove(c);
+		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur") && !e.getActionCommand().equals("changeImage")) { return; }
+		for (Component c : this.extraToolbar.getComponents()) { this.extraToolbar.remove(c); }
+			
 		switch (e.getActionCommand()) {
 			case "changeImage"   -> this.ctrl.getFramePrinc().mnuOpenFileListener(e);
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
@@ -338,7 +338,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		this.updateUI();
 	}
 
-	private void uniformiserBouton(JButton bouton) {
+	protected void uniformiserBouton(JButton bouton) {
 		bouton.setPreferredSize ( new Dimension( 40, 40 ) );
 		bouton.setMaximumSize   ( new Dimension( 40, 40 ) );
 		bouton.setMinimumSize   ( new Dimension( 40, 40 ) );

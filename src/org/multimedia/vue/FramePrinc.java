@@ -42,19 +42,20 @@ import org.multimedia.util.ImageUtils;
 public class FramePrinc extends JFrame implements WindowListener, ComponentListener, ActionListener
 {
 	@Serial
-	private static final long serialVersionUID = 5106104636891939306L;
+	protected static final long serialVersionUID = 5106104636891939306L;
 
 	Controleur ctrl;
 
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
-	private JMenu mnuTailTe;
-	private Color selectedColor = Color.BLACK;
-	private boolean isSaved;
+	protected JMenu mnuTailTe;
+	protected Color selectedColor = Color.BLACK;
+	protected boolean isSaved;
 	public final String titre;
-	private File fichierOuvert;
-	private int textSize = 12;
-	private String textTexte = "";
+	protected File fichierOuvert;
+	protected int textSize = 12;
+	protected String textTexte = "";
+	
 	private int tolerance;
 	
 	private int width;
@@ -111,43 +112,24 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK), e -> this.saveAs(e));
 		
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), e -> {
-			Figure f = this.ctrl.metier.getFigureSelected();
+			Figure f = this.ctrl.getMetier().getFigureSelected();
 			if (f != null) {
 				this.ctrl.metier.delFigure(f);
 			}
 			this.panelImage.updateUI();
 		});
 		
-//		this.addMouseWheelListener(e -> {
-//			if (this.panelImage.getImage() == null)
-//				return;
-//			synchronized (FramePrinc.class) {
-//				if ((KeyEvent.CTRL_DOWN_MASK & e.getModifiersEx()) != 0) {
-//					double rotation = e.getPreciseWheelRotation();
-//					System.out.println(rotation);
-//					if (rotation > 0) {
-//						this.panelImage.transform.applyZoom(1.1);
-//					} else {
-//						this.panelImage.transform.applyZoom(0.9);
-//					}
-//					this.panelImage.updateUI();
-//				}
-//			}
-//		});
-		
 		this.addWindowListener(this);
 		this.addComponentListener(this);
-		
 		this.setVisible ( true );
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 	
-	private void registerKeyboardEvent(KeyStroke key, ActionListener a) {
+	protected void registerKeyboardEvent(KeyStroke key, ActionListener a) {
 		this.getRootPane().registerKeyboardAction(a, key, JComponent.WHEN_IN_FOCUSED_WINDOW);
 	}
 
-	private JMenuBar createMenuBar() {
-
+	protected JMenuBar createMenuBar() {
 		// La barre de menu à proprement parler
 		JMenuBar menuBar = new JMenuBar();
 
@@ -353,8 +335,7 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 	public void mnuOpenFileListener(ActionEvent event) {
 		if (this.isSaved == false && this.isModified()) {
 			int status = JOptionPane.showInternalConfirmDialog(this.getContentPane(), "Votre travail n'est pas sauvegardé, voulez-vous vraiment en disposer ?");
-			if (status != JOptionPane.OK_OPTION)
-				return;
+			if (status != JOptionPane.OK_OPTION) { return; }
 		}
 		this.openFileChooser("Sélectionnez une image", (fileChooser, result) -> {
 			if (result == JFileChooser.APPROVE_OPTION) {
@@ -374,6 +355,8 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 			}
 		});
 	}
+
+    public File getFichier() { return this.fichierOuvert;}
 	
 	public void openFileChooser(String titre, IFileChooser action) {
 		// Créer un JFileChooser pour sélectionner un fichier
@@ -389,21 +372,23 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		action.onResult(fileChooser, fileChooser.showOpenDialog(this));
 	}
 	
-	private static interface IFileChooser {
+	protected static interface IFileChooser {
 		public void onResult(JFileChooser fileChooser, int result);
 	}
 
-	public void mnuAjTeListener(ActionEvent event) { this.panelImage.enableStylo(! this.panelImage.isStyloMode()); }
-	public void setSelectedColor(Color color) { this.selectedColor = color; }
-	public void setTextSize(int size) { 
+	public void mnuAjTeListener       ( ActionEvent event) { this.panelImage.enableStylo(! this.panelImage.isStyloMode()); }
+	public void setSelectedColor      ( Color color)       { this.selectedColor = color; }
+	public void setTextTexte          ( String texte)      { this.textTexte = texte; }
+	public void setTolerance          ( int tolerance)     { this.tolerance = tolerance; }
+    public PanelImage getPanelImage   ( )                  { return this.panelImage; }
+	public BarreOutils getBarreOutils ( )                  { return this.barreOutils; }
+	public boolean isModified         ()                   { return this.panelImage.getImage() != null && this.panelImage.transform.hasOperations(); }
+	
+	
+    public void setTextSize(int size) { 
 		this.textSize = size; 
 		this.getBarreOutils().updateComboBoxSize(size);
 		this.updateMenuTextSize(size);
-	}
-	public void setTextTexte(String texte) { this.textTexte = texte; }
-	
-	public void setTolerance(int tolerance) {
-		this.tolerance = tolerance;
 	}
 	
 	public void updateMenuTextSize(int newSize) {
@@ -432,33 +417,23 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		this.panelImage.transform.writeText(this.textTexte, x, y, this.textSize, this.selectedColor);
 		this.panelImage.updateUI();
 	}
-	
-	public PanelImage getPanelImage() { return this.panelImage; }
-	public BarreOutils getBarreOutils() { return this.barreOutils; }
-	
-	public boolean isModified() {
-		return this.panelImage.getImage() != null && this.panelImage.transform.hasOperations();
-	}
-	
+
 	public void setModified() {
 		this.isSaved = false;
 		this.setTitle(this.titre + (this.panelImage.getImage() != null ? " - " + this.fichierOuvert.getName() : "") + "*");
 	}
 	
 	public void save(ActionEvent e) {
-		if (this.fichierOuvert == null)
-			return;
+		if (this.fichierOuvert == null) { return; }
 		BufferedImage image = this.panelImage.transform.applyTransforms(this.panelImage.getImage());
+       
 		BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		Graphics2D g2 = out.createGraphics();
 		g2.drawImage(image, 0, 0, null);
 		
 		g2.dispose();
-		try {
-			ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		try { ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert); } 
+		catch (Exception ex) { ex.printStackTrace(); }
 		
 		this.isSaved = true;
 		this.setTitle(this.titre + (this.panelImage.getImage() != null ? " - " + this.fichierOuvert.getName() : ""));
@@ -475,7 +450,7 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		this.save(e);
 	}
 	
-	private String getFileExtension(File file) {
+	protected String getFileExtension(File file) {
 		if (file == null)
 			return null;
 		if (file.isDirectory())
@@ -486,16 +461,6 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 	
 	@Override
 	public void windowOpened(WindowEvent e) {}
-	
-	@Override
-	public void windowClosing(WindowEvent e) {
-		if (this.isSaved == false && this.isModified()) {
-			int status = JOptionPane.showInternalConfirmDialog(this.getContentPane(), "Votre travail n'est pas sauvegardé, voulez-vous vraiment quitter ?");
-			if (status == JOptionPane.CANCEL_OPTION || status == JOptionPane.NO_OPTION)
-				return;
-		}
-		this.dispose();
-	}
 	
 	@Override
 	public void windowClosed(WindowEvent e) {}
@@ -511,20 +476,34 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 	
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
+
+    @Override
+	public void componentResized(ComponentEvent e) { }
+	
+	@Override
+	public void componentMoved(ComponentEvent e) {}
+	
+	@Override
+	public void componentShown(ComponentEvent e) {}
+	
+	@Override
+	public void componentHidden(ComponentEvent e) {}
+
+    @Override
+	public void windowClosing(WindowEvent e) {
+		if (this.isSaved == false && this.isModified()) {
+			int status = JOptionPane.showInternalConfirmDialog(this.getContentPane(), "Votre travail n'est pas sauvegardé, voulez-vous vraiment quitter ?");
+			if (status == JOptionPane.CANCEL_OPTION || status == JOptionPane.NO_OPTION)
+				return;
+		}
+		this.dispose();
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (this.fichierOuvert == null)
 			return;
 		switch (e.getActionCommand()) {
-			case "GIT" -> {
-				System.out.println("Help!");
-				try {
-					Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
-				} catch (IOException | URISyntaxException e1) {
-					e1.printStackTrace();
-				}
-			}
 			case "AjusterLC" -> {
 				JSlider brightnessSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
 				brightnessSlider.setMajorTickSpacing((100 - -100) / 5);
@@ -575,54 +554,9 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 					null, null, null
 				);
 	
-				if (result == JOptionPane.OK_OPTION) {
-					this.panelImage.transform.addRotation(slider.getValue());
-				}
+				if (result == JOptionPane.OK_OPTION) { this.panelImage.transform.addRotation(slider.getValue()); }
 			}
 		}
 		this.panelImage.updateUI();
 	}
-	
-	@Override
-	public void componentResized(ComponentEvent e) {
-//		int numF = this.ctrl.metier.getNbFigure();
-//		
-//		System.out.format("w1=%d, w2=%d\n", this.width,  this.getWidth());
-//		System.out.format("h1=%d, h2=%d\n", this.height, this.getHeight());
-//		
-//		for (int i = 0; i < numF; i++) {
-//			Figure f = this.ctrl.metier.getFigure(i);
-//			int minWidth  = Math.min(this.width,  this.getWidth());
-//			int maxWidth  = Math.max(this.width,  this.getWidth());
-//			int minHeight = Math.min(this.height, this.getHeight());
-//			int maxHeight = Math.max(this.height, this.getHeight());
-//			int x = f.getCentreX() - f.getTailleX() / 2;
-//			int y = f.getCentreY() - f.getTailleY() / 2;
-//			System.out.println(x + "<>" + y);
-//			if (this.width > this.getWidth())
-//				x = x / (maxWidth / minWidth);
-//			if (this.width < this.getWidth())
-//				x = x * (maxWidth / minWidth);
-//			if (this.height > this.getHeight())
-//				y = y / (maxHeight / minHeight);
-//			if (this.height > this.getHeight())
-//				y = y * (maxHeight / minHeight);
-//			System.out.println(x + "<>" + y);
-//			System.out.println("-".repeat(15));
-//			this.ctrl.metier.deplacerFigure(i, x, y);
-//		}
-//		
-//		this.width  = this.getWidth();
-//		this.height = this.getHeight();
-	}
-	
-	@Override
-	public void componentMoved(ComponentEvent e) {}
-	
-	@Override
-	public void componentShown(ComponentEvent e) {}
-	
-	@Override
-	public void componentHidden(ComponentEvent e) {}
-	
 }
