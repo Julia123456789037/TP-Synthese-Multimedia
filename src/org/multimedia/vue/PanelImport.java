@@ -128,8 +128,8 @@ public class PanelImport extends PanelImage {
 				startY = currentY = e.getY();
 			} else {
 				boolean foundFigure = false;
-				for (int i = 0; i < PanelImport.this.ctrl.getNbFigure(); i++) {
-					Figure fig = PanelImport.this.ctrl.getFigure(i);
+				for (int i = 0; i < PanelImport.this.lstImport.size(); i++) {
+					Figure fig = PanelImport.this.lstImport.get(i);
 					if (fig != null && fig.possede(e.getX(), e.getY())) {
 						this.figSelected = fig;
 						startX = e.getX();
@@ -143,8 +143,8 @@ public class PanelImport extends PanelImage {
 					this.figSelected.setSelected(true);
 
 				if (!foundFigure) {
-					for (int i = 0; i < PanelImport.this.ctrl.getNbFigure(); i++) {
-						PanelImport.this.ctrl.getFigure(i).setSelected(false);
+					for (int i = 0; i < PanelImport.this.lstImport.size(); i++) {
+						PanelImport.this.lstImport.get(i).setSelected(false);
 					}
 					this.figSelected = null;
 				}
