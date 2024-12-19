@@ -2,7 +2,9 @@ package org.multimedia.vue;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -51,17 +53,20 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.ctrl = ctrl;
 		this.isSaved = false;
 		this.titre = "Swing Painter";
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.setTitle  ( this.titre  );
-		this.setSize   ( 1500, 950 );
+		this.setSize   ( (int) screenSize.getWidth() - 200, (int) screenSize.getHeight() - 100 );
 		this.setLocationRelativeTo( null );
 		
 		try {
-			String lafClassName = switch (System.getProperty("os.name")) {
-				case "Linux"   -> "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-				case "Windows" -> "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-				default        -> UIManager.getCrossPlatformLookAndFeelClassName();
-			};
+			String lafClassName = UIManager.getCrossPlatformLookAndFeelClassName();
+			String osName = System.getProperty("os.name");
+			if (osName.equals("Linux"))
+				lafClassName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+			if (osName.matches("Windows \\d+"))
+				lafClassName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 			UIManager.setLookAndFeel(lafClassName);
 		} catch (Exception e) { e.printStackTrace(); }
 		
@@ -90,6 +95,23 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		});
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), e -> this.save(e));
 		this.registerKeyboardEvent(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK), e -> this.saveAs(e));
+		
+//		this.addMouseWheelListener(e -> {
+//			if (this.panelImage.getImage() == null)
+//				return;
+//			synchronized (FramePrinc.class) {
+//				if ((KeyEvent.CTRL_DOWN_MASK & e.getModifiersEx()) != 0) {
+//					double rotation = e.getPreciseWheelRotation();
+//					System.out.println(rotation);
+//					if (rotation > 0) {
+//						this.panelImage.transform.applyZoom(1.1);
+//					} else {
+//						this.panelImage.transform.applyZoom(0.9);
+//					}
+//					this.panelImage.updateUI();
+//				}
+//			}
+//		});
 		
 		this.addWindowListener(this);
 		

@@ -543,6 +543,20 @@ public class ImageUtils
 	    
 	    return resultat;
 	}
+	
+	public static BufferedImage applyZoom(BufferedImage img, double zoom) {
+		int newWidth = (int) (img.getWidth() * zoom);
+		int newHeight = (int) (img.getHeight() * zoom);
+		BufferedImage res = new BufferedImage(newWidth, newHeight, img.getType());
+		Graphics2D g2d = res.createGraphics();
+		
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g2d.scale(zoom, zoom);
+	    g2d.drawImage(img, 0, 0, null);
+		g2d.dispose();
+		
+		return res;
+	}
 
 	
 	public static BufferedImage invertHorizontal(BufferedImage img) {
@@ -767,20 +781,20 @@ public class ImageUtils
 	 * @param zoom
 	 * @return
 	 */
-	public static BufferedImage applyZoom(BufferedImage img, float zoom)
-	{
-		BufferedImage tmp = new BufferedImage((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom), img.getType());
-		
-		for (int y = 0; y < tmp.getHeight(); y++)
-		{
-			for (int x = 0; x < tmp.getWidth(); x++)
-			{
-				tmp.setRGB(x, y, img.getRGB((int) Math.floor(x / zoom), (int) Math.floor(y / zoom)));
-			}
-		}
-		
-		return ImageUtils.applyMedianFilter(tmp, 2);
-	}
+//	public static BufferedImage applyZoom(BufferedImage img, float zoom)
+//	{
+//		BufferedImage tmp = new BufferedImage((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom), img.getType());
+//		
+//		for (int y = 0; y < tmp.getHeight(); y++)
+//		{
+//			for (int x = 0; x < tmp.getWidth(); x++)
+//			{
+//				tmp.setRGB(x, y, img.getRGB((int) Math.floor(x / zoom), (int) Math.floor(y / zoom)));
+//			}
+//		}
+//		
+//		return ImageUtils.applyMedianFilter(tmp, 2);
+//	}
 	
 	/**
 	 * Appliquer un filtre mégian sur l'image.
