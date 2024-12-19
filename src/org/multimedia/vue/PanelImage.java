@@ -367,10 +367,17 @@ public class PanelImage extends JPanel {
 						startX = e.getX();
 						startY = e.getY();
 						foundFigure = true;
-					} else { fig.setSelected(false); }
+					} 
 				}
 				if (this.figSelected != null) { this.figSelected.setSelected(true); }
 
+				for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
+					if (!PanelImage.this.ctrl.getFigure(i).equals(this.figSelected))
+					{
+						PanelImage.this.ctrl.getFigure(i).setSelected(false);
+					}
+				}
+				
 				if (!foundFigure) {
 					for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
 						PanelImage.this.ctrl.getFigure(i).setSelected(false);
