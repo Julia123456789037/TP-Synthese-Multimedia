@@ -39,15 +39,10 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
 	private JMenu mnuTailTe;
-	
 	private Color selectedColor = Color.BLACK;
-	
 	private boolean isSaved;
-	
 	public final String titre;
-	
 	private File fichierOuvert;
-	
 	private int textSize = 12;
 	private String textTexte = "";
 	
@@ -133,7 +128,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		mnuSaveFileAs.setIcon( new ImageIcon( ImageUtils.openImg("/save_as.png", true) ) );
 		mnuSaveFileAs.setMnemonic(KeyEvent.VK_E);
 		mnuSaveFileAs.addActionListener(this::saveAs);
-		mnuSaveFile.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
+		mnuSaveFileAs.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) );
 		mnuFile.add(mnuSaveFileAs);
 		
 		mnuFile.addSeparator();
