@@ -145,7 +145,7 @@ public class PanelImage extends JPanel {
 	}
 
 	private void pickColor(int x, int y) {
-		this.image = this.transform.applyTransforms(this.image);
+		BufferedImage image = this.transform.applyTransforms(this.image);
 		int imageX = x - ( getWidth()  - image.getWidth()  ) / 2;
 		int imageY = y - ( getHeight() - image.getHeight() ) / 2;
 
