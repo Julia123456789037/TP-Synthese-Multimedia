@@ -419,7 +419,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		g2.dispose();
 		try { ImageIO.write(out, this.getFileExtension(this.fichierOuvert), this.fichierOuvert); } 
         catch (Exception ex) { ex.printStackTrace(); }
-        this.panelImage.setImage(out);
+        //this.panelImage.setImage(out);
         this.panelImage.saveImageWithOverlap(this.fichierOuvert);
 		
 		this.isSaved = true;
