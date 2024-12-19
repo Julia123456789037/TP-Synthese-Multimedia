@@ -44,6 +44,13 @@ public class ImageTransform {
 		});
 	}
 
+    public void fillTransp( Color color ) {
+		this.addOperation(image -> {
+			try { return ImageUtils.replaceColorWithTransparency(image, color); } 
+            catch (IllegalArgumentException e) { return image; }
+		});
+	}
+
 	public void applyBrightness( int brightness ) {
 		this.addOperation(image -> ImageUtils.applyBrightness( image, brightness ));
 	}
@@ -54,6 +61,10 @@ public class ImageTransform {
 	
     public void toGreyScale() {
         this.addOperation(image -> ImageUtils.toGreyScale( image ));
+    }
+    
+    public void applyZoom(double zoom) {
+    	this.addOperation(image -> ImageUtils.applyZoom(image, zoom));
     }
     
     public void undo() {

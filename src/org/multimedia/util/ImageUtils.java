@@ -381,6 +381,29 @@ public class ImageUtils
         return Math.abs(pix1[0] - pix2[0]) == 0 && Math.abs(pix1[1] - pix2[1]) == 0 && Math.abs(pix1[2] - pix2[2]) == 0 && Math.abs(pix1[3] - pix2[3]) == 0;
     }
 
+    public static BufferedImage replaceColorWithTransparency(BufferedImage img, Color targetColor) {
+        // Clone l'image pour ne pas modifier l'originale
+        BufferedImage res = Builder.deepClone(img);
+    
+        WritableRaster raster = res.getRaster();
+        int[] target = new int[]{targetColor.getRed(), targetColor.getGreen(), targetColor.getBlue(), targetColor.getAlpha()};
+        int[] transparent = new int[]{0, 0, 0, 0}; // Couleur transparente (RGBA)
+    
+        // Parcourt tous les pixels de l'image
+        Rectangle bounds = raster.getBounds();
+        int[] aux = {255, 255, 255, 255}; // Tampon temporaire pour lire les pixels
+    
+        for (int y = 0; y < bounds.height; y++) {
+            for (int x = 0; x < bounds.width; x++) {
+                int[] pixel = raster.getPixel(x, y, aux);
+    
+                // Si la couleur du pixel correspond à la couleur cible, le remplace par du transparent
+                if (isEqualRgba(pixel, target)) { raster.setPixel(x, y, transparent); }
+            }
+        }
+        return res;
+    }
+
 	
 	/**
 	 * Inclusion naïve d'une image dans une autre.
@@ -519,6 +542,20 @@ public class ImageUtils
 	    g2d.dispose();
 	    
 	    return resultat;
+	}
+	
+	public static BufferedImage applyZoom(BufferedImage img, double zoom) {
+		int newWidth = (int) (img.getWidth() * zoom);
+		int newHeight = (int) (img.getHeight() * zoom);
+		BufferedImage res = new BufferedImage(newWidth, newHeight, img.getType());
+		Graphics2D g2d = res.createGraphics();
+		
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g2d.scale(zoom, zoom);
+	    g2d.drawImage(img, 0, 0, null);
+		g2d.dispose();
+		
+		return res;
 	}
 
 	
@@ -744,20 +781,20 @@ public class ImageUtils
 	 * @param zoom
 	 * @return
 	 */
-	public static BufferedImage applyZoom(BufferedImage img, float zoom)
-	{
-		BufferedImage tmp = new BufferedImage((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom), img.getType());
-		
-		for (int y = 0; y < tmp.getHeight(); y++)
-		{
-			for (int x = 0; x < tmp.getWidth(); x++)
-			{
-				tmp.setRGB(x, y, img.getRGB((int) Math.floor(x / zoom), (int) Math.floor(y / zoom)));
-			}
-		}
-		
-		return ImageUtils.applyMedianFilter(tmp, 2);
-	}
+//	public static BufferedImage applyZoom(BufferedImage img, float zoom)
+//	{
+//		BufferedImage tmp = new BufferedImage((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom), img.getType());
+//		
+//		for (int y = 0; y < tmp.getHeight(); y++)
+//		{
+//			for (int x = 0; x < tmp.getWidth(); x++)
+//			{
+//				tmp.setRGB(x, y, img.getRGB((int) Math.floor(x / zoom), (int) Math.floor(y / zoom)));
+//			}
+//		}
+//		
+//		return ImageUtils.applyMedianFilter(tmp, 2);
+//	}
 	
 	/**
 	 * Appliquer un filtre mégian sur l'image.
