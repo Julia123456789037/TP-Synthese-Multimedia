@@ -2,6 +2,7 @@ package org.multimedia.vue;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -14,7 +15,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -326,8 +330,20 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		menuBar.add(menuAjust);
 		
 		// Définition du menu déroulant "Help" et de son contenu
-		JMenu mnuHelp = new JMenu( "Help" );
+		JMenu mnuHelp = new JMenu( "Aide" );
 		mnuHelp.setMnemonic(KeyEvent.VK_H);
+		
+		JMenuItem itemGit = new JMenuItem("Répertoire GIT");
+		itemGit.setIcon(new ImageIcon(ImageUtils.openImg("/git.png", true)));
+		itemGit.setMnemonic(KeyEvent.VK_R);
+		itemGit.addActionListener(e -> {
+			try {
+				Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
+			} catch (IOException | URISyntaxException e1) {
+				e1.printStackTrace();
+			}
+		});
+		mnuHelp.add(itemGit);
 		
 		menuBar.add(mnuHelp);
 		
@@ -501,6 +517,14 @@ public class FramePrinc extends JFrame implements WindowListener, ComponentListe
 		if (this.fichierOuvert == null)
 			return;
 		switch (e.getActionCommand()) {
+			case "GIT" -> {
+				System.out.println("Help!");
+				try {
+					Desktop.getDesktop().browse(new URI("https://github.com/Julia123456789037/TP-Synthese-Multimedia"));
+				} catch (IOException | URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
 			case "AjusterLC" -> {
 				JSlider brightnessSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
 				brightnessSlider.setMajorTickSpacing((100 - -100) / 5);
