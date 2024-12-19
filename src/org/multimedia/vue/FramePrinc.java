@@ -34,19 +34,19 @@ import org.multimedia.util.ImageUtils;
 public class FramePrinc extends JFrame implements WindowListener, ActionListener
 {
 	@Serial
-	private static final long serialVersionUID = 5106104636891939306L;
+	protected static final long serialVersionUID = 5106104636891939306L;
 
 	Controleur ctrl;
 
 	BarreOutils	barreOutils;
 	PanelImage	panelImage;
-	private JMenu mnuTailTe;
-	private Color selectedColor = Color.BLACK;
-	private boolean isSaved;
+	protected JMenu mnuTailTe;
+	protected Color selectedColor = Color.BLACK;
+	protected boolean isSaved;
 	public final String titre;
-	private File fichierOuvert;
-	private int textSize = 12;
-	private String textTexte = "";
+	protected File fichierOuvert;
+	protected int textSize = 12;
+	protected String textTexte = "";
 	
 	public FramePrinc(Controleur ctrl)
 	{
@@ -119,11 +119,11 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 	
-	private void registerKeyboardEvent(KeyStroke key, ActionListener a) {
+	protected void registerKeyboardEvent(KeyStroke key, ActionListener a) {
 		this.getRootPane().registerKeyboardAction(a, key, JComponent.WHEN_IN_FOCUSED_WINDOW);
 	}
 
-	private JMenuBar createMenuBar() {
+	protected JMenuBar createMenuBar() {
 
 		// La barre de menu à proprement parler
 		JMenuBar menuBar = new JMenuBar();
@@ -354,7 +354,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		action.onResult(fileChooser, fileChooser.showOpenDialog(this));
 	}
 	
-	private static interface IFileChooser {
+	protected static interface IFileChooser {
 		public void onResult(JFileChooser fileChooser, int result);
 	}
 
@@ -432,7 +432,7 @@ public class FramePrinc extends JFrame implements WindowListener, ActionListener
 		this.save(e);
 	}
 	
-	private String getFileExtension(File file) {
+	protected String getFileExtension(File file) {
 		if (file == null)
 			return null;
 		if (file.isDirectory())

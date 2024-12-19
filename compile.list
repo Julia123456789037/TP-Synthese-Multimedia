@@ -20,6 +20,7 @@
 ./src/org/multimedia/util/ImageUtils.java
 ./src/org/multimedia/util/PixelIterator.java
 ./src/org/multimedia/util/Text.java
+./src/org/multimedia/vue/BarreOutilsImport.java
 ./src/org/multimedia/vue/BarreOutils.java
 ./src/org/multimedia/vue/FrameImport.java
 ./src/org/multimedia/vue/FramePrinc.java

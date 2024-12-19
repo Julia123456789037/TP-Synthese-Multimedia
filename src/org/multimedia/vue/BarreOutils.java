@@ -23,32 +23,32 @@ import org.multimedia.util.ImageUtils;
 public class BarreOutils extends JToolBar implements ActionListener
 {
 	@Serial
-	private static final long serialVersionUID = 6326511901738014336L;
+	protected static final long serialVersionUID = 6326511901738014336L;
 
-	private Controleur ctrl;
-	private JButton		btnSauvegarder;
-	private JButton		btnOuvrirImage;
-	private JButton		btnPipette;
-	private JButton		btnPotPeinture;
-	private JButton		btnCouleur;
-	private JButton 	btnAjouterTexte;
-	private JButton		btnCreerRectangle;
-	private JButton		btnCreerRond;
-	private JButton 	btnUndo;
-	private JButton 	btnRedo;
-	private JButton 	btnCurseur;
-	private JButton		btnAutreFrame;
-	private JButton		btnFondTransp;
-	private JButton		btnColerForme;
-	private JButton 	btnPremPlan;
-	private JButton		btnDeuxPlan;
-	private JButton		btnAvDerPlan;
-	private JButton		btnArrPlan;
+	protected Controleur ctrl;
+	protected JButton		btnSauvegarder;
+	protected JButton		btnOuvrirImage;
+	protected JButton		btnPipette;
+	protected JButton		btnPotPeinture;
+	protected JButton		btnCouleur;
+	protected JButton 	btnAjouterTexte;
+	protected JButton		btnCreerRectangle;
+	protected JButton		btnCreerRond;
+	protected JButton 	btnUndo;
+	protected JButton 	btnRedo;
+	protected JButton 	btnCurseur;
+	protected JButton		btnAutreFrame;
+	protected JButton		btnFondTransp;
+	protected JButton		btnColerForme;
+	protected JButton 	btnPremPlan;
+	protected JButton		btnDeuxPlan;
+	protected JButton		btnAvDerPlan;
+	protected JButton		btnArrPlan;
 
-	private JComboBox<String> comboTailleTexte;
+	protected JComboBox<String> comboTailleTexte;
 	
-	private Color couleurSelectionnee = Color.BLACK;
-	private JTextField textFieldTexte; 
+	protected Color couleurSelectionnee = Color.BLACK;
+	protected JTextField textFieldTexte; 
 
 	public BarreOutils(Controleur ctrl) 
 	{
@@ -138,7 +138,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 			public void changedUpdate( DocumentEvent e ) { onTextChanged(); }
 
 			// Méthode appelée à chaque changement de texte
-			private void onTextChanged() {
+			protected void onTextChanged() {
 				String texte = textFieldTexte.getText();
 				ctrl.getFramePrinc().setTextTexte( texte ); // Appeler la méthode dans FramePrinc
 			}
@@ -306,7 +306,7 @@ public class BarreOutils extends JToolBar implements ActionListener
 		}
 	}
 
-	private void uniformiserBouton(JButton bouton) {
+	protected void uniformiserBouton(JButton bouton) {
 		bouton.setPreferredSize ( new Dimension( 40, 40 ) );
 		bouton.setMaximumSize   ( new Dimension( 40, 40 ) );
 		bouton.setMinimumSize   ( new Dimension( 40, 40 ) );
