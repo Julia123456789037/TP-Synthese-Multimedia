@@ -21,7 +21,7 @@ public class PanelImport extends PanelImage {
 		super(ctrl);
 		this.lstImport = new ArrayList<>(); // Initialize with an empty list of figures specific to PanelImport
 	}
-/*
+
 	// Add figures to the secondary list and shared controller
 	public void addToSecondaryList(int x, int y, int tx, int ty, char c, BufferedImage bi) {
 		// This adds the figure only to lstImport, not to the global figure list in ctrl
@@ -33,7 +33,7 @@ public class PanelImport extends PanelImage {
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+		
 		Graphics2D g2 = (Graphics2D) g;
 	
 		// 1. Draw the image if it exists
@@ -74,7 +74,7 @@ public class PanelImport extends PanelImage {
 		}
 	
 		// 3. Draw the preview of the figure being created (if in create mode)
-		if (chkCreateMode.isSelected()) {
+		if (this.creationFigure != ' ') {
 			int left = Math.min(startX, currentX);
 			int top = Math.min(startY, currentY);
 			int width = Math.abs(currentX - startX);
@@ -89,6 +89,6 @@ public class PanelImport extends PanelImage {
 				g2.drawOval(left, top, width, height);
 			}
 		}
-	} */
+	} 
 
 }
