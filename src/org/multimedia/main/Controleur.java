@@ -1,18 +1,23 @@
 package org.multimedia.main;
 
-import javax.swing.SwingUtilities;
 import java.awt.image.BufferedImage;
-import org.multimedia.metier.*;
+
+import javax.swing.SwingUtilities;
+
+import org.multimedia.composants.FormeFigure;
+import org.multimedia.metier.Figure;
+import org.multimedia.metier.Metier;
 import org.multimedia.vue.FramePrinc;
 
 public class Controleur {
-	private FramePrinc ihm;
-	private Metier  metier;
+	
+	public final FramePrinc ihm;
+	public final Metier  metier;
 
 	// Constructeur
-	public Controleur ()
+	public Controleur()
 	{
-		this.metier = new Metier ();
+		this.metier = new Metier();
 		this.ihm    = new FramePrinc(this);
 
 	}
@@ -49,7 +54,7 @@ public class Controleur {
 		this.metier.deselectFigure();
 	}
 
-	public void ajouterFigure(int x, int y, int tx, int ty, char c, BufferedImage bi) {
+	public void ajouterFigure(int x, int y, int tx, int ty, FormeFigure c, BufferedImage bi) {
 		this.metier.ajouterFigure(x, y, tx, ty, c, bi);
 	}
 

@@ -1,26 +1,28 @@
 package org.multimedia.metier;
 
-import java.util.List;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import org.multimedia.composants.FormeFigure;
 
 public class Metier {
+	
 	private List<Figure> lstFigure;
 
 	public Metier() {
-		this.lstFigure = new ArrayList<Figure>();
+		this.lstFigure = new ArrayList<>();
 	}
 
 	
-	public void ajouterFigure(int x, int y, int tx, int ty, char c, BufferedImage bi) {
+	public void ajouterFigure(int x, int y, int tx, int ty, FormeFigure c, BufferedImage bi) {
 		System.out.println("Adding Figure: ");
-		if (c == 'r') {
-			this.lstFigure.add(new Rectangle(x, y, tx, ty, c, bi));
-		}
-		if (c == 'o') {
-			this.lstFigure.add(new Ovale(x, y, tx, ty, c, bi));
-		}
+		this.lstFigure.add(switch (c) {
+			case RECTANGLE -> new Rectangle(x, y, tx, ty, c, bi);
+			case OVAL      -> new Ovale(x, y, tx, ty, c, bi);
+			default        -> null;
+		});
 	}
 
 	public int getNbFigure() {
@@ -52,7 +54,7 @@ public class Metier {
 	}
 
 	public void planArriere(int n) {
-		if (n < 0 || n >= lstFigure.size()) {
+		if (n < 1 || n >= lstFigure.size()) {
 			return;
 		}
 
@@ -61,11 +63,9 @@ public class Metier {
 	}
 
 	public void planAvant(int n) {
-		if (n < 0 || n >= lstFigure.size()) {
+		if (n < 0 || n > lstFigure.size() - 1)
 			return;
-		}
 		Collections.swap(lstFigure, n, n + 1);
-
 	}
 
 	

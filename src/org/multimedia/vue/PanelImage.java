@@ -4,43 +4,36 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serial;
 
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
+import org.multimedia.composants.FormeFigure;
 import org.multimedia.composants.ImageTransform;
 import org.multimedia.composants.ModeEdition;
 import org.multimedia.main.Controleur;
 import org.multimedia.metier.Figure;
 import org.multimedia.util.Arithmetique;
 
-public class PanelImage extends JPanel implements ActionListener {
+public class PanelImage extends JPanel {
 	protected Controleur ctrl;
 	protected BufferedImage image;
 	protected boolean pipetteMode = false; // Mode pipette activé/désactivé
 	protected Color couleurSelectionnee = Color.BLACK;
 	protected Cursor cursorPipette;
-
-	protected char creationFigure = ' ';
-	protected JButton btnPremierPlan, btnArrierePlan, btnAvant, btnArriere;
+	
+	protected FormeFigure creationFigure = FormeFigure.VIDE;
+	
 	protected int startX;
 	protected int startY;
 	protected int currentX;
@@ -89,50 +82,23 @@ public class PanelImage extends JPanel implements ActionListener {
 			}
 		});
 
-		JPanel panelTracer, panelAction;
+		JPanel panelTracer;
 		this.typeSelection = 'c';
 
 		this.setLayout(new BorderLayout());
 
 		// crÃ©ation des composants;
 		panelTracer = new JPanel();
-		panelAction = new JPanel(new FlowLayout());
 
 		panelTracer.setOpaque(false);
-		panelAction.setOpaque(true);
 
 		this.lblOval = new JLabel("Ovale");
 		this.lblRect = new JLabel("Rectangle");
 
-		// initialisation de la JCOMBOBOX
-
-		this.btnPremierPlan = new JButton("1er plan");
-		this.btnArrierePlan = new JButton("Arrière plan");
-		this.btnAvant = new JButton("1 plan avant");
-		this.btnArriere = new JButton("1 plan arrière");
-
-		// positionnement des composants
-
-		// this.add(panelTracer, BorderLayout.CENTER);
-		SwingUtilities.invokeLater(() -> {
-			// Modifications des composants ici
-			panelAction.add(btnPremierPlan);
-			panelAction.add(btnArrierePlan);
-			panelAction.add(this.btnAvant);
-			panelAction.add(this.btnArriere);
-			panelAction.revalidate();
-			panelAction.repaint();
-		});
-		this.add(panelAction, BorderLayout.NORTH);
 
 		// activation des composants
 
-		gereSouris = new GereSouris();
-		
-		btnPremierPlan.addActionListener(this);
-		btnArrierePlan.addActionListener(this);
-		this.btnAvant.addActionListener(this);
-		this.btnArriere.addActionListener(this);
+		GereSouris gereSouris = new GereSouris();
 
 		this.addMouseListener(gereSouris);
 		this.addMouseMotionListener(gereSouris);
@@ -165,22 +131,22 @@ public class PanelImage extends JPanel implements ActionListener {
 		return this.getLocationOnScreen();
 	}
 
-	public void setCreationFigure(char c) {
+	public void setCreationFigure(FormeFigure c) {
 		this.creationFigure = c;
 		System.out.println(c);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 
 		// Dessiner l'image si elle existe
-		if (this.image != null) {
-			BufferedImage image = this.transform.applyTransforms(this.image);
-			int x = (getWidth() - image.getWidth()) / 2;
-			int y = (getHeight() - image.getHeight()) / 2;
-
+		if ( this.image != null ) {
+			BufferedImage image = this.transform.applyTransforms( this.image );
+			int x = ( getWidth()  - image.getWidth()  ) / 2;
+			int y = ( getHeight() - image.getHeight() ) / 2;
 			g.drawImage(this.drawCheckerBoard(image.getWidth(), image.getHeight()), x, y, this);
 			// Dessiner l'image avec ses dimensions d'origine
 			g.drawImage(image, x, y, this);
@@ -203,20 +169,15 @@ public class PanelImage extends JPanel implements ActionListener {
 				if (fig.isSelected()) {
 					g2.setColor(this.couleurSelectionnee);
 					switch (fig.getType()) {
-						case 'r':
-							g2.drawRect(left, top, fig.getTailleX(), fig.getTailleY());
-							break;
-
-						case 'o':
-							g2.drawOval(left, top, fig.getTailleX(), fig.getTailleY());
-							break;
+						case RECTANGLE -> g2.drawRect(left, top, fig.getTailleX(), fig.getTailleY());
+						case OVAL      -> g2.drawOval(left, top, fig.getTailleX(), fig.getTailleY());
 					}
 				}
 			}
 		}
 
 		// 3. Draw the preview of the figure being created (if in create mode)
-		if (creationFigure != ' ') {
+		if (!this.creationFigure.equals(FormeFigure.VIDE)) {
 			int left = Math.min(startX, currentX);
 			int top = Math.min(startY, currentY);
 			int width = Math.abs(currentX - startX);
@@ -224,11 +185,10 @@ public class PanelImage extends JPanel implements ActionListener {
 
 			g2.setColor(Color.GRAY);
 			g2.setStroke(new BasicStroke(2));
-
-			if (creationFigure == 'r') {
-				g2.drawRect(left, top, width, height);
-			} else if (creationFigure == 'o') {
-				g2.drawOval(left, top, width, height);
+			
+			switch (this.creationFigure) {
+				case RECTANGLE -> g2.drawRect(left, top, width, height);
+				case OVAL      -> g2.drawOval(left, top, width, height);
 			}
 		}
 		g.dispose();
@@ -258,7 +218,7 @@ public class PanelImage extends JPanel implements ActionListener {
 	@Override
 	public void updateUI() {
 		super.updateUI();
-		//// this.repaint();
+		this.repaint();
 	}
 
 	public void loadImage(BufferedImage image) {
@@ -286,15 +246,13 @@ public class PanelImage extends JPanel implements ActionListener {
 
 	public void enableSelectionRect(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_RECT : ModeEdition.NORMAL;
-		char c = enable ? 'r' : ' ';
-		PanelImage.this.setCreationFigure(c);
+		PanelImage.this.setCreationFigure(enable ? FormeFigure.RECTANGLE : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
 	}
 
 	public void enableSelectionRond(boolean enable) {
 		this.mode = enable ? ModeEdition.SELECTION_ROND : ModeEdition.NORMAL;
-		char c = enable ? 'o' : ' ';
-		PanelImage.this.setCreationFigure(c);
+		PanelImage.this.setCreationFigure(enable ? FormeFigure.OVAL : FormeFigure.VIDE);
 		this.setCursor(this.mode.cursor);
 	}
 
@@ -381,7 +339,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.premierPlan(index); // Call premierPlan with the figure index
-			// this.repaint();
+			this.repaint();
 		}
 	}
 
@@ -389,7 +347,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.planAvant(index);
-			// this.repaint();
+			this.repaint();
 		}
 	}
 
@@ -397,7 +355,7 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.planArriere(index);
-			// this.repaint();
+			this.repaint();
 		}
 	}
 
@@ -405,47 +363,17 @@ public class PanelImage extends JPanel implements ActionListener {
 		int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
 		if (index != -1) {
 			this.ctrl.ArrierePlan(index);
-			// this.repaint();
+			this.repaint();
 		}
+    }
+	
+	public Color getColor() {
+		return this.couleurSelectionnee;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		if (evt.getSource() == this.btnPremierPlan) {
-			// Get the index of the selected figure
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure()); // Replace with your method to get the
-																					// selected figure index
-			if (index != -1) {
-				this.ctrl.premierPlan(index); // Call premierPlan with the figure index
-				// this.repaint();
-			}
-		}
-
-		// Handle send to back action
-		else if (evt.getSource() == this.btnArrierePlan) {
-			// Get the index of the selected figure
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
-			if (index != -1) {
-				this.ctrl.ArrierePlan(index);
-				// this.repaint();
-			}
-		} else if (evt.getSource() == this.btnArriere) {
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
-			if (index != -1) {
-				this.ctrl.planArriere(index);
-				// this.repaint();
-			}
-		} else if (evt.getSource() == this.btnAvant) {
-			int index = this.ctrl.getIndiceFigure(this.ctrl.getSelectedFigure());
-			if (index != -1) {
-				this.ctrl.planAvant(index);
-				// this.repaint();
-			}
-		}
-
-	}
-
-	public void saveImageWithOverlap(File outputFile) {
+	public void saveImageWithOverlap() {
+		BufferedImage image = this.transform.applyTransforms(this.image);
+		
 		int imageX = (getWidth() - image.getWidth()) / 2;
 		int imageY = (getHeight() - image.getHeight()) / 2;
 		Rectangle imageBounds = new Rectangle(imageX, imageY, image.getWidth(), image.getHeight());
@@ -463,35 +391,9 @@ public class PanelImage extends JPanel implements ActionListener {
 
 			if (!intersection.isEmpty()) {
 				// Modify image pixels
-				for (int y = intersection.y; y < intersection.y + intersection.height; y++) {
-					for (int x = intersection.x; x < intersection.x + intersection.width; x++) {
-						// Calculate relative coordinates in the image
-						int relativeX = x - imageX;
-						int relativeY = y - imageY;
-
-						// Ensure coordinates are within bounds for the image
-						if (relativeX >= 0 && relativeX < image.getWidth() &&
-								relativeY >= 0 && relativeY < image.getHeight() &&
-								figure.possede(x, y)) {
-
-							int figureColor = figure.getFigureImage().getRGB(x - figureLeft, y - figureTop);
-
-							int alpha = (figureColor >> 24) & 0xFF;
-							if (alpha > 0) { // On dessinne seulement si ce n'est PAS TRANSPARENT
-
-								image.setRGB(relativeX, relativeY,
-										figure.getFigureImage().getRGB(x - figureLeft, y - figureTop));
-							}
-						}
-					}
-				}
+				System.out.println("Got here!");
+				this.transform.drawCalc(intersection, imageX, imageY, figure, figureLeft, figureTop);
 			}
-		}
-
-		try {
-			ImageIO.write(image, "png", outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -501,11 +403,9 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (creationFigure != ' ') {
-				startX = e.getX();
-				startY = e.getY();
-				currentX = startX;
-				currentY = startY;
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
+				startX = currentX = e.getX();
+				startY = currentY = e.getY();
 			} else {
 				boolean foundFigure = false;
 				for (int i = 0; i < PanelImage.this.ctrl.getNbFigure(); i++) {
@@ -534,7 +434,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (creationFigure != ' ') {
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
 				currentX = e.getX();
 				currentY = e.getY();
 				PanelImage.this.repaint(); // Repaint to update the preview
@@ -551,7 +451,9 @@ public class PanelImage extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (creationFigure != ' ') {
+			if (!creationFigure.equals(FormeFigure.VIDE)) {
+				BufferedImage image = PanelImage.this.transform.applyTransforms(PanelImage.this.image);
+				
 				// Calculate the width and height of the figure
 				int width = Math.abs(currentX - startX);
 				int height = Math.abs(currentY - startY);
@@ -574,7 +476,7 @@ public class PanelImage extends JPanel implements ActionListener {
 
 				PanelImage.this.enableSelectionRect(false);
 				PanelImage.this.enableSelectionRond(false);
-				PanelImage.this.setCreationFigure(' ');
+				PanelImage.this.setCreationFigure(FormeFigure.VIDE);
 				PanelImage.this.repaint();
 			}
 		}
