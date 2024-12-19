@@ -54,7 +54,7 @@ public class Metier {
 	}
 
 	public void planArriere(int n) {
-		if (n < 0 || n >= lstFigure.size()) {
+		if (n < 1 || n >= lstFigure.size()) {
 			return;
 		}
 
@@ -63,11 +63,9 @@ public class Metier {
 	}
 
 	public void planAvant(int n) {
-		if (n < 0 || n >= lstFigure.size()) {
+		if (n < 0 || n > lstFigure.size() - 1)
 			return;
-		}
 		Collections.swap(lstFigure, n, n + 1);
-
 	}
 
 	

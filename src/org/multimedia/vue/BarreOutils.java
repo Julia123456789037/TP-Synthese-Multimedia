@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.Serial;
 
 import javax.swing.ImageIcon;
@@ -235,32 +234,31 @@ public class BarreOutils extends JToolBar implements ActionListener
 		
 		this.add(panel, BorderLayout.CENTER);
 		
-		this.extraToolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		this.extraToolbar.setSize(this.getWidth(), this.extraToolbar.getHeight());
+//		this.extraToolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		this.extraToolbar = new JPanel();
 		this.add(this.extraToolbar, BorderLayout.SOUTH);
-		
 		
 		/*-------------------------------*/
 		/* Activation des composants     */
 		/*-------------------------------*/
 		this.btnOuvrirImage    .addActionListener(this);
-		this.btnSauvegarder     .addActionListener(this);
-		this.btnUndo            .addActionListener(this);
-		this.btnRedo            .addActionListener(this);
-		this.btnCurseur         .addActionListener(this);
-		this.btnCouleur         .addActionListener(this);
-		this.btnPipette         .addActionListener(this);
-		this.btnPotPeinture     .addActionListener(this);
-		this.btnFondTransp      .addActionListener(this);
-		this.btnAjouterTexte    .addActionListener(this);
-		this.btnCreerRectangle  .addActionListener(this);
-		this.btnCreerRond       .addActionListener(this);
-		this.btnAutreFrame      .addActionListener(this);
-		this.btnColerForme      .addActionListener(this);
-		this.btnPremPlan        .addActionListener(this);
-		this.btnDeuxPlan        .addActionListener(this);
-		this.btnAvDerPlan       .addActionListener(this);
-		this.btnArrPlan         .addActionListener(this);
+		this.btnSauvegarder    .addActionListener(this);
+		this.btnUndo           .addActionListener(this);
+		this.btnRedo           .addActionListener(this);
+		this.btnCurseur        .addActionListener(this);
+		this.btnCouleur        .addActionListener(this);
+		this.btnPipette        .addActionListener(this);
+		this.btnPotPeinture    .addActionListener(this);
+		this.btnFondTransp     .addActionListener(this);
+		this.btnAjouterTexte   .addActionListener(this);
+		this.btnCreerRectangle .addActionListener(this);
+		this.btnCreerRond      .addActionListener(this);
+		this.btnAutreFrame     .addActionListener(this);
+		this.btnColerForme     .addActionListener(this);
+		this.btnPremPlan       .addActionListener(this);
+		this.btnDeuxPlan       .addActionListener(this);
+		this.btnAvDerPlan      .addActionListener(this);
+		this.btnArrPlan        .addActionListener(this);
 	}
 
 	public void setCouleurSelectionnee( Color couleur ) {
@@ -285,12 +283,12 @@ public class BarreOutils extends JToolBar implements ActionListener
 	public void actionPerformed ( ActionEvent e)
 	{
 		final PanelImage panelIm = this.ctrl.getFramePrinc().getPanelImage();
-		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur"))
+		if (panelIm.getImage() == null && !e.getActionCommand().equals("Couleur") && !e.getActionCommand().equals("changeImage"))
 			return;
 		for (Component c : this.extraToolbar.getComponents())
 			this.extraToolbar.remove(c);
 		switch (e.getActionCommand()) {
-			case "changeImage" -> { this.ctrl.getFramePrinc().mnuOpenFileListener(e); }
+			case "changeImage"   -> this.ctrl.getFramePrinc().mnuOpenFileListener(e);
 			case "Sauvegarder"   -> this.ctrl.getFramePrinc().save(e);
 			case "Pipette"       -> panelIm.enablePipetteMode( ! panelIm.isPipetteMode() );
 			case "PotDePeinture" -> {
@@ -306,8 +304,8 @@ public class BarreOutils extends JToolBar implements ActionListener
 					this.extraToolbar.add(contrastSlider);
 				}
 			}
-			case "FondTransparent" 	-> panelIm.paintTransp();
-			case "Couleur"       -> {
+			case "FondTransparent" -> panelIm.paintTransp();
+			case "Couleur"         -> {
 				// Ouvrir le sélecteur de couleur
 				Color nouvelleCouleur = JColorChooser.showDialog(this, "Choisir une couleur", couleurSelectionnee);
 
@@ -317,24 +315,24 @@ public class BarreOutils extends JToolBar implements ActionListener
 					this.btnCouleur.setBackground(couleurSelectionnee); // Mettre à jour la couleur du bouton
 				}
 			}
-			case "CopierRectangle" 	-> { panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() ); }
-			case "CopierRond" 		-> { panelIm.enableSelectionRond( ! panelIm.isSelectionRondMode() ); }
-			case "AjouterDuTexte" 	-> { panelIm.enableStylo( ! panelIm.isStyloMode() ); }
-			case "Undo" -> {
+			case "CopierRectangle" -> panelIm.enableSelectionRect( ! panelIm.isSelectionRectMode() );
+			case "CopierRond"      -> panelIm.enableSelectionRond( ! panelIm.isSelectionRondMode() );
+			case "AjouterDuTexte"  -> panelIm.enableStylo( ! panelIm.isStyloMode() );
+			case "Undo"            -> {
 				panelIm.transform.undo();
 				panelIm.updateUI();
 			}
-			case "Redo" -> {
+			case "Redo"            -> {
 				panelIm.transform.redo();
 				panelIm.updateUI();
 			}
-			case "SourisNormal" 	-> { panelIm.curseurMode( ); }
-			case "changeAutreImage" -> { panelIm.openSourcePanel(); }
-			case "collerForme"      -> { panelIm.saveImageWithOverlap(new File("rendu.png"));}
-			case "1erPlan"          -> { panelIm.premPlan(); }
-			case "passe1niv"        -> { panelIm.avanverUnPlan(); }
-			case "reculer1niv"      -> { panelIm.reculerUnPlan(); }
-			case "dernierPlan"      -> { panelIm.dernPlan(); }
+			case "SourisNormal"     -> panelIm.curseurMode( );
+			case "changeAutreImage" -> panelIm.openSourcePanel();
+			case "collerForme"      -> panelIm.saveImageWithOverlap();
+			case "1erPlan"          -> panelIm.premPlan();
+			case "passe1niv"        -> panelIm.avanverUnPlan();
+			case "reculer1niv"      -> panelIm.reculerUnPlan();
+			case "dernierPlan"      -> panelIm.dernPlan();
 		}
 		this.updateUI();
 	}
