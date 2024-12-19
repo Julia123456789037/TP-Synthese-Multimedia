@@ -29,14 +29,7 @@ Sur la page github du répertoire :
 
 ## 1. Lancement de l'application
 
-   Il faut tout d'abord se placer dans le dossier racine de l'application. Vous devriez voir le dossier "bin"
-
-sur linux : 
-     2 Méthodes : 
-       1.Lancer lancement.sh
-           Si ça ne fonctionne pas, lancer d'abord compile.sh et déplacez vous ensuite dans le dossier "bin" et lancer la commande sur un terminal <b> java org.multimedia.main.Controleur </b>
-
-Sur windows : 
+Pour lancer rapidement l'application télécharger le .jar et faite la commande java -jar SwingPainter.jar dans le dossier où est rangé le .jar
 
 
 
